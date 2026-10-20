@@ -1,0 +1,16 @@
+# secrets and local state
+.env
+*.db
+*.sqlite
+# environments and caches
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.DS_Store
+# data that is not redistributed (paper full texts) and generated indexes
+data/papers/
+data/raw/
+cache/
+*.npy
+chroma*/
