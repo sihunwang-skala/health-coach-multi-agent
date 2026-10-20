@@ -49,7 +49,8 @@ flowchart LR
 
 ## 5. Before / After
 - 비교 대상: Before = , After =
-- 같은 입력: 
+- 같은 입력:
+
 | 지표 | Before | After | 차이 |
 |---|---|---|---|
 | 검색 정확도 (Recall@6) | | | |
