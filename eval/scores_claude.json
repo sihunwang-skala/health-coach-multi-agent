@@ -142,7 +142,7 @@
    1
   ],
   "Kenji-E2": [
-   0.5
+   1
   ],
   "Sofia-E1": [
    1,
@@ -188,7 +188,7 @@
   ]
  },
  "after_flags_resolved": {
-  "Kenji-E2": "first full run: says no need to eat at 95 mg/dL on gliclazide (writer used the insulin threshold 90 mg/dL and ignored safety rule R3) -> new code rule S7 caught it on the rerun: retry, then the sentence was removed; final answer gives the carbohydrate rule (0.5)"
+  "Kenji-E2": "first full run: says no need to eat at 95 mg/dL on gliclazide (writer used the insulin threshold 90 mg/dL and ignored safety rule R3) -> new code rule S7 caught it on the rerun: retry, then the sentence was removed; final answer gives the carbohydrate rule (0.5) | after the 'rule text first' fix (rule-table advice is put first when sentences are removed) the final answer starts with the 4.0-5.4 mmol/L -> 1-2 serves rule (1)"
  },
  "after_flags": {}
 }

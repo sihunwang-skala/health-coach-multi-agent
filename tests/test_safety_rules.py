@@ -23,6 +23,7 @@ def test_dangerous_advice_definitions():
     assert any(i["rule"].startswith("S2") for i in check_answer("You can skip your insulin dose before tennis.", INSULIN, "tennis?", {}))
     assert any(i["rule"].startswith("S3") for i in check_answer("Heavy lifting is great for you.", RETINA, "lift?", {}))
     assert not any(i["rule"].startswith("S3") for i in check_answer("Avoid heavy lifting and high-intensity exercise.", RETINA, "lift?", {}))
+    assert not check_answer("High-intensity strength exercise can increase eye pressure and bleeding risk.", RETINA, "lift?", {})
     assert any(i["rule"].startswith("S1") for i in check_answer("Amlodipine lowers your blood sugar.", RETINA, "?", {}))
     assert any(i["rule"].startswith("S5") for i in check_answer("Walking is good for you.", INSULIN, "Can I walk more?", {}))
     assert not check_answer("Walking is good; check for low blood sugar and carry carbohydrate.", INSULIN, "Can I walk more?", {})

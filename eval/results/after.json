@@ -2118,7 +2118,7 @@
   "user": "u06",
   "q": "My blood sugar is 95 before my walk. Should I eat something first?",
   "system": "after",
-  "answer": "However, since you are taking gliclazide, which is a sulfonylurea, you should monitor your glucose closely, as there is an increased risk of hypoglycemia during exercise [PMC6546780]. If your glucose levels drop to between 4.0 and 5.4 mmol/L (about 72-97 mg/dL), it is advisable to consume one to two serves of fast-acting carbohydrate before starting your walk [PMC6546780]. Given your age and chronic kidney disease, it's important to be cautious and ensure your safety while exercising [PMC4170131].",
+  "answer": "Sulfonylureas raise the risk of low blood sugar during moderate to high-intensity exercise and for up to 12 hours after: check glucose before exercise and carry fast-acting carbohydrate. [PMC6546780] A pre-exercise glucose of 4.0-5.4 mmol/L (about 72-97 mg/dL) can herald a low during exercise: take one to two serves of fast-acting carbohydrate first. [PMC6546780] For fall risk, choose balance and strength exercise (it lowers injurious falls) and use a support such as a chair or cane when balance is impaired. [PMC10435089] However, since you are taking gliclazide, which is a sulfonylurea, you should check your glucose before exercise and carry fast-acting carbohydrate in case your levels drop [PMC6546780]. Given your age and conditions, it's important to monitor your blood sugar closely, especially since the risk of hypoglycemia is higher with sulfonylureas [PMC5509969]. Additionally, consider incorporating balance and strength exercises to help with your low muscle mass and mobility issues, using support if needed [PMC10435089].",
   "route": "exercise",
   "trace": [
    "guard",
@@ -2136,14 +2136,14 @@
    "remove_unsafe"
   ],
   "timings": {
-   "guard": 0.064,
-   "supervisor": 1.186,
-   "make_queries": 5.657,
-   "retrieve_mcp": 1.571,
-   "pick_notes": 2.967,
+   "guard": 0.029,
+   "supervisor": 2.107,
+   "make_queries": 7.308,
+   "retrieve_mcp": 3.925,
+   "pick_notes": 3.136,
    "verify_notes": 0.01,
    "safety_agent": 0.001,
-   "writer": 2.974,
+   "writer": 2.221,
    "validate": 0.0,
    "remove_unsafe": 0.0
   },
@@ -2153,14 +2153,15 @@
    "My blood sugar is 95 before my walk. Should I eat something first? sulfonylurea exercise hypoglycaemia chronic kidney disease exercise older adults",
    "What are the recommended blood sugar levels and pre-exercise nutrition guidelines for individuals engaging in short walks before lunch?",
    "sulfonylurea exercise hypoglycaemia in older adults with type 2 diabetes",
-   "chronic kidney disease exercise precautions for older adults",
-   "pre-exercise nutrition guidelines for short walks before lunch in type 2 diabetes and chronic kidney disease stage 3",
-   "effects of short walks before lunch (postprandial exercise) on blood sugar levels in type 2 diabetes",
-   "risks of hypoglycaemia from gliclazide during short walks before lunch",
+   "chronic kidney disease exercise precautions for short walks before lunch",
+   "pre-exercise nutrition guidelines for individuals with low muscle mass and type 2 diabetes",
+   "blood sugar levels before short walks before lunch (pre-exercise nutrition) in older adults with type 2 diabetes",
+   "effects of gliclazide on blood sugar levels during short walks before lunch",
+   "risks of hypoglycaemia during short walks before lunch for older adults on gliclazide",
    "recommended pre-exercise nutrition for individuals with type 2 diabetes and chronic kidney disease stage 3",
-   "guidelines for exercise frequency and duration for older adults with low muscle mass",
-   "precautions for exercising with chronic kidney disease stage 3 and type 2 diabetes",
-   "impact of short walks on muscle mass in older adults with low muscle mass"
+   "guidelines for short walks before lunch for older adults with low muscle mass",
+   "impact of short walks before lunch on blood sugar levels in individuals with chronic kidney disease",
+   "precautions for exercising with weak legs and type 2 diabetes before lunch"
   ],
   "notes": [
    {
@@ -2184,77 +2185,85 @@
     "source": "PMC6546780"
    },
    {
-    "note": "Glucose between 4.0 and 5.4 mmol/L may herald impending hypoglycaemia during exercise and warrants one to two serves of fast-acting carbohydrate. Exercise should not start if glucose is between 4.0 and 5.4 mmol/L without monitoring.",
+    "note": "Glucose between 4.0 and 5.4 mmol/L may herald impending hypoglycaemia during exercise and warrants one to two serves of fast-acting carbohydrate.",
     "source": "PMC6546780"
    },
    {
-    "note": "The risk of hypoglycaemia is 2-3 times higher with sulfonylureas compared to other oral medications. Gliclazide is safer than glimepiride and is recommended for elderly patients with diabetes and risk of hypoglycaemia.",
+    "note": "The risk of hypoglycaemia is 2-3 times higher with sulfonylureas compared to other orally administered drugs. Gliclazide is safer than glimepiride and is recommended for the elderly with diabetes and risk of hypoglycaemia.",
     "source": "PMC5509969"
-   },
-   {
-    "note": "Older individuals with chronic kidney disease (CKD) are at greater risk for hypoglycemia and adverse consequences from hypoglycemia. Greater care to avoid hypoglycemia is needed in older patients with CKD, and less stringent A1C targets of treatment are recommended.",
-    "source": "PMC4170131"
    },
    {
     "note": "Regular moderate to vigorous exercise reduces the incidence and progression of nephropathy, as well as the risk of cardiovascular events and mortality in patients with diabetes, in the absence of contraindications.",
     "source": "PMC8453655"
    },
    {
-    "note": "In asymptomatic patients with diabetes who plan to do low to moderate physical activity, medical evaluation and physician clearance are not needed before starting the activity.",
+    "note": "Exercise is not contraindicated in patients with diabetes with peripheral or autonomic neuropathy, but individualized assessment and special precautions should be considered.",
     "source": "PMC8453655"
    },
    {
-    "note": "Exercise training improves glycaemic control, primarily by increasing glucose uptake into active muscles and inhibiting glucose production from the liver.",
+    "note": "Blood glucose decreases during and after exercise for individuals with type 2 diabetes; however, this does not usually result in hypoglycaemia unless the individual is taking insulin or sulphonylureas.",
     "source": "PMC6546780"
    },
    {
-    "note": "A short session of moderate intensity exercise after breakfast decreases glucose levels in participants with type 2 diabetes, but the effect does not persist after lunch without additional exercise.",
+    "note": "Increased insulin sensitivity may alter insulin and/or sulphonylurea requirements post-exercise for those with diabetes.",
+    "source": "PMC6546780"
+   },
+   {
+    "note": "Moderate-intensity exercise did not increase hypoglycemic episodes compared to control conditions in subsequent nocturnal periods.",
     "source": "PMC6190726"
    },
    {
-    "note": "All the exercise conditions showed a significant attenuation of the post-meal glycemic excursion (P < 0.003) and the glucose incremental area under the curve at 0–120 min (P < 0.028) and 0–180 min (P < 0.048) compared with CON.",
-    "source": "PMC8145872"
+    "note": "The risk of hypoglycaemia increases with age and is greatest with insulin treatment; it is also relatively high with sulphonylureas. Each occurrence of hypoglycaemia increases the risk of death due to cardiological conditions and can cause worsening of cognitive functions or escalate dementia. Clinical manifestation of hypoglycaemia in elderly patients may occur with lower levels of glycaemia in comparison with younger persons.",
+    "source": "PMC5509969"
    },
    {
-    "note": "Increased physical exercise carries an increased risk of hypoglycaemia due to increased insulin sensitivity. Regular eating habits lower the risk of hypoglycaemia, while irregular eating habits increase it.",
-    "source": "PMC3639216"
+    "note": "A serious side effect of sulfonylureas is a risk of hypoglycaemia, which is 2-3 times higher in comparison to other orally administered drugs. The risk of hypoglycaemia increases in cases of renal or hepatic insufficiency as well as with simultaneous use of drugs that increase the effect of sulfonylureas.",
+    "source": "PMC5509969"
    },
    {
     "note": "Exercise-induced hypoglycemia is a common concern for patients with diabetes and their exercise caregivers.",
     "source": "PMC8453655"
    },
    {
-    "note": "Guidelines from the American College of Sports Medicine and the American Heart Association for older adults recommend a minimum of 150 min per week of moderate intensity aerobic training (30 min on five out of seven days per week) or a minimum of 60 min (20 min on three days per week) of vigorous activity.",
-    "source": "PMC7284931"
+    "note": "A short session of moderate intensity exercise after breakfast decreases glucose levels in participants with type 2 diabetes, but the effect does not persist after lunch without additional exercise.",
+    "source": "PMC6190726"
    },
    {
-    "note": "The benefits of resistance training for improving muscle mass and function in older adults with sarcopenia are well-established and it is a first-line treatment for this condition.",
-    "source": "PMC10695715"
+    "note": "A1C levels between 7–8% appear to be associated with the highest survival rates in retrospective analyses of DKD patients.",
+    "source": "PMC4170131"
    },
    {
-    "note": "Exercise should be recommended to patients with diabetic nephropathy, albeit with due precautions.",
-    "source": "PMC8453655"
+    "note": "It is recommended to establish the glucose trend prior to exercising with two to three glucose measures.",
+    "source": "PMC6546780"
    },
    {
-    "note": "There is no need for any restrictions on the exercise of patients with diabetes with nephropathy.",
-    "source": "PMC8453655"
-   },
-   {
-    "note": "The European Society of Clinical Nutrition and Metabolism guidelines recommend a minimum protein intake of 1.0 g/kg body weight/day; 1.2–1.5 g/kg body weight/day is recommended for older subjects with acute or chronic illness.",
-    "source": "PMC7693664"
-   },
-   {
-    "note": "Consumption of ω-3 fatty acids (PUFA and ω-3FA) was associated with lower risk of mortality and positive effects on muscle mass, grip strength, and walking speed in older individuals.",
-    "source": "PMC7693664"
+    "note": "If the glucose level is falling and it has been greater than 90 min since eating, then one serve of a slow-acting carbohydrate should be considered.",
+    "source": "PMC6546780"
    }
   ],
   "dropped_notes": [
    {
-    "note": "The risk of hypoglycaemia from sulphonylureas, including gliclazide, is 2-3 times higher compared to other orally administered drugs. This risk increases in cases of renal insufficiency and with the use of drugs that enhance sulphonylureas' effects.",
-    "source": "PMC5509969",
+    "note": "Exercise may increase risk of hypoglycemia, particularly in individuals under insulin or insulin secretagogues (sulfonylureas and meglitinides) therapy. Gliclazide is a sulfonylurea, which may increase the risk of hypoglycemia during or after exercise.",
+    "source": "PMC6862460",
     "novel": [
-     "enhan",
-     "inclu"
+     "glicl"
+    ]
+   },
+   {
+    "note": "Guidance on carbohydrate intake for older adults based on physical activity level suggests that for moderate activity (like brisk walking), the target carbohydrate intake is 5-6 g/kg body mass per day.",
+    "source": "PMC8599603",
+    "novel": [
+     "adult",
+     "like",
+     "mass"
+    ]
+   },
+   {
+    "note": "The American College of Sports Medicine and the American Heart Association recommend a minimum of 150 min per week of moderate intensity aerobic training, which can include walking.",
+    "source": "PMC7284931",
+    "novel": [
+     "inclu",
+     "walki"
     ]
    }
   ],
@@ -2286,33 +2295,32 @@
    "No, you do not need to eat something before your walk since your blood sugar is 95 mg/dL, which is within the ideal range of 90 - 250 mg/dL for exercise [PMC8453655]."
   ],
   "passages": [
-   671,
-   1231,
-   1289,
+   1285,
+   1574,
    1578,
    1990,
-   2029,
+   2023,
+   2031,
    2039,
    2056,
    2057,
+   2058,
+   2211,
    2560,
-   2911,
-   2921,
-   3345,
-   3725,
    3730,
    3738,
    3744,
    3745,
    3758,
-   3759
+   3771,
+   3854
   ],
-  "latency_s": 17.43,
-  "calls": 20,
-  "tokens_in": 29590,
-  "tokens_out": 2033,
-  "embed_tokens": 105,
-  "cost": 0.00566,
+  "latency_s": 21.26,
+  "calls": 21,
+  "tokens_in": 31514,
+  "tokens_out": 2090,
+  "embed_tokens": 132,
+  "cost": 0.005984,
   "by_step": {
    "supervisor": {
     "calls": 1,
@@ -2332,30 +2340,30 @@
    "query_conditions": {
     "calls": 1,
     "in": 369,
-    "out": 60
+    "out": 56
    },
    "query_decompose": {
     "calls": 1,
-    "in": 449,
-    "out": 118
+    "in": 445,
+    "out": 146
    },
    "picker": {
-    "calls": 13,
-    "in": 25220,
-    "out": 1466
+    "calls": 14,
+    "in": 27402,
+    "out": 1514
    },
    "writer": {
     "calls": 1,
-    "in": 1429,
-    "out": 104
+    "in": 1302,
+    "out": 102
    },
    "writer_retry": {
     "calls": 1,
-    "in": 1530,
-    "out": 174
+    "in": 1403,
+    "out": 161
    }
   },
-  "thread_id": "2089a857-849d-489c-a8c3-a7712f4a82fe"
+  "thread_id": "fb8c1099-c52b-48ba-9278-c8e99667e331"
  },
  "Sofia-E1": {
   "kind": "health",
@@ -3585,7 +3593,7 @@
   "user": "u10",
   "q": "I have proliferative retinopathy. Can I keep lifting heavy weights?",
   "system": "after",
-  "answer": "No, you should avoid lifting heavy weights due to your proliferative retinopathy. Instead, consider moderate resistance exercises at 50-80% of your one-repetition maximum, focusing on safety and avoiding any movements that could strain your eyes [PMC8453655]. Always check your glucose levels before exercising, as low blood sugar can occur during and after exercise, especially since you are on insulin [PMC6546780]. Additionally, ensure your blood pressure is monitored and cleared before engaging in any exercise [PMC6546780].",
+  "answer": "No, you should avoid lifting heavy weights due to your proliferative retinopathy. High-intensity strength exercises can increase intraocular pressure and risk vitreous hemorrhage or retinal detachment, which is particularly concerning for your condition [PMC8453655][PMC12031090]. Instead, consider engaging in moderate resistance training with lighter weights, ensuring you do not hold your breath while lifting to manage your blood pressure safely [PMC12031090]. Always check your blood sugar before exercising and carry fast-acting carbohydrates, as low blood sugar can occur during and after exercise [PMC6546780]. It's important to consult your doctor for personalized advice regarding your exercise routine.",
   "route": "exercise",
   "trace": [
    "guard",
@@ -3596,41 +3604,35 @@
    "verify_notes",
    "safety_agent",
    "writer",
-   "validate",
-   "retry",
-   "writer",
-   "validate",
-   "remove_unsafe"
+   "validate"
   ],
   "timings": {
-   "guard": 0.007,
-   "supervisor": 1.319,
-   "make_queries": 5.998,
-   "retrieve_mcp": 0.79,
-   "pick_notes": 4.046,
+   "guard": 0.028,
+   "supervisor": 1.315,
+   "make_queries": 5.496,
+   "retrieve_mcp": 1.502,
+   "pick_notes": 3.539,
    "verify_notes": 0.005,
-   "safety_agent": 0.0,
-   "writer": 2.305,
-   "validate": 0.0,
-   "remove_unsafe": 0.0
+   "safety_agent": 0.001,
+   "writer": 1.856,
+   "validate": 0.002
   },
   "queries": [
    "I have proliferative retinopathy. Can I keep lifting heavy weights?",
    "lifting heavy weights with proliferative retinopathy (resistance training) in proliferative diabetic retinopathy and type 2 diabetes and hypertension",
    "I have proliferative retinopathy. Can I keep lifting heavy weights? insulin treated exercise hypoglycaemia hypertension blood pressure response to exercise diabetic retinopathy exercise precautions older adults",
    "guidelines for resistance training in individuals with proliferative retinopathy",
-   "lifting heavy weights (resistance training) with proliferative diabetic retinopathy precautions",
-   "insulin treated exercise hypoglycaemia risk during resistance training",
-   "hypertension blood pressure response to resistance training in older adults",
-   "exercise precautions for diabetic retinopathy during weight lifting",
-   "lifting heavy weights (resistance training) effects on proliferative diabetic retinopathy",
-   "risks of hypoglycaemia during resistance training with insulin glargine and insulin aspart",
-   "guidelines for safe exercise in older adults with proliferative retinopathy",
-   "impact of resistance training on blood pressure in individuals with hypertension",
-   "recommended frequency and duration of resistance training for older adults with diabetes",
-   "precautions for lifting weights (resistance training) with proliferative diabetic retinopathy",
-   "effects of exercise on blood sugar levels in insulin-treated individuals",
-   "safety of lifting heavy weights (resistance training) for older adults with diabetes and hypertension"
+   "lifting heavy weights (resistance training) with proliferative diabetic retinopathy",
+   "exercise-induced hypoglycaemia with insulin glargine and insulin aspart treatment",
+   "hypertension blood pressure response to exercise in older adults with type 2 diabetes",
+   "diabetic retinopathy exercise precautions for resistance training",
+   "lifting heavy weights (resistance training) and risk of retinal detachment in proliferative diabetic retinopathy",
+   "impact of heavy weights (resistance training) on blood sugar levels in type 2 diabetes",
+   "guidelines for safe resistance training in older adults with proliferative retinopathy",
+   "exercise frequency and intensity recommendations for individuals with proliferative diabetic retinopathy",
+   "precautions for lifting heavy weights (resistance training) while on insulin glargine and insulin aspart",
+   "effects of hypertension on exercise tolerance in older adults with type 2 diabetes",
+   "monitoring blood pressure during resistance training in individuals with hypertension and diabetes"
   ],
   "notes": [
    {
@@ -3642,19 +3644,19 @@
     "source": "PMC12031090"
    },
    {
+    "note": "Exercise is contraindicated if a person has had a hypoglycaemic event that required assistance from another person to treat the event within the previous 24 h, if feeling unwell or glucose is < 4.0 mmol/L and the intended exercise is being done alone or is potentially unsafe.",
+    "source": "PMC6546780"
+   },
+   {
     "note": "Hypoglycaemia during exercise, or for up to 12 h after exercise, is the main risk for individuals with type 2 diabetes taking insulin and/or sulfonylurea medication.",
     "source": "PMC6546780"
    },
    {
-    "note": "Exercise is contraindicated if a person has had a hypoglycaemic event that required assistance from another person to treat the event within the previous 24 h, if feeling unwell or glucose is < 4.0 mmol/L.",
-    "source": "PMC6546780"
-   },
-   {
-    "note": "The American College of Sports and Medicine suggests that resistance exercise should be prescribed with moderate loads (60% one repetition maximum) for hypertensive patients.",
+    "note": "Aerobic exercise promotes greater BP reductions compared with resistance exercise, but recent studies indicate that the hypotensive effect of resistance exercise can be in the same proportion to that of aerobic exercise.",
     "source": "PMC4270306"
    },
    {
-    "note": "Sessions of resistance exercise with different volumes are able to promote significant post-exercise hypotension and increase peripheral vasodilatation in elderly hypertensive patients, with these effects being more pronounced in sessions with higher volume.",
+    "note": "The American College of Sports and Medicine suggests that resistance exercise should be prescribed with moderate loads (60% one repetition maximum) for hypertensive patients.",
     "source": "PMC4270306"
    },
    {
@@ -3662,64 +3664,35 @@
     "source": "PMC8453655"
    },
    {
-    "note": "Monitoring glucose levels and the direction of change following exercise can decrease post-exercise hypoglycaemia. This is especially important when there has been an increase in exercise (duration or intensity) or when a new exercise program is started.",
-    "source": "PMC6546780"
-   },
-   {
-    "note": "Adults with diabetes should perform resistance exercises on 2 - 3 nonconsecutive days per week. The intensity of 50 - 80% one-repetition maximum (1-RM) is recommended, depending on the level of fitness. In each session, 5 - 10 exercises, involving big muscles of the upper and lower extremities and the trunk should be performed in set(s) with 10 - 15 repetitions. Each exercise should be repeated 1 and maximum of 3 - 4 sets in each session.",
-    "source": "PMC8453655"
-   },
-   {
-    "note": "Improvements in muscle strength and size following resistance training tended to be greater when involving higher loads (approximately 80% one-repetition maximum [1-RM]) compared with lower loads (approximately 45% 1-RM).",
-    "source": "PMC10695715"
-   },
-   {
-    "note": "Recommendations suggest engaging in 2–3 non-consecutive days/week of resistance exercise for adults affected by diabetes using a variety of strength training modalities.",
+    "note": "Resistance training improves blood pressure and increases muscle mass and strength, which may positively impact insulin responsiveness and metabolic control in T2D patients.",
     "source": "PMC7739324"
    },
    {
-    "note": "High-intensity resistance training is more effective than low or moderate-intensity for reducing insulin levels and overall glycemic management in patients with type 2 diabetes.",
-    "source": "PMC10995365"
+    "note": "Recommendations suggest engaging in 2–3 non-consecutive days/week of resistance exercise for adults affected by DM using a variety of strength training modalities.",
+    "source": "PMC7739324"
    },
    {
-    "note": "Resistance training is encouraged for patients with type 2 diabetes, except when there is a contraindication.",
-    "source": "PMC8453655"
+    "note": "Avoid high-intensity exercises that can cause sudden increases in blood pressure, such as sprinting or heavy lifting.",
+    "source": "PMC10811574"
    },
    {
-    "note": "Older adults with diabetes should engage in strength training at least twice a week.",
+    "note": "Patients with high blood pressure should avoid holding their breath during strength exercises to prevent exorbitantly high and dangerous blood pressure peaks.",
     "source": "PMC12031090"
-   }
-  ],
-  "dropped_notes": [
-   {
-    "note": "Resistance training has been shown to lower systolic blood pressure (SBP) and diastolic blood pressure (DBP) in hypertensive individuals. Studies indicate that resistance exercises can lead to a reduction in SBP ranging from −9.1 to −4.7 mmHg and DBP ranging from −4.0 to −2.4 mmHg.",
-    "source": "PMC11654863",
-    "novel": [
-     "blood",
-     "diast",
-     "indic",
-     "indiv",
-     "lead",
-     "shown",
-     "systo"
-    ]
    },
    {
-    "note": "A standardized resistance exercise protocol is recommended, considering muscle resistance level and training duration, to effectively manage blood pressure in hypertensive patients.",
-    "source": "PMC11654863",
-    "novel": [
-     "blood"
-    ]
+    "note": "Benefits of exercise training were lower in T2DM patients taking antihypertensive medications.",
+    "source": "PMC8128270"
    },
    {
-    "note": "Resistance training improves blood pressure and increases muscle mass and strength, which may positively impact insulin responsiveness and metabolic control in patients with type 2 diabetes.",
-    "source": "PMC7739324",
-    "novel": [
-     "diabe",
-     "type"
-    ]
+    "note": "Resistance exercise is able to promote post-exercise hypotension in hypertensive elderly people, with greater hypotension for exercises with higher volume.",
+    "source": "PMC4270306"
+   },
+   {
+    "note": "The magnitude of post-exercise hypotension was significantly greater for exercises with higher volume.",
+    "source": "PMC4270306"
    }
   ],
+  "dropped_notes": [],
   "safety_notes": [
    {
     "id": "R1",
@@ -3737,38 +3710,31 @@
     "source": "PMC6546780"
    }
   ],
-  "issues": [
-   {
-    "rule": "S3 high-intensity / heavy exercise suggested with retinopathy",
-    "quote": "High-intensity resistance training can increase intraocular pressure and the risk of vitreous hemorrhage or retinal detachment, which is particularly concerning for your condition [PMC12031090][PMC8453655]."
-   }
-  ],
-  "retries": 1,
-  "removed": [
-   "High-intensity resistance training can increase intraocular pressure and the risk of vitreous hemorrhage or retinal detachment, which is particularly concerning for your condition [PMC12031090][PMC8453655]."
-  ],
+  "issues": [],
+  "retries": 0,
+  "removed": [],
   "passages": [
-   671,
-   922,
-   1157,
+   735,
    1176,
+   1177,
+   1422,
    1423,
    1425,
-   2028,
-   2051,
+   1439,
    2056,
+   2061,
    2949,
-   3730,
-   3736,
+   3333,
+   3337,
    3766,
    3768
   ],
-  "latency_s": 17.06,
-  "calls": 23,
-  "tokens_in": 34008,
-  "tokens_out": 2564,
-  "embed_tokens": 237,
-  "cost": 0.006644,
+  "latency_s": 13.76,
+  "calls": 21,
+  "tokens_in": 31257,
+  "tokens_out": 2059,
+  "embed_tokens": 120,
+  "cost": 0.005926,
   "by_step": {
    "supervisor": {
     "calls": 1,
@@ -3788,30 +3754,25 @@
    "query_conditions": {
     "calls": 1,
     "in": 377,
-    "out": 61
+    "out": 68
    },
    "query_decompose": {
     "calls": 1,
-    "in": 452,
-    "out": 138
+    "in": 459,
+    "out": 134
    },
    "picker": {
-    "calls": 16,
-    "in": 30188,
-    "out": 1955
+    "calls": 15,
+    "in": 28777,
+    "out": 1608
    },
    "writer": {
     "calls": 1,
-    "in": 1154,
-    "out": 147
-   },
-   "writer_retry": {
-    "calls": 1,
-    "in": 1224,
-    "out": 152
+    "in": 1031,
+    "out": 138
    }
   },
-  "thread_id": "bd9ea815-9f7f-4385-a993-4eeb2813a70b"
+  "thread_id": "c7d51aed-6e22-4b90-bcc9-7c43f523e226"
  },
  "Walter-E2": {
   "kind": "health",

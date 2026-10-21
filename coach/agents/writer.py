@@ -47,4 +47,9 @@ async def remove_unsafe(state, config):
         if i["quote"] and i["quote"] in ans:
             ans = ans.replace(i["quote"], "").replace("  ", " ").strip()
             removed.append(i["quote"])
+    if removed or any(not i["quote"] for i in state.get("issues", [])):
+        # the writer ignored the rule table twice: its rules go first, verbatim, so the key safety content is never lost
+        rules = " ".join(f"{s_['advice']} [{s_['source']}]" for s_ in state.get("safety_notes", []))
+        if rules:
+            ans = rules + (" " + ans if ans else "")
     return {"answer": ans, "removed": removed}

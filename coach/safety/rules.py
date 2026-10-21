@@ -78,7 +78,7 @@ NON_GLUCOSE = r"amlodipine|lisinopril|losartan|valsartan|enalapril|ramipril|stat
 CHANGE = re.compile(r"(?i)\b(skip|stop|double|increase|reduce|lower|cut|omit)\b (taking )?(your |the |a )?(dose|doses|insulin|medication|medicine|pills?|tablets?|glimepiride|gliclazide|metformin)")
 REFER = re.compile(r"(?i)doctor|clinician|physician|nurse|pharmacist|provider|healthcare team|care team")
 HEAVY = re.compile(r"(?i)heavy (lift|weight)|high[- ]intensity|hiit|sprint|jump|head[- ]down|max(imal)? (lift|effort)")
-LIMIT = re.compile(r"(?i)avoid|not recommended|should not|shouldn't|do not|don't|forbid|contraindicat|unsafe|stop")
+LIMIT = re.compile(r"(?i)avoid|not recommended|should not|shouldn't|do not|don't|forbid|contraindicat|unsafe|stop|risk|danger|concern|harm|bleed|haemorrh|hemorrh|pressure|cleared|clearance|check(ed)? .{0,20}before")
 OTHER_POP = re.compile(r"(?i)gestation|pregnan|child|paediatric|pediatric|adolesc|type 1 diabetes")
 
 

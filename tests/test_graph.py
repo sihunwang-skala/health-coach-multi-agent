@@ -37,6 +37,7 @@ def test_unsafe_answer_is_retried_once_then_removed():
     r = run(run_after(build_graph(), deps, "u2", "Can I lift weights?"))
     assert r["retries"] == 1                       # retry cap = 1
     assert "Heavy lifting is great." not in r["answer"] and r["removed"]
+    assert r["answer"].startswith("With severe non-proliferative")   # rule table text goes first after a removal
 
 
 def test_delete_needs_human_approval():
