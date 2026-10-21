@@ -14,3 +14,5 @@ data/raw/
 cache/
 *.npy
 chroma*/
+data/coach.db
+eval/results/*.log

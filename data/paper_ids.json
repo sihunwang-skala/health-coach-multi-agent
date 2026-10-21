@@ -1,0 +1,30 @@
+{
+ "_note": "PubMed Central open-access papers. Full texts are NOT in the repository (license); scripts/fetch_papers.py downloads them. role: core = exercise for older adults with type 2 diabetes (the questions are answered from these); distractor = same-looking but other topic (exercise motivation / chatbots / other diseases) or the diabetes DIET shelf (50 papers), so retrieval has to find the right papers among similar ones - the same design as the diabetes PoC corpus.",
+ "core": {
+  "PMC6546780": "exercise specialists guide for adults with diabetes (hypoglycaemia, retinopathy, neuropathy precautions)",
+  "PMC8453655": "national clinical practice guideline for exercise in patients with diabetes",
+  "PMC7739324": "beneficial effects of physical activity in diabetic patients",
+  "PMC9289978": "daily steps and all-cause mortality (meta-analysis of 15 cohorts)",
+  "PMC4201471": "walking and glycaemic control in type 2 diabetes (meta-analysis)",
+  "PMC6190726": "20-minute post-dinner exercise and postprandial glucose in type 2 diabetes",
+  "PMC8145872": "postprandial exercise types and the breakfast glucose response in type 2 diabetes",
+  "PMC4334091": "effectiveness and safety of high-intensity interval training in type 2 diabetes",
+  "PMC6862460": "HIIT vs moderate continuous training in middle-aged and older type 2 diabetes",
+  "PMC11116924": "5:2 diet or low-volume HIIT plus resistance exercise in type 2 diabetes (RCT)",
+  "PMC10201453": "consensus on physical activity for people with diabetes at risk of foot ulcers",
+  "PMC7980337": "exercise and healing of diabetic foot ulcers (systematic review)",
+  "PMC8155768": "exercise interventions and balance in type 2 diabetes (systematic review)",
+  "PMC10435089": "exercise interventions for fall prevention in older adults (systematic review)",
+  "PMC10695715": "type 2 diabetes and sarcopenia in older adults",
+  "PMC8746908": "preventing sarcopenia in ageing: protein intake and exercise",
+  "PMC7284931": "physical activity and exercise strategies to manage frailty",
+  "PMC11654863": "exercise training for blood pressure reduction in hypertension (overview)",
+  "PMC4270306": "resistance exercise volume and blood pressure response in hypertensive older adults",
+  "PMC10995365": "exercise and eye health / ocular diseases",
+  "PMC8508740": "fast-acting glucagon for severe hypoglycaemia"
+ },
+ "distractor_exercise_other_topic": ["PMC9261340", "PMC7485229", "PMC6555722", "PMC7110817", "PMC7557439", "PMC7674816",
+  "PMC8665384", "PMC10811574", "PMC12031090", "PMC8128270", "PMC8746852", "PMC8599603", "PMC10305337", "PMC11528923",
+  "PMC8308465"],
+ "distractor_diabetes_diet_shelf": "the 50 diabetes-diet papers of the diabetes PoC corpus (ids in data/diet_shelf_ids.txt)"
+}

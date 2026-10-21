@@ -1,0 +1,432 @@
+{
+ "PMC6546780": {
+  "title": "Resources to Guide Exercise Specialists Managing Adults with Diabetes",
+  "role": "core",
+  "chars": 32398
+ },
+ "PMC8453655": {
+  "title": "Iranian National Clinical Practice Guideline for Exercise in Patients with Diabetes",
+  "role": "core",
+  "chars": 48444
+ },
+ "PMC7739324": {
+  "title": "Beneficial Effects of Physical Activity in Diabetic Patients",
+  "role": "core",
+  "chars": 24988
+ },
+ "PMC9289978": {
+  "title": "Daily steps and all-cause mortality: a meta-analysis of 15 international cohorts",
+  "role": "core",
+  "chars": 34035
+ },
+ "PMC4201471": {
+  "title": "Impact of Walking on Glycemic Control and Other Cardiovascular Risk Factors in Type 2 Diabetes: A Meta-Analysis",
+  "role": "core",
+  "chars": 35858
+ },
+ "PMC6190726": {
+  "title": "Twenty Minute Moderate-Intensity Post-Dinner Exercise Reduces the Postprandial Glucose Response in Chinese Patients with Type 2 Diabetes",
+  "role": "core",
+  "chars": 24798
+ },
+ "PMC8145872": {
+  "title": "The Effect of Different Postprandial Exercise Types on Glucose Response to Breakfast in Individuals with Type 2 Diabetes",
+  "role": "core",
+  "chars": 20872
+ },
+ "PMC4334091": {
+  "title": "Effectiveness and Safety of High-Intensity Interval Training in Patients With Type 2 Diabetes",
+  "role": "core",
+  "chars": 18808
+ },
+ "PMC6862460": {
+  "title": "High-Intensity Interval Training Versus Moderate-Intensity Continuous Training in Middle-Aged and Older Patients with Type 2 Diabetes: A Randomized Controlled Crossover Trial of the Acute Effects of Treadmill Walking on Glycemic Control",
+  "role": "core",
+  "chars": 32098
+ },
+ "PMC11116924": {
+  "title": "Effect of 5:2 Regimens: Energy-Restricted Diet or Low-Volume High-Intensity Interval Training Combined With Resistance Exercise on Glycemic Control and Cardiometabolic Health in Adults With Overweight/Obesity and Type 2 Diabetes: A Three-Arm Randomized Controlled Trial",
+  "role": "core",
+  "chars": 36990
+ },
+ "PMC10201453": {
+  "title": "Consensus-based recommendations on physical activity and exercise in patients with diabetes at risk of foot ulcerations: a Delphi study",
+  "role": "core",
+  "chars": 50963
+ },
+ "PMC7980337": {
+  "title": "Does exercise improve healing of diabetic foot ulcers? A systematic review",
+  "role": "core",
+  "chars": 27607
+ },
+ "PMC8155768": {
+  "title": "The Effects of Exercise Interventions on Balance Capacity in Patients with Type 2 Diabetes Mellitus: A Systematic Review and Meta-Analysis",
+  "role": "core",
+  "chars": 65148
+ },
+ "PMC10435089": {
+  "title": "Effectiveness of exercise interventions on fall prevention in ambulatory community-dwelling older adults: a systematic review with narrative synthesis",
+  "role": "core",
+  "chars": 47691
+ },
+ "PMC10695715": {
+  "title": "Type 2 Diabetes Mellitus and Sarcopenia as Comorbid Chronic Diseases in Older Adults: Established and Emerging Treatments and Therapies",
+  "role": "core",
+  "chars": 54503
+ },
+ "PMC8746908": {
+  "title": "Strategies to Prevent Sarcopenia in the Aging Process: Role of Protein Intake and Exercise",
+  "role": "core",
+  "chars": 95374
+ },
+ "PMC7284931": {
+  "title": "Physical activity and exercise: Strategies to manage frailty",
+  "role": "core",
+  "chars": 87003
+ },
+ "PMC11654863": {
+  "title": "The Western and Chinese exercise training for blood pressure reduction among hypertensive patients: An overview of systematic reviews",
+  "role": "core",
+  "chars": 56793
+ },
+ "PMC4270306": {
+  "title": "Resistance exercise with different volumes: blood pressure response and forearm blood flow in the hypertensive elderly",
+  "role": "core",
+  "chars": 23951
+ },
+ "PMC10995365": {
+  "title": "Effects and potential mechanisms of exercise and physical activity on eye health and ocular diseases",
+  "role": "core",
+  "chars": 81006
+ },
+ "PMC8508740": {
+  "title": "New Fast Acting Glucagon for Recovery from Hypoglycemia, a Life-Threatening Situation: Nasal Powder and Injected Stable Solutions",
+  "role": "core",
+  "chars": 34598
+ },
+ "PMC9261340": {
+  "title": "The Importance of Motivation to Older Adult Physical and Cognitive Exercise Program Development, Initiation, and Adherence",
+  "role": "distractor_exercise_other_topic",
+  "chars": 21522
+ },
+ "PMC7485229": {
+  "title": "Modifiable facilitators and barriers to exercise adherence in older adults with MCI/dementia using the Theoretical Domains Framework: a systematic review protocol",
+  "role": "distractor_exercise_other_topic",
+  "chars": 23780
+ },
+ "PMC6555722": {
+  "title": "The experience of motivation and adherence to group-based exercise of Norwegians aged 80 and more: a qualitative study",
+  "role": "distractor_exercise_other_topic",
+  "chars": 49944
+ },
+ "PMC7110817": {
+  "title": "Fatigue, barriers to physical activity and predictors for motivation to exercise in advanced Cancer patients",
+  "role": "distractor_exercise_other_topic",
+  "chars": 34448
+ },
+ "PMC7557439": {
+  "title": "Artificial Intelligence Chatbot Behavior Change Model for Designing Artificial Intelligence Chatbots to Promote Physical Activity and a Healthy Diet: Viewpoint",
+  "role": "distractor_exercise_other_topic",
+  "chars": 38830
+ },
+ "PMC7674816": {
+  "title": "Development and Usability Evaluation of a Healthy Lifestyle Coaching Chatbot Using a Habit Formation Model",
+  "role": "distractor_exercise_other_topic",
+  "chars": 31240
+ },
+ "PMC8665384": {
+  "title": "Feasibility, Usability, and Effectiveness of a Machine Learning–Based Physical Activity Chatbot: Quasi-Experimental Study",
+  "role": "distractor_exercise_other_topic",
+  "chars": 42758
+ },
+ "PMC10811574": {
+  "title": "Comprehensiveness, Accuracy, and Readability of Exercise Recommendations Provided by an AI-Based Chatbot: Mixed Methods Study",
+  "role": "distractor_exercise_other_topic",
+  "chars": 50688
+ },
+ "PMC12031090": {
+  "title": "ChatGPT-4o-Generated Exercise Plans for Patients with Type 2 Diabetes Mellitus—Assessment of Their Safety and Other Quality Criteria by Coaching Experts",
+  "role": "distractor_exercise_other_topic",
+  "chars": 30945
+ },
+ "PMC8128270": {
+  "title": "Effect of exercise training on heart rate variability in type 2 diabetes mellitus patients: A systematic review and meta-analysis",
+  "role": "distractor_exercise_other_topic",
+  "chars": 48588
+ },
+ "PMC8746852": {
+  "title": "Nutrition, Diet and Healthy Aging",
+  "role": "distractor_exercise_other_topic",
+  "chars": 6937
+ },
+ "PMC8599603": {
+  "title": "Eat like an athlete: insights of sports nutrition science to support active aging in healthy older adults",
+  "role": "distractor_exercise_other_topic",
+  "chars": 26313
+ },
+ "PMC10305337": {
+  "title": "Effectiveness of Theory-Based Physical Activity and Nutrition Interventions in Aging Latino Adults: A Scoping Review",
+  "role": "distractor_exercise_other_topic",
+  "chars": 117160
+ },
+ "PMC11528923": {
+  "title": "Virtual Motivational Interviewing (VIMINT) to support physical activity: Experiences of older adults and counsellors",
+  "role": "distractor_exercise_other_topic",
+  "chars": 43290
+ },
+ "PMC8308465": {
+  "title": "Identifying and Managing Malnutrition, Frailty and Sarcopenia in the Community: A Narrative Review",
+  "role": "distractor_exercise_other_topic",
+  "chars": 63348
+ },
+ "PMC10012121": {
+  "title": "Hypoglycemia event prediction from CGM using ensemble learning",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 13548
+ },
+ "PMC10075038": {
+  "title": "Gestational diabetes mellitus: The optimal time of delivery",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 23854
+ },
+ "PMC10086485": {
+  "title": "Gestational diabetes is driven by microbiota-induced inflammation months before diagnosis",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 28328
+ },
+ "PMC10294056": {
+  "title": "Effect of resveratrol in gestational diabetes mellitus and its complications",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 30053
+ },
+ "PMC10384204": {
+  "title": "Effect of Dietary Approaches on Glycemic Control in Patients with Type 2 Diabetes: A Systematic Review with Network Meta-Analysis of Randomized Trials",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 53236
+ },
+ "PMC10473953": {
+  "title": "Gestational diabetes mellitus and COVID-19: The epidemic during the pandemic",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 49537
+ },
+ "PMC10597685": {
+  "title": "Association of triglyceride-glucose index levels with gestational diabetes mellitus in the US pregnant women: a cross-sectional study",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 25199
+ },
+ "PMC10688235": {
+  "title": "Metformin-Induced Vitamin B12 Deficiency in Patients With Type-2 Diabetes Mellitus",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 24957
+ },
+ "PMC10688561": {
+  "title": "Alarming Surge in Early-onset Type 2 Diabetes: A Global Catastrophe on the Horizon",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 8663
+ },
+ "PMC10899420": {
+  "title": "Eu- or hypoglycemic ketosis and ketoacidosis in children: a review",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 24186
+ },
+ "PMC10903815": {
+  "title": "Meal frequency strategies for the management of type 2 diabetes subjects: A systematic review",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 28969
+ },
+ "PMC11055016": {
+  "title": "Gestational Diabetes Mellitus: What Can Medical Nutrition Therapy Do?",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 29469
+ },
+ "PMC3639216": {
+  "title": "Avoiding hypoglycemia: a key to success for glucose-lowering therapy in type 2 diabetes",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 26914
+ },
+ "PMC4170131": {
+  "title": "Diabetic Kidney Disease: A Report From an ADA Consensus Conference",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 85054
+ },
+ "PMC4206977": {
+  "title": "Stem cell treatment for type 1 diabetes",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 15384
+ },
+ "PMC4538272": {
+  "title": "A journey into a Mediterranean diet and type 2 diabetes: a systematic review with meta-analyses",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 30332
+ },
+ "PMC5064028": {
+  "title": "Endocrine manifestations in celiac disease",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 19239
+ },
+ "PMC5094642": {
+  "title": "Danish Registry of Childhood and Adolescent Diabetes",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 13400
+ },
+ "PMC5509969": {
+  "title": "Diabetes in the elderly",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 23566
+ },
+ "PMC5740094": {
+  "title": "Gestational diabetes from A to Z",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 77053
+ },
+ "PMC5793337": {
+  "title": "Carbohydrate Counting in Children and Adolescents with Type 1 Diabetes",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 25131
+ },
+ "PMC5829968": {
+  "title": "Early Infant Diet and Islet Autoimmunity in the TEDDY Study",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 36953
+ },
+ "PMC5875783": {
+  "title": "Low-carbohydrate diets for type 1 diabetes mellitus: A systematic review",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 40065
+ },
+ "PMC5979537": {
+  "title": "Gut Microbiota and Type 1 Diabetes",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 27569
+ },
+ "PMC6024719": {
+  "title": "Associations of Diet and Physical Activity with Risk for Gestational Diabetes Mellitus: A Systematic Review and Meta-Analysis",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 38353
+ },
+ "PMC6146652": {
+  "title": "Teens with Type 1 Diabetes: How Does Their Nutrition Measure Up?",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 34499
+ },
+ "PMC6343294": {
+  "title": "Diabetic nephropathy: recent advances in pathophysiology and challenges in dietary management",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 16831
+ },
+ "PMC6723585": {
+  "title": "Low-Carbohydrate Diets for Gestational Diabetes",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 31005
+ },
+ "PMC6912234": {
+  "title": "Vitamin D and Gestational Diabetes Mellitus: Is There a Link?",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 30294
+ },
+ "PMC6940903": {
+  "title": "Coagulatory Defects in Type-1 and Type-2 Diabetes",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 57793
+ },
+ "PMC7019231": {
+  "title": "Influence of Diabetes during Pregnancy on Human Milk Composition",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 36340
+ },
+ "PMC7031264": {
+  "title": "Chrononutrition in the management of diabetes",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 34487
+ },
+ "PMC7400219": {
+  "title": "Leptin and Nutrition in Gestational Diabetes",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 40639
+ },
+ "PMC7599681": {
+  "title": "Diet and Healthy Lifestyle in the Management of Gestational Diabetes Mellitus",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 58390
+ },
+ "PMC7693664": {
+  "title": "Nutrition Management in Older Adults with Diabetes: A Review on the Importance of Shifting Prevention Strategies from Metabolic Syndrome to Frailty",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 63140
+ },
+ "PMC7783121": {
+  "title": "Type 1 diabetes mellitus in children: experience in Indonesia",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 27010
+ },
+ "PMC7804828": {
+  "title": "Efficacy and safety of low and very low carbohydrate diets for type 2 diabetes remission: systematic review and meta-analysis of published and unpublished randomized trial data",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 54011
+ },
+ "PMC7923051": {
+  "title": "Oleuropein alleviates gestational diabetes mellitus by activating AMPK signaling",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 24529
+ },
+ "PMC8057793": {
+  "title": "Consensus on Medical Nutrition Therapy for Diabesity (CoMeND) in Adults: A South Asian Perspective",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 55820
+ },
+ "PMC8303885": {
+  "title": "Epigenetic Changes in Gestational Diabetes Mellitus",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 37468
+ },
+ "PMC8336013": {
+  "title": "Effect of low glycaemic index or load dietary patterns on glycaemic control and cardiometabolic risk factors in diabetes: systematic review and meta-analysis of randomised controlled trials",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 53254
+ },
+ "PMC8371343": {
+  "title": "Mini‐review: Glucagon responses in type 1 diabetes – a matter of complexity",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 21093
+ },
+ "PMC8649788": {
+  "title": "Cystic fibrosis-related diabetes: The patient perspective☆",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 23255
+ },
+ "PMC8778490": {
+  "title": "The role of sugar-sweetened beverages in the global epidemics of obesity and chronic diseases",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 53400
+ },
+ "PMC8998242": {
+  "title": "Effectiveness of Strategies for Nutritional Therapy for Patients with Type 2 Diabetes and/or Hypertension in Primary Care: A Systematic Review and Meta-Analysis",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 33928
+ },
+ "PMC9205567": {
+  "title": "Diabetes: how to manage gestational diabetes mellitus",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 39307
+ },
+ "PMC9251182": {
+  "title": "Gestational Diabetes Mellitus Changes Human Colostrum Immune Composition",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 24823
+ },
+ "PMC9654708": {
+  "title": "Gut Microbiome Changes in Gestational Diabetes",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 34976
+ },
+ "PMC9671203": {
+  "title": "Does Vitamin D Have a Role in Diabetes?",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 17889
+ },
+ "PMC9973101": {
+  "title": "Oral Health Implications and Dental Management of Diabetic Children",
+  "role": "distractor_diabetes_diet_shelf",
+  "chars": 21708
+ }
+}

@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exercise Coach</title>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1d2430;--muted:#667085;--line:#e4e7ec;--accent:#2f6fed;--warn:#b42318;--ok:#067647}
+@media (prefers-color-scheme: dark){:root{--bg:#111418;--card:#1a1f26;--ink:#e6e9ef;--muted:#98a2b3;--line:#2b323c;--accent:#6c9cff;--warn:#f97066;--ok:#47cd89}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,"Noto Sans KR",sans-serif}
+main{max-width:860px;margin:0 auto;padding:16px;display:grid;gap:12px}
+header h1{font-size:20px;margin:4px 0}header p{margin:0;color:var(--muted);font-size:13px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.row{display:flex;gap:8px;flex-wrap:wrap}select,input,button{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+input{flex:1;min-width:200px}button{background:var(--accent);color:#fff;border:0;cursor:pointer}button.secondary{background:transparent;color:var(--ink);border:1px solid var(--line)}
+#steps{display:flex;gap:6px;flex-wrap:wrap}.step{font-size:12px;padding:3px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.msg{white-space:pre-wrap}.user{color:var(--muted)}.meta{font-size:12px;color:var(--muted)}.warn{color:var(--warn)}.ok{color:var(--ok)}
+.examples button{background:transparent;color:var(--accent);border:1px dashed var(--line);font-size:13px}
+</style></head><body><main>
+<header><h1>Exercise Coach — older adults with type 2 diabetes</h1>
+<p>Multi-agent demo (synthetic users). Not medical advice — for medicines or symptoms ask your doctor, nurse or pharmacist. In an emergency call 119.</p></header>
+<div class="card row"><select id="user"></select><input id="msg" placeholder="Ask about exercise…"><button id="send">Send</button></div>
+<div class="card examples row" id="ex"></div>
+<div class="card"><div class="meta">Agent steps (live, SSE)</div><div id="steps"></div></div>
+<div id="log" style="display:grid;gap:10px"></div>
+</main>
+<script>
+const users={u01:"Maria (68, metformin)",u02:"Daniel (72, numb feet)",u03:"Grace (75, CKD 3)",u04:"Robert (66, hypertension)",u05:"Linda (79, glimepiride, falls)",u06:"Kenji (81, gliclazide, low muscle)",u07:"Sofia (70, glimepiride, BP)",u08:"James (77, insulin)",u09:"Dorothy (84, insulin, cane)",u10:"Walter (69, insulin, retinopathy)"};
+const ex=["Would a short walk after dinner help my blood sugar?","I have proliferative retinopathy. Can I keep lifting heavy weights?","Can I skip my insulin before tennis so I don't go low?","I'm sweating, shaky and confused after my walk.","I walked 30 minutes after dinner today.","Delete my last record, it was wrong.","Is hot yoga safe for me?"];
+const sel=document.getElementById('user');for(const[k,v]of Object.entries(users)){const o=document.createElement('option');o.value=k;o.textContent=v;sel.appendChild(o)}
+const exd=document.getElementById('ex');ex.forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{document.getElementById('msg').value=t;send()};exd.appendChild(b)});
+function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+function add(html){const d=document.createElement('div');d.className='card';d.innerHTML=html;document.getElementById('log').prepend(d);return d}
+async function approve(tid,yes){const r=await fetch('/approve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:sel.value,thread_id:tid,approve:yes})});const j=await r.json();add(`<div class="msg ${yes?'ok':''}">${esc(j.answer)}</div>`)}
+function send(){const m=document.getElementById('msg').value.trim();if(!m)return;const steps=document.getElementById('steps');steps.innerHTML='';
+ const es=new EventSource(`/chat/stream?user_id=${sel.value}&message=${encodeURIComponent(m)}`);
+ es.onmessage=e=>{const j=JSON.parse(e.data);if(!j.done){const s=document.createElement('span');s.className='step';s.textContent=j.step+(j.seconds?` ${j.seconds.toFixed(1)}s`:'');steps.appendChild(s);return}
+  es.close();let h=`<div class="msg user">${esc(users[sel.value])}: ${esc(m)}</div><div class="msg">${esc(j.answer||'')}</div>`;
+  if(j.safety_notes&&j.safety_notes.length)h+=`<div class="meta warn">Safety rules applied: ${j.safety_notes.map(s=>s.id+' ['+s.source+']').join(', ')}</div>`;
+  if(j.sources&&j.sources.length)h+=`<div class="meta">Sources: ${j.sources.map(s=>`<a href="https://pmc.ncbi.nlm.nih.gov/articles/${s}/" target="_blank">${s}</a>`).join(', ')}</div>`;
+  h+=`<div class="meta">route: ${j.route} · ${j.latency_s}s · ${j.calls} LLM calls · $${j.cost}</div>`;const d=add(h);
+  if(j.interrupt){const q=document.createElement('div');q.className='row';q.innerHTML=`<span class="warn">${esc(j.interrupt.question)}</span>`;const y=document.createElement('button');y.textContent='Approve';y.onclick=()=>{approve(j.thread_id,true);q.remove()};const n=document.createElement('button');n.className='secondary';n.textContent='Cancel';n.onclick=()=>{approve(j.thread_id,false);q.remove()};q.append(y,n);d.appendChild(q)}}}
+function showRecord(r,label){const steps=document.getElementById('steps');steps.innerHTML='';
+ (r.trace||[]).forEach(n=>{const s=document.createElement('span');s.className='step';const t=(r.timings||{})[n];s.textContent=n+(t?` ${t.toFixed(1)}s`:'');steps.appendChild(s)});
+ let h=`<div class="meta">${label}</div><div class="msg user">${esc(users[r.user]||r.user)}: ${esc(r.q)}</div><div class="msg">${esc(r.answer||'')}</div>`;
+ if(r.safety_notes&&r.safety_notes.length)h+=`<div class="meta warn">Safety rules applied: ${r.safety_notes.map(s=>s.id+' ['+s.source+']').join(', ')}</div>`;
+ const src=[...new Set((r.notes||[]).map(n=>n.source).filter(Boolean))];if(src.length)h+=`<div class="meta">Sources: ${src.join(', ')}</div>`;
+ if(r.removed&&r.removed.length)h+=`<div class="meta warn">Removed by the safety check after 1 retry: ${esc(r.removed.join(' '))}</div>`;
+ if(r.interrupt_shown)h+=`<div class="row"><span class="warn">${esc(r.interrupt_shown.question)}</span><button>Approve</button><button class="secondary">Cancel</button></div>`;
+ h+=`<div class="meta">route: ${r.route} · ${r.latency_s}s · ${r.calls} LLM calls · $${r.cost} · retries ${r.retries||0}</div>`;add(h)}
+const P=new URLSearchParams(location.search);
+if(P.get('replay')){P.get('replay').split(',').reverse().forEach(id=>fetch('/replay/'+id+'?system='+(P.get('system')||'after')).then(r=>r.json()).then(r=>showRecord(r,'Recorded evaluation run ('+(P.get('system')||'after')+'): '+id)))}
+if(P.get('q')){sel.value=P.get('user')||'u01';document.getElementById('msg').value=P.get('q');setTimeout(send,300)}
+document.getElementById('send').onclick=send;document.getElementById('msg').addEventListener('keydown',e=>{if(e.key==='Enter')send()});
+</script></body></html>
