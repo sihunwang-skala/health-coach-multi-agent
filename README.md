@@ -4,7 +4,7 @@
 
 > 이 서비스는 의사가 아니라 코칭 서비스입니다. 진단·처방이 필요한 요청에는 Safety Guard를 적용해 AI가 임의로 판단하지 않도록 하고, 약 변경은 의료진에게, 응급 증상은 119로 안내합니다. 예시 사용자 10명은 모두 가상 인물입니다.
 
-**결과 보고서: [docs/REPORT.md](docs/REPORT.md)** · [발표 PPT](docs/health-coach-presentation.pptx) · [발표 화면](docs/PRESENTATION_VIEW.md) · [5분 발표 스크립트](docs/PRESENTATION_SCRIPT.md) · 전체 평가 표: [eval/results/metrics_tables.md](eval/results/metrics_tables.md) · 평가 방법: [docs/EVALUATION.md](docs/EVALUATION.md)
+**결과 보고서: [docs/REPORT.md](docs/REPORT.md)** · [발표 화면](docs/PRESENTATION_VIEW.md) · [5분 발표 스크립트](docs/PRESENTATION_SCRIPT.md) · 전체 평가 표: [eval/results/metrics_tables.md](eval/results/metrics_tables.md) · 평가 방법: [docs/EVALUATION.md](docs/EVALUATION.md)
 
 ## 결과 — 두 가지 평가로 확인한 Before / After (GPT-6 Luna)
 Baseline(Before) = Standard Paper-Search RAG · Ablation = Health Agentic RAG, Single-Agent + Health Agentic RAG · Proposed(After) = Multi-Agent + Health Agentic RAG
