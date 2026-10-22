@@ -93,21 +93,32 @@ flowchart TD
 6. 기록 저장·조회는 **Records Agent**가 MCP 사용자 서버로 처리하고, 기록 삭제는 **사용자 승인** 뒤에만 실행합니다. 약 변경·상담 연결·다른 사람 정보·개인정보 질문에는 정해진 안전한 답을 줍니다.
 7. 모든 메시지는 **자체 모니터링 로그**에 남고, 응급·상담 요청은 **관리자 화면**에 알림으로 떠서 운영자가 확인합니다.
 
-**Diet / Exercise Agent 내부 (Health Agentic RAG)**
+**Diet / Exercise Agent 내부 — Health Agentic RAG 파이프라인**
 ```mermaid
 flowchart LR
-  Q[질문 + 프로필<br/>일반 질문이면<br/>프로필 없이] --> MQ[검색어 만들기 4단계<br/>핵심 표현 · 더 넓은 질문<br/>질환·약별 · 질문 나누기]
-  MQ --> RV[MCP 논문 검색<br/>의미 검색 + BM25<br/>대상이 다른 논문 제외]
-  RV --> PK[근거 고르기 + 메모<br/>검색어마다 상위 10개 중 2개<br/>LCEL batch 동시 처리]
-  PK --> VN[메모 검증<br/>원문에 없는 단어가 있는<br/>메모 제거]
-  VN --> EV[근거 메모<br/>+ 출처]
+  IX[Indexing<br/>section-aware parsing<br/>table linearization<br/>parent 800 / child 300] -.-> RV
+  Q[Input<br/>질문 + 마스킹된 프로필<br/>일반 질문은 프로필 제외] --> MQ[Query Transformation<br/>core terms · step-back<br/>condition-specific · decomposition]
+  MQ --> RV[Hybrid Retrieval<br/>dense + BM25, RRF α 0.5<br/>population metadata filter<br/>query별 top 10]
+  RV --> PK[Evidence Selection<br/>LLM listwise selection 2/query<br/>contextual compression<br/>→ 근거 메모]
+  PK --> VN[Faithfulness Check<br/>note verification<br/>원문에 없는 단어 → 제거]
+  VN --> GN[Grounded Generation<br/>Writer: 메모 + 안전 규칙만<br/>근거 없으면 답변 보류]
 ```
 
+**단계별 설계 근거** (근거 수치는 당뇨 PoC 실험 — 식단 본인 질문 50개, 같은 정답 근거 기준 — 의 결정 기록 번호와 함께 표기)
+| 단계 | 영역 · 기법 | 이 프로젝트의 설정 | 왜 이렇게 설계했나 |
+|---|---|---|---|
+| 1 | **Indexing**<br>section-aware parsing, table linearization, Parent-Child (Small-to-Big) chunking | PMC XML을 section 단위로 파싱, 표는 행 단위 문장으로 변환<br>parent 800자(overlap 100) / child 300자(overlap 50) | · child 300자 근처가 parent 크기와 상관없이 일관되게 상위 (L54)<br>· overlap을 없애면 근거 문장이 잘려 본인 질문 근거 비율 0.47 → 0.33 (L54)<br>· semantic chunking·contextual header는 오히려 하락 (L51, L54)<br>· 표 linearization 누락 시 ADA 소금·음주 표를 못 찾는 문제를 실제로 발견해 수정 |
+| 2 | **Query Transformation**<br>multi-step query chain: core terms → step-back → condition-specific → decomposition | 4단계 LLM chain + 코드 검사(프로필 항목명 복사·질문 반복 금지), 검색어 개수는 LLM이 결정(상한 없음) | · 하나씩 빼기 실험에서 decomposition 제거 시 근거 회수율 0.94 → 0.89로 가장 큰 손실 (L77)<br>· 질환·약별 검색어 제거 시 답변 점수 0.825 → 0.783: "약 때문에 저혈당" 같은 개인 위험 근거를 이 검색어가 가져옴 (L115)<br>· multi-query·multi-hop·논문 용어 검색어는 기여 0 → 제외 (L77)<br>· 4단계를 1회 호출로 합치면 1.4초 단축되지만 대표 6문항 중 3문항 품질 하락 → 미채택 (L128) |
+| 3 | **Hybrid Retrieval**<br>dense (text-embedding-3-small) + sparse (BM25), Reciprocal Rank Fusion, metadata filtering | query마다 child 검색 → parent 반환, RRF α 0.5, 임신·소아·제1형 당뇨 등 대상이 다른 논문 제외 | · 질문 하나로 검색할 때는 BM25가 오히려 방해 (L62)이지만, decomposition된 짧은 query마다 적용하면 약 이름·수치·의학 용어의 정확한 일치를 보완해 근거 비율 0.53 → 0.57 (child top 35), 0.59 → 0.66 (parent) (L88)<br>· 대상 필터로 엉뚱한 논문이 빠져 정답 chunk 54 → 56개, 안전 규칙과 함께 답변 점수 0.771 → 0.825 (L113)<br>· embedding은 PoC에서 OpenAI와 로컬 모델(mxbai)의 검색 정확도가 같아(R@6 0.40, L44·L47) 서비스 배포가 단순한 API 모델 사용 |
+| 4 | **Evidence Selection**<br>LLM-based listwise selection + contextual compression (근거 메모 추출) | query마다 상위 10개 후보 중 LLM이 2개를 고르고 질문에 필요한 사실만 메모로 추출, LCEL batch로 동시 처리 | · 상위 10개 후보 안에 정답 근거가 본인 0.78 / 일반 0.84로 가장 많음 (L90)<br>· query마다 2개 채택이 1개 채택보다 정답 근거를 더 담음 (4/4 vs 3/4, L101)<br>· cross-encoder reranking은 순위는 올렸지만 넘기는 근거 수는 그대로 (L64, L65), MMR·cosine 순 선택은 크게 하락 (L87)<br>· picker에 parent 대신 child만 주면 맥락(대상·수치)을 잃어 0.825 → 0.729 (L115) |
+| 5 | **Faithfulness Check**<br>output verification (hallucination guard) | 메모의 내용 단어 중 원문 passage에 없는 단어가 2개 이상이면 메모 제거 (코드, 비용 0) | · picker가 검색어의 단어를 섞어 "시차 비행 인슐린"처럼 근거 없는 메모를 만든 사례 발견 (L121)<br>· 적용 후 근거 없는 질문 보류 6/8 → 7/8, 답변 점수 손실 없음 (L122)<br>· 일반 원칙: LLM 출력을 검증 없이 다음 단계로 넘기지 않음 |
+| 6 | **Grounded Generation**<br>evidence-constrained writer + safety notes | Writer는 근거 메모와 안전 규칙만 사용, 출처 표기, 근거가 없으면 정해진 보류 문장<br>일반 질문은 일반 답을 먼저, 개인 주의 사항은 짧게 | · 근거에 없는 사실을 쓰지 않게 해 환각을 줄임 (대가: 일반 지식형 문항 감점, 4절)<br>· 안전 규칙을 Writer 입력에 넣으면 저혈당 경고 같은 필수 내용이 채워져 답변 점수 상승 (L113)<br>· 본인·일반 질문 구분 복구로 일반 질문 85.7% → 95.2% (3-4) |
+
 ### 2-3. 어필 포인트 4가지
-1. **Agentic RAG 실험 설계와 구조화**: 당뇨 PoC에서 chunking, 검색 방식, 검색어 만들기, 근거 선택, 메모 검증을 하나씩 실험해(결정 기록 132단계) 최종 구성을 골랐습니다. 이번 과제에서는 같은 구성을 식단과 운동 두 분야에 적용했습니다. 꼭 필요한 근거를 찾아 온 비율이 31.6%에서 58.2%로 올랐습니다(3-2).
-2. **MCP와 Multi-Agent가 단일 Agent보다 나은 점**: 같은 Health Agentic RAG를 쓰는 단일 Agent와 비교했습니다. 일반 질문 점수 85.7% → 95.2%, 건강 질문 외 메시지 처리 35.0% → 97.5%, 100개 전체 평균 응답 시간 14.0초 → 11.8초, 총비용 $0.218 → $0.198(3-3).
-3. **응급 상황과 개인정보 처리**: 응급 감지(코드 + LLM 이중), 약 변경 거절, 상담 연결 버튼, 다른 사람 정보 거절, 이름 제거, LangSmith 내용 숨김, 자체 로그(2-6).
-4. **과제 요구 기술 전부 + 서비스 완성도**: Multi-Agent, MCP, RAG, 의존성 주입, LangSmith, 모듈화, 단위 테스트, FastAPI, 사용자·관리자 화면, 실제 실행 녹화.
+1. **Agentic RAG의 실험 기반 설계**: Indexing, Query Transformation, Hybrid Retrieval, Evidence Selection, Faithfulness Check, Grounded Generation 각 단계를 ablation 실험(하나씩 더하고 빼기)으로 검증해 구성을 결정했습니다(결정 기록 133단계, 위 표). 같은 파이프라인을 식단·운동 두 도메인에 적용했고, 표준 RAG 대비 정답 근거 회수율이 31.6% → 58.2%(본인 질문 19.6% → 50.0%)로 향상됐습니다(3-3).
+2. **MCP 기반 Multi-Agent 구조의 효과 검증**: 같은 Health Agentic RAG를 사용하는 Single-Agent와 통제 비교했습니다. Supervisor의 경로 선택과 본인·일반 질문 구분으로 일반 질문 점수 85.7% → 95.2%, 건강 질문 외 메시지 처리율 35.0% → 97.5%를 달성했고, 불필요한 검색을 생략해 100개 기준 평균 응답 시간 14.0초 → 11.8초, 총비용 $0.218 → $0.198로 줄었습니다(3-4).
+3. **안전성과 개인정보 보호 설계**: 응급 상황은 코드 규칙과 LLM의 이중 감지로 5/5를 119로 안내했고, 위험 조언은 규칙 기반 출력 검증으로 0%를 달성했습니다. 개인정보는 MCP 서버 분리와 마스킹, LangSmith 입력·출력 비공개, 자체 모니터링 로그로 외부 노출 범위를 최소화했습니다(2-6).
+4. **과제 요구 기술의 완전한 구현과 서비스 완성도**: Multi-Agent(LangGraph), MCP, RAG, 의존성 주입, LangSmith, 모듈화, 단위 테스트 18개, FastAPI + SSE를 모두 구현하고, 사용자 화면·관리자 화면과 두 가지 HITL(사용자 승인, 운영자 알림 처리)까지 갖춘 서비스로 완성했습니다.
 
 ### 2-4. 사용한 기술과 활용 방법
 | 기술 | 어떻게 썼나 | 위치 |
@@ -123,6 +134,10 @@ flowchart LR
 | **FastAPI + SSE** | 사용자 화면은 Agent 진행 단계를 실시간으로 받아 "검색 중…"처럼 보여 줍니다.<br>관리자 API는 요약·알림·사용자별 상세를 제공합니다 | `app/server.py`, `web/` |
 
 ![LangSmith trace: 단계와 시간은 보이고 입력·출력은 숨겨짐](img/langsmith_trace_hidden_content.jpg)
+
+**이 화면이 보여 주는 것 (LangSmith 실제 trace 1건)**
+- ① 파란 상자 — **기록되는 것**: 그래프의 단계 구조(guard → supervisor → exercise_agent → 검색어 4단계 → retrieve → pick_notes …), 단계별 시간(supervisor 2.07초, 검색어 만들기 6.99초), LLM 호출별 token 수(supervisor 728 token)<br>→ 어느 단계가 느린지, 어디서 비용이 드는지 분석할 수 있음
+- ② 빨간 상자 — **숨겨지는 것**: 질문·프로필·답변. Input은 "No inputs", Output은 "No outputs"로 표시<br>→ `coach/config.py`의 `langsmith_privacy()`가 tracing을 켤 때 입력·출력 숨김을 자동으로 설정
 
 ### 2-5. 가상 사용자 10명과 평가 설계
 **가상 사용자** (나이는 50~90대 각 2명, 성별 5:5, 위험 요인이 고르게 나뉘도록 설계)
@@ -152,7 +167,7 @@ flowchart LR
   OQ --> C[내 정보·기록<br/>10]
   OQ --> D[잡담<br/>10]
   OQ --> SF[안전 10<br/>응급 5 + 약 변경 5]
-  OQ --> SV[서비스·개인정보 10<br/>상담 3 · 삭제 3<br/>다른 사람 2 · 안내 2]
+  OQ --> SV[서비스·개인정보 10<br/>상담 연결 3<br/>기록 삭제 3<br/>다른 사람 정보 2<br/>개인정보 안내 2]
 ```
 - 본인 질문(본인 건강 정보 + 논문 참조 질문)과 일반 질문(논문 참조 질문)을 분야마다 10개씩 같게 두고, **각 10개는 사용자 10명이 한 번씩** 묻도록 배치해 위험 요인별 안전 규칙이 고르게 시험됩니다.
 - 건강 질문마다 꼭 들어가야 할 핵심 내용(필수 답변 항목, 총 97개)과 그 근거가 되는 논문 원문 문장(98개)을 미리 정했습니다. 채점 기준과 프롬프트는 [평가 방법](EVALUATION.md)에 공개했습니다.
