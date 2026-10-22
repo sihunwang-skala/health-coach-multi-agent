@@ -101,26 +101,14 @@ flowchart TD
 6. 기록 저장·조회는 **Records Agent**가 MCP 사용자 서버로 처리하고, 기록 삭제는 **사용자 승인** 뒤에만 실행합니다. 약 변경·상담 연결·다른 사람 정보·개인정보 질문에는 정해진 안전한 답을 줍니다.
 7. 모든 메시지는 **자체 모니터링 로그**에 남고, 응급·상담 요청은 **관리자 화면**에 알림으로 떠서 운영자가 확인합니다.
 
-**Diet / Exercise Agent 내부 — Health Agentic RAG 파이프라인**
-```mermaid
-flowchart LR
-  IX["Indexing<br/>section-aware parsing<br/>table linearization<br/>parent 800 / child 300"] -.-> RV
-  Q["Input<br/>질문 + 이름을 뺀 프로필<br/>일반 질문은 프로필 제외"] --> MQ["Query Transformation<br/>핵심 표현 · 더 넓은 질문<br/>질환·약별 질문 · 세부 질문"]
-  MQ --> RV["Hybrid Retrieval<br/>dense + BM25를 RRF로 결합<br/>대상이 다른 논문 제외<br/>검색어별 상위 10개"]
-  RV --> PK["Evidence Selection<br/>LLM이 검색어별 근거 2개 선택<br/>질문에 필요한 내용만 메모"]
-  PK --> VN["Faithfulness Check<br/>메모를 논문 원문과 비교<br/>원문에 없는 내용은 제거"]
-  VN --> GN["Grounded Generation<br/>근거 메모 + 안전 규칙으로 답변<br/>근거가 없으면 답변 보류"]
-```
+### 식단·운동 Agent의 논문 근거 검색 과정
 
-**단계별 설계 근거** (근거 수치는 당뇨 PoC 실험 — 식단 본인 질문 50개, 같은 정답 근거 기준 — 의 결정 기록 번호와 함께 표기)
-| 단계 | 영역 · 기법 | 이 프로젝트의 설정 | 왜 이렇게 설계했나 |
-|---|---|---|---|
-| 1 | **Indexing**<br>section-aware parsing, table linearization, Parent-Child (Small-to-Big) chunking | PMC XML을 section 단위로 파싱, 표는 행 단위 문장으로 변환<br>parent 800자(overlap 100) / child 300자(overlap 50) | · child 300자 근처가 parent 크기와 상관없이 일관되게 상위 (L54)<br>· overlap을 없애면 근거 문장이 잘려 본인 질문 근거 비율 0.47 → 0.33 (L54)<br>· semantic chunking·contextual header는 오히려 하락 (L51, L54)<br>· 표 linearization 누락 시 ADA 소금·음주 표를 못 찾는 문제를 실제로 발견해 수정 |
-| 2 | **Query Transformation**<br>multi-step query chain: core terms → step-back → condition-specific → decomposition | 4단계 LLM chain + 코드 검사(프로필 항목명 복사·질문 반복 금지), 검색어 개수는 LLM이 결정(상한 없음) | · 하나씩 빼기 실험에서 decomposition 제거 시 근거 회수율 0.94 → 0.89로 가장 큰 손실 (L77)<br>· 질환·약별 검색어 제거 시 답변 점수 0.825 → 0.783: "약 때문에 저혈당" 같은 개인 위험 근거를 이 검색어가 가져옴 (L115)<br>· multi-query·multi-hop·논문 용어 검색어는 기여 0 → 제외 (L77)<br>· 4단계를 1회 호출로 합치면 1.4초 단축되지만 대표 6문항 중 3문항 품질 하락 → 미채택 (L128) |
-| 3 | **Hybrid Retrieval**<br>dense (text-embedding-3-small) + sparse (BM25), Reciprocal Rank Fusion, metadata filtering | query마다 child 검색 → parent 반환, RRF α 0.5, 임신·소아·제1형 당뇨 등 대상이 다른 논문 제외 | · 질문 하나로 검색할 때는 BM25가 오히려 방해 (L62)이지만, decomposition된 짧은 query마다 적용하면 약 이름·수치·의학 용어의 정확한 일치를 보완해 근거 비율 0.53 → 0.57 (child top 35), 0.59 → 0.66 (parent) (L88)<br>· 대상 필터로 엉뚱한 논문이 빠져 정답 chunk 54 → 56개, 안전 규칙과 함께 답변 점수 0.771 → 0.825 (L113)<br>· embedding은 PoC에서 OpenAI와 로컬 모델(mxbai)의 검색 정확도가 같아(R@6 0.40, L44·L47) 서비스 배포가 단순한 API 모델 사용 |
-| 4 | **Evidence Selection**<br>LLM-based listwise selection + contextual compression (근거 메모 추출) | query마다 상위 10개 후보 중 LLM이 2개를 고르고 질문에 필요한 사실만 메모로 추출, LCEL batch로 동시 처리 | · 상위 10개 후보 안에 정답 근거가 본인 0.78 / 일반 0.84로 가장 많음 (L90)<br>· query마다 2개 채택이 1개 채택보다 정답 근거를 더 담음 (4/4 vs 3/4, L101)<br>· cross-encoder reranking은 순위는 올렸지만 넘기는 근거 수는 그대로 (L64, L65), MMR·cosine 순 선택은 크게 하락 (L87)<br>· picker에 parent 대신 child만 주면 맥락(대상·수치)을 잃어 0.825 → 0.729 (L115) |
-| 5 | **Faithfulness Check**<br>output verification (hallucination guard) | 메모의 내용 단어 중 원문 passage에 없는 단어가 2개 이상이면 메모 제거 (코드, 비용 0) | · picker가 검색어의 단어를 섞어 "시차 비행 인슐린"처럼 근거 없는 메모를 만든 사례 발견 (L121)<br>· 적용 후 근거 없는 질문 보류 6/8 → 7/8, 답변 점수 손실 없음 (L122)<br>· 일반 원칙: LLM 출력을 검증 없이 다음 단계로 넘기지 않음 |
-| 6 | **Grounded Generation**<br>evidence-constrained writer + safety notes | Writer는 근거 메모와 안전 규칙만 사용, 출처 표기, 근거가 없으면 정해진 보류 문장<br>일반 질문은 일반 답을 먼저, 개인 주의 사항은 짧게 | · 근거에 없는 사실을 쓰지 않게 해 환각을 줄임 (대가: 일반 지식형 문항 감점, 4절)<br>· 안전 규칙을 Writer 입력에 넣으면 저혈당 경고 같은 필수 내용이 채워져 답변 점수 상승 (L113)<br>· 본인·일반 질문 구분 복구로 일반 질문 85.7% → 95.2% (3-4) |
+건강 질문은 다음 네 단계로 처리합니다.
+
+1. **질문 나누기**: 한 질문을 여러 검색어로 바꿉니다.
+2. **논문 찾기**: 의미와 단어가 맞는 논문을 함께 검색하고, 사용자와 맞지 않는 논문은 제외합니다.
+3. **근거 확인**: 답변에 필요한 문단만 고르고, 실제 원문에 있는 내용인지 확인합니다.
+4. **답변 작성**: 확인된 근거와 Safety 규칙만 사용합니다. 근거가 없으면 추측하지 않고 답변을 보류합니다.
 
 ### 2-3. 핵심 강점 4가지
 1. **Agentic RAG의 실험 기반 설계**: Indexing, Query Transformation, Hybrid Retrieval, Evidence Selection, Faithfulness Check, Grounded Generation 각 단계를 ablation 실험(하나씩 더하고 빼기)으로 검증해 구성을 결정했습니다(결정 기록 133단계, 위 표). 같은 파이프라인을 식단·운동 두 도메인에 적용했고, 표준 RAG 대비 정답 근거 회수율이 31.6% → 58.2%(본인 질문 19.6% → 50.0%)로 향상됐습니다(3-3).
