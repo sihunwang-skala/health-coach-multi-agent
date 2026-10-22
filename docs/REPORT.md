@@ -215,6 +215,8 @@ LLM에는 이름을 빼고 나이·질환·약·생활습관만 보냅니다.
 이 표는 **논문 근거가 필요한 건강 질문 60개만** 비교합니다. RAG 구성 자체의 효과를 보기 위해 Standard RAG부터 최종 Multi-Agent까지 4가지 시스템을 함께 놓았습니다.
 ![four systems](img/result_health_four_systems.png)
 
+<div align="center"><strong>표 1. 건강 질문 60개 성능 비교 — 4가지 시스템</strong></div>
+
 | 지표 | Standard Paper-Search RAG | Health Agentic RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
 |---|---|---|---|---|
 | 답변 점수 ¹ | 75.3% | 73.2% | 88.7% | **91.5%** |
@@ -261,6 +263,8 @@ LLM에는 이름을 빼고 나이·질환·약·생활습관만 보냅니다.
 이 표는 건강 질문 60개와 건강 질문 외 메시지 40개를 합친 **전체 서비스 평가**입니다. Health Agentic RAG 단독 시스템은 서비스 요청을 처리하는 routing이 없어 이 비교에서는 제외하고, 실제 서비스로 사용할 수 있는 3가지만 비교했습니다. 건강 질문 점수는 3-2 표의 60개 결과를 다시 표시한 값이고, 나머지 행은 전체 100개 기준입니다.
 ![question kinds](img/result_by_question_kind.png)
 ![other messages](img/result_other_messages.png)
+
+<div align="center"><strong>표 2. 전체 메시지 100개 서비스 성능 비교 — 3가지 시스템</strong></div>
 
 | 지표 (메시지 100개 전체) | Standard Paper-Search RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
 |---|---|---|---|

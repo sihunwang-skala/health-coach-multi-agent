@@ -12,6 +12,8 @@ Baseline(Before) = Standard Paper-Search RAG · Ablation = Health Agentic RAG, S
 
 첫 번째 표는 **건강 질문 60개만 4가지 시스템으로 비교**해 RAG와 Agent 구조의 효과를 확인한 결과입니다.
 
+<div align="center"><strong>표 1. 건강 질문 60개 성능 비교 — 4가지 시스템</strong></div>
+
 | 지표 | Standard Paper-Search RAG | Health Agentic RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
 |---|---|---|---|---|
 | 건강 질문 60개 답변 점수 ¹ | 75.3% | 73.2% | 88.7% | **91.5%** |
@@ -23,6 +25,8 @@ Baseline(Before) = Standard Paper-Search RAG · Ablation = Health Agentic RAG, S
 | 건강 질문 1개당 비용 | **$0.0002** | $0.0025 | $0.0025 | $0.0032 |
 
 두 번째 표는 **건강 질문 60개와 서비스 메시지 40개, 총 100개를 실제 서비스처럼 비교**한 결과입니다. Health Agentic RAG 단독 시스템은 서비스 메시지를 처리하는 routing이 없어 제외했습니다. 건강 질문 지표는 첫 번째 표의 60개 결과이고, 나머지 지표는 100개 전체 기준입니다.
+
+<div align="center"><strong>표 2. 전체 메시지 100개 서비스 성능 비교 — 3가지 시스템</strong></div>
 
 | 지표 (메시지 100개 전체) | Standard Paper-Search RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
 |---|---|---|---|
