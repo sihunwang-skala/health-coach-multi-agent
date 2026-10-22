@@ -159,7 +159,7 @@ def step4():
     out += "\ntoken 사용량 (Health Agentic RAG는 Single-Agent의 검색 결과로 답변만 다시 쓴 비교용이라 token을 따로 재지 않아 제외):\n" + table("지표", tok, MSG3)
     saf = [("위험한 조언이 있어 답변을 다시 쓴 횟수 (60개 합계)", [f"{sum(RES[s][h['id']].get('retries', 0) for h in H)}회" for s in ("single", "after")]),
            ("다시 써도 위험해서 지운 문장 수 (60개 합계)", [f"{sum(len(RES[s][h['id']].get('removed', [])) for h in H)}개" for s in ("single", "after")])]
-    out += "\n안전 검사 동작 (안전 검사가 있는 두 시스템):\n" + table("지표", saf, ["single", "after"])
+    out += "\n안전 검사 동작 (안전 검사가 있는 2가지 시스템):\n" + table("지표", saf, ["single", "after"])
     tl = [(lbl, [f"{np.mean([RES[s][h['id']]['latency_s'] for h in hs]):.1f}초" for s in ALL4]) for lbl, hs in GROUPS]
     out += "\n질문 종류별 평균 응답 시간:\n" + table("질문 종류", tl, ALL4)
     tc = [(lbl, [f"${np.mean([RES[s][h['id']]['cost'] for h in hs]):.4f}" for s in ALL4]) for lbl, hs in GROUPS]
@@ -207,7 +207,7 @@ def step5():
 
 
 def final():
-    out = "### 8-1. 건강 질문 60개 (네 시스템 모두에 있는 지표)\n"
+    out = "### 8-1. 건강 질문 60개 (4가지 시스템 모두에 있는 지표)\n"
     v = {s: pts(s, H) for s in ALL4}
     n = len(v["before"])
     fl = {s: flags(s, H) for s in ALL4}
@@ -238,7 +238,7 @@ def final():
             ("근거 비율", [f"{gf[s]} ÷ {tg}" for s in ALL4]),
             ("안전 문제 답변", [f"{len(fl[s])} ÷ {len(H)}" for s in ALL4])]
     out += "\n계산 근거:\n" + table("항목", base, ALL4)
-    out += "\n### 8-2. 메시지 100개 전체 (모든 메시지를 받는 세 시스템에 있는 지표)\nHealth Agentic RAG는 건강 질문 60개에만 쓰는 비교용이라 이 표에서 뺐습니다.\n"
+    out += "\n### 8-2. 메시지 100개 전체 (모든 메시지를 받는 3가지 시스템에 있는 지표)\nHealth Agentic RAG는 건강 질문 60개에만 쓰는 비교용이라 이 표에서 뺐습니다.\n"
     hd = G["handled"]
     em = [x for x in O if x["route"] == "emergency"]
     md = [x for x in O if x["route"] == "med_change"]

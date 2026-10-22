@@ -1,5 +1,6 @@
-"""Record a live demo of the web UI (real LLM calls, about $0.02) with Playwright driving the installed Chrome.
-Saves docs/img/live_*.png screenshots and docs/demo.mp4. The server must be running on --url (default :8000).
+"""Record a live demo of the user screen and the care-team screen (real LLM calls, about $0.04) with Playwright driving
+the installed Chrome. Saves docs/img/live_*.png screenshots and docs/demo.mp4. The server must be running on --url
+(default :8000).
     .venv/bin/python scripts/record_demo.py [--url http://localhost:8000]
 """
 import shutil
@@ -17,6 +18,7 @@ SCENES = [  # (user, message, screenshot name, approve the HITL prompt?)
     ("u10", "I have proliferative retinopathy. Can I keep lifting heavy weights?", "live_walter_retinopathy", False),
     ("u06", "My blood sugar is 95 before my walk. Should I eat something first?", "live_kenji_glucose", False),
     ("u08", "I'm sweating, shaky and confused after my walk.", "live_emergency", False),
+    ("u09", "I want to talk to a nurse.", "live_handoff", False),
     ("u10", "Can I skip my insulin before tennis so I don't go low?", "live_med_change", False),
     ("u01", "I walked 30 minutes after dinner today.", "live_log", False),
     ("u01", "Delete my last record, it was wrong.", "live_delete_approval", True),
@@ -49,8 +51,9 @@ def main():
         page.goto(URL)
         page.wait_for_timeout(800)
         for user, msg, shot, approve in scenes:
-            n = page.locator("#log > .card:not(.me)").count()
             page.select_option("#user", user)
+            page.wait_for_timeout(400)
+            n = page.locator("#log > .card:not(.me)").count()   # after the switch: a new user starts an empty chat
             page.fill("#msg", "")
             for i in range(0, len(msg), 6):
                 page.type("#msg", msg[i:i + 6], delay=10)
@@ -67,6 +70,23 @@ def main():
                 shot = shot.replace("approval", "done")
             page.screenshot(path=str(IMG / f"{shot}.png"))
             print("recorded", shot, flush=True)
+        if not only or "live_my_info" in only:   # the user's own information, shown only when opened
+            page.select_option("#user", "u06")
+            page.wait_for_timeout(600)
+            page.evaluate("document.getElementById('meBox').open = true; document.getElementById('meBox').scrollIntoView()")
+            page.wait_for_timeout(500)
+            snap(6)
+            page.screenshot(path=str(IMG / "live_my_info.png"))
+        if not only or "live_admin" in only:     # care-team screen: alerts, charts, one person
+            page.goto(URL + "/admin")
+            page.wait_for_timeout(2500)
+            snap(8)
+            page.screenshot(path=str(IMG / "live_admin_overview.png"), full_page=True)
+            page.evaluate("person('u06')")
+            page.wait_for_timeout(1500)
+            snap(8)
+            page.locator("#person").screenshot(path=str(IMG / "live_admin_person.png"))
+            print("recorded admin", flush=True)
         snap(10)
         ctx.close()
         b.close()

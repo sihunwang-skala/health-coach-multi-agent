@@ -71,7 +71,7 @@ fig, ax = plt.subplots(figsize=(11, 4.4))
 safe = {s: 100 * (1 - sum(bool(check_answer(RES[s][h["id"]]["answer"], PROF[h["user"]], h["q"], {})) for h in H) / len(H)) for s in SYS}
 vals = {s: [score(s, H), score(s, [h for h in H if h["type"] == "A"]), score(s, [h for h in H if h["type"] == "B"]), gold(s), safe[s]] for s in SYS}
 bars(ax, ["답변 점수", "본인 질문\n답변 점수", "일반 질문\n답변 점수", "꼭 필요한 근거를\n찾아 온 비율", "안전 문제가\n없는 답변"], SYS, vals,
-     "건강 질문 60개: 네 시스템 비교 (같은 질문, 같은 논문, GPT-6 Luna)", ylim=115)
+     "건강 질문 60개: 4가지 시스템 비교 (같은 질문, 같은 논문, GPT-6 Luna)", ylim=115)
 ax.legend(fontsize=8, ncol=4, loc="upper center", bbox_to_anchor=(0.5, -0.2))
 fig.tight_layout()
 fig.savefig(IMG / "result_health_four_systems.png", dpi=150)

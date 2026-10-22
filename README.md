@@ -6,7 +6,7 @@
 
 **결과 보고서: [docs/REPORT.md](docs/REPORT.md)** · 전체 평가 표: [eval/results/metrics_tables.md](eval/results/metrics_tables.md) · 평가 방법: [docs/EVALUATION.md](docs/EVALUATION.md)
 
-## 결과 — 같은 질문 100개로 네 시스템 비교 (GPT-6 Luna)
+## 결과 — 같은 질문 100개로 4가지 시스템 비교 (GPT-6 Luna)
 ![four systems](docs/img/result_health_four_systems.png)
 
 | 지표 | Standard Paper-Search RAG | Health Agentic RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
@@ -19,7 +19,7 @@
 | 건강 질문 평균 응답 시간 | **4.1초** | 15.1초 | 15.5초 | 18.2초 |
 | 건강 질문 1개당 비용 | **$0.0002** | $0.0025 | $0.0025 | $0.0032 |
 
-| 지표 (모든 메시지를 받는 세 시스템) | Standard Paper-Search RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
+| 지표 (모든 메시지를 받는 3가지 시스템) | Standard Paper-Search RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
 |---|---|---|---|
 | 건강 질문 외 메시지 40개를 제대로 처리한 비율 ⁴ | 57.5% | 35.0% | **97.5%** |
 | 응급 상황 처리 | 80% | 60% | **100%** |
@@ -47,7 +47,7 @@
 구조: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · 안전·개인정보·데이터 흐름: [docs/SAFETY_PRIVACY.md](docs/SAFETY_PRIVACY.md)
 
 ## 기술 구성
-LangGraph (supervisor + compiled subgraph, 동시 실행, 조건부 edge, interrupt/checkpointer) · LangChain LCEL (ChatOpenAI invoke/batch) · LangSmith (입력·출력 숨김) · MCP (fastmcp 서버 2개: 논문 검색 / 사용자 프로필·기록) · RAG (하이브리드 검색, 대상 필터, 메모 검증) · FastAPI + SSE · 의존성 주입 (`coach/deps.py`) · 모듈화 · 단위 테스트 18개 (가짜 LLM + 가짜 MCP 서버, 네트워크 없음)
+LangGraph (supervisor + compiled subgraph, 동시 실행, 조건부 edge, interrupt/checkpointer) · LangChain LCEL (ChatOpenAI invoke/batch) · LangSmith (입력·출력 숨김) · MCP (fastmcp 서버 2개: 논문 검색 / 사용자 프로필·기록) · RAG (하이브리드 검색, 대상 필터, 메모 검증) · FastAPI + SSE · 의존성 주입 (`coach/deps.py`) · 모듈화 · 단위 테스트 18개 (test double: FakeLLM + in-memory mock MCP 서버, 네트워크·API 키 없이 실행)
 
 ## 실행
 ```bash

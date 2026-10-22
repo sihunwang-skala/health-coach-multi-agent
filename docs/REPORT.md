@@ -7,7 +7,7 @@
 
 보고서 순서는 과제 안내의 발표 순서를 따릅니다: **1. 문제 → 2. 개선·추가 포인트 → 3. Before/After 수치 → 4. 한계와 트레이드오프 → 5. 추가 개선**.
 
-**한 줄 요약**: 같은 질문 100개로 네 시스템을 비교했을 때, 우리 Multi-Agent는 건강 질문 답변 점수 91.5%(표준 논문 검색 RAG 75.3%), 안전 문제가 있는 답변 0%(8.3%), 건강 질문 외 메시지 처리 97.5%(57.5%)였고, 대가로 건강 질문 응답 시간이 4.1초에서 18.2초로 늘었습니다.
+**한 줄 요약**: 같은 질문 100개로 4가지 시스템을 비교했을 때, 우리 Multi-Agent는 건강 질문 답변 점수 91.5%(표준 논문 검색 RAG 75.3%), 안전 문제가 있는 답변 0%(8.3%), 건강 질문 외 메시지 처리 97.5%(57.5%)였고, 대가로 건강 질문 응답 시간이 4.1초에서 18.2초로 늘었습니다.
 
 ---
 
@@ -23,7 +23,7 @@
 | 근거 | 내용 | 출처 |
 |---|---|---|
 | 고령 당뇨 환자가 많다 | 국내 65세 이상 성인의 당뇨병 유병률 29.3% (30세 이상 전체 15.5%) | Diabetes Fact Sheets in Korea 2024, *Diabetes Metab J* 2025 ([정정본 Table 1](https://pmc.ncbi.nlm.nih.gov/articles/PMC12086556)) |
-| 같은 조언도 사람마다 위험이 다르다 | 고령, 인슐린·설포닐우레아 사용은 저혈당 응급입원의 위험 요인으로 보고됨. 신장병이 있으면 metformin 사용 기준(eGFR)과 단백질 양이 달라지고, 망막병증이 있으면 고강도 운동을 피해야 함 | [Drugs & Aging 2025](https://link.springer.com/article/10.1007/s40266-025-01218-0), [JAMA Netw Open](https://jamanetwork.com/journals/jamanetworkopen/article-abstract/2785666), 우리 코퍼스 논문(PMC6546780, PMC4170131, PMC8453655) |
+| 같은 조언도 사람마다 위험이 다르다 | 고령, 인슐린·설포닐우레아 사용은 저혈당 응급입원의 위험 요인으로 보고됨.<br>신장병이 있으면 metformin 사용 기준(eGFR)과 단백질 양이 달라지고, 망막병증이 있으면 고강도 운동을 피해야 함 | [Drugs & Aging 2025](https://link.springer.com/article/10.1007/s40266-025-01218-0), [JAMA Netw Open](https://jamanetwork.com/journals/jamanetworkopen/article-abstract/2785666), 우리 코퍼스 논문(PMC6546780, PMC4170131, PMC8453655) |
 | 교육을 받기 어렵다 | 국내 연구에서 당뇨 자기관리 교육 참여율은 병원·의원 23.2%, 보건소 5.3%였고 고령일수록 참여가 낮은 경향 | [KoreaMed](https://synapse.koreamed.org/articles/1141541) |
 | 일반 AI 챗봇의 건강 조언은 위험할 수 있다 | 2025년, 60세 남성이 ChatGPT와 소금 대체재를 상담한 뒤 브롬화나트륨을 3개월간 먹고 브롬 중독으로 입원한 사례가 의학 학술지에 보고됨(저자들도 대화 기록은 확인하지 못함). 2023년 미국 섭식장애협회(NEDA)의 상담 챗봇이 해로운 다이어트 조언을 해 운영이 중단됨 | Annals of Internal Medicine: Clinical Cases 2025 ([보도](https://www.livescience.com/health/food-diet/man-sought-diet-advice-from-chatgpt-and-ended-up-with-bromide-intoxication)), [Fortune 2023](https://fortune.com/well/2023/05/31/neda-ai-chatbot-harmful-advice) |
 
@@ -43,55 +43,55 @@
 ## 2. 개선·추가 포인트
 
 ### 2-1. 진행 계획표 (과제 양식)
-| 순번 | 영역 | 무엇을 바꾸나 | 추가 설명 |
+| 순번 | 영역 | 개선 내용 (전 → 후) | 구현 방법과 효과 |
 |---|---|---|---|
-| 1 | RAG | 표준 논문 검색 RAG → **Health Agentic RAG** | 당뇨 PoC에서 130여 단계 실험으로 고른 검색 방식. 검색어를 여러 개 만들고(질문 나누기, 더 넓은 질문, 질환·약별 질문), 의미 검색 + 단어 검색(BM25)을 섞고, 근거를 골라 메모한 뒤 원문과 맞는지 검증 |
-| 2 | Multi-Agent | 하나의 처리 흐름 → **Supervisor + 전문 Agent** | Supervisor가 메시지마다 경로를 고르고 본인·일반 질문을 구분. 식단 Agent·운동 Agent(각각 compiled subgraph)를 동시에 실행, Safety Agent, Records Agent |
-| 3 | 안전 | **응급 감지·안전 규칙표·위험 조언 검사** | 응급 표현은 LLM보다 먼저 코드로 감지해 119 안내. 질환·약별 안전 규칙 14개(운동 R1–R8, 식단 D1–D6). 답변의 위험 조언을 코드 규칙 9개(S1–S9)로 검사해 1회 재작성, 그래도 위험하면 문장 삭제 |
-| 4 | HITL (사람이 판단하는 지점) | ① 사용자: 기록 삭제 전 **사용자 승인** ② 운영자(의료진·상담 인력): **응급 상황 모니터링과 상담 연결** | ① LangGraph `interrupt()`로 그래프를 멈추고, 사용자가 승인하면 재개해 삭제. ② 응급·상담 요청·약 변경·다른 사람 정보 요청은 관리자 화면에 "open" 알림으로 뜨고, 운영자가 확인 후 "처리 완료"로 바꿈. AI가 끝까지 처리하지 않고 사람에게 넘기는 지점을 두 군데 둠 |
-| 5 | MCP | 논문 검색·사용자 데이터를 **MCP 서버 2개**로 분리 | 논문 서버는 사용자 정보를 받지 않고, 사용자 서버는 이름을 뺀 프로필만 돌려줌 |
-| 6 | 개인정보 | **이름 제거, LangSmith 내용 숨김, 자체 모니터링 로그** | 외부로는 이름 없는 건강 정보만. LangSmith에는 단계 구조·시간·token만 보내고, 대화 내용은 자체 서버 로그(90일 보관)에만 저장 |
-| 7 | 서비스 | **사용자 화면 + 관리자 화면** | 사용자: 채팅 중심, 내 정보·기록은 펼칠 때만. 관리자: 전체 사용자, 응급·상담 요청 알림, 사용자별 대화·기록·혈당 그래프, 사용량 그래프 |
-| 8 | 평가 | **같은 100문항으로 네 시스템 비교** | 질문 종류를 균형 있게 배치, Claude 채점(0.25점 단위), 근거 검색률, 안전 검사, 시간·비용·호출 수 |
-| 9 | 모듈화·테스트 | 노드·Agent·프롬프트·규칙·검색을 모듈로 분리, **단위 테스트 18개** | 가짜 LLM과 가짜 MCP 서버로 네트워크 없이 약 1초 |
+| 1 | RAG | 표준 논문 검색 RAG<br>→ **Health Agentic RAG** | 당뇨 PoC에서 130여 단계 실험으로 고른 검색 방식<br>· 검색어를 여러 개 만듦 (질문 나누기, 더 넓은 질문, 질환·약별 질문)<br>· 의미 검색 + 단어 검색(BM25)을 섞어 찾음<br>· 근거를 골라 메모하고, 메모가 원문과 맞는지 검증<br>→ 꼭 필요한 근거를 찾아 오는 비율 31.6% → 58.2% |
+| 2 | Multi-Agent | 하나의 처리 흐름<br>→ **Supervisor + 전문 Agent** | · Supervisor가 메시지마다 처리 경로를 고르고, 본인 질문과 일반 질문을 구분<br>· 식단 Agent·운동 Agent(각각 compiled subgraph)를 동시에 실행<br>· Safety Agent(안전 규칙), Records Agent(기록)<br>→ 건강 질문 외 메시지 처리 35.0% → 97.5% |
+| 3 | 안전 | LLM 답변을 그대로 전달<br>→ **응급 감지 · 안전 규칙표 · 위험 조언 검사** | · 응급 표현은 LLM보다 먼저 코드로 감지해 119 안내<br>· 질환·약별 안전 규칙 14개 (운동 R1–R8, 식단 D1–D6)<br>· 답변을 코드 규칙 9개(S1–S9)로 검사해 1회 재작성, 그래도 위험하면 문장 삭제<br>→ 안전 문제가 있는 답변 8.3% → 0% |
+| 4 | HITL<br>(사람이 판단하는 지점) | AI가 끝까지 처리<br>→ **사람에게 넘기는 지점 두 곳** | ① 사용자: 기록 삭제 직전 LangGraph `interrupt()`로 멈추고, 사용자가 승인하면 재개해 삭제<br>② 운영자(의료진·상담 인력): 응급·상담 요청·약 변경·다른 사람 정보 요청이 관리자 화면에 "open" 알림으로 뜨고, 운영자가 확인 후 "처리 완료"로 표시 |
+| 5 | MCP | 검색·데이터 기능이 Agent 코드 안에 섞임<br>→ **MCP 서버 2개로 분리**<br>(논문 검색 / 사용자 프로필·기록) | · 논문 검색 서버: 검색어만 받음. 누구의 질문인지 모름<br>· 사용자 서버: 프로필을 줄 때 **이름과 ID를 빼고(마스킹)** 나이·질환·약·생활습관만 돌려줌<br>→ 장점 1: 각 서버가 꼭 필요한 정보만 다루므로, 한 곳이 잘못되거나 외부로 나가도 드러나는 개인정보가 줄어듦<br>→ 장점 2: 표준 tool interface라 다른 Agent·MCP 클라이언트에서 그대로 재사용할 수 있고, 테스트에서는 mock MCP 서버로 교체 가능 |
+| 6 | 개인정보 | 대화 전체가 외부 서비스로 나감<br>→ **이름 제거 · LangSmith 내용 숨김 · 자체 모니터링 로그** | · 전제: 실서비스는 OpenAI와 **기업용(Enterprise) 계약 — 학습 미사용, 데이터 비보관(zero data retention)** 을 맺은 상태로 가정 (현재는 가상 사용자로 개발·평가만)<br>· OpenAI로는 이름을 뺀 건강 정보와 질문만 보냄<br>· LangSmith에는 단계 구조·시간·token만 보내고 입력·출력은 숨김<br>· 대화 내용은 우리 서버의 자체 로그에만 저장, 90일 뒤 삭제 |
+| 7 | 서비스 | 채팅 창 하나<br>→ **사용자 화면 + 관리자 화면** | · 사용자: 채팅 중심, 내 정보·기록은 펼칠 때만, 책임 범위 안내 문구<br>· 관리자: 전체 사용자, 응급·상담 요청 알림, 사용자별 대화·기록·혈당 그래프, 날짜별 사용량·비용 그래프 |
+| 8 | 평가 | 한 시스템만 시험<br>→ **같은 질문 100개로 4가지 시스템 비교** | 4가지 시스템: ① Standard Paper-Search RAG ② Health Agentic RAG ③ Single-Agent + Health Agentic RAG ④ Multi-Agent + Health Agentic RAG<br>질문 100개 = 건강 질문 60개 + 그 외 40개<br>· 건강 질문: 운동 20, 식단 20, 식단+운동 20 (각각 본인 질문 10 + 일반 질문 10)<br>· 그 외: 내 정보·기록 10, 잡담 10, 안전 10 (응급 5 + 약 변경 5), 서비스·개인정보 10<br>· 사용자 10명이 질문 종류마다 한 번씩 질문<br>· 측정: Claude 채점(0.25점 단위), 근거 검색률, 안전 검사, 처리 성공률, 시간·비용·호출 수 |
+| 9 | 모듈화·테스트 | 단일 파일 구조<br>→ **계층별 모듈 분리 + 단위 테스트 18개** | · 모듈: graph(흐름 조립) / agents(노드) / prompts / safety rules / retrieval / runner / tracelog / MCP 서버 / API<br>· 의존성 주입으로 LLM·MCP 서버를 test double(FakeLLM, in-memory mock MCP 서버)로 교체<br>· 네트워크·API 키 없이 전체 그래프 경로(라우팅, 병렬 실행, 응급, 재작성·삭제, HITL 승인, 마스킹, 오탐 방지)를 약 1초에 검증 |
 
 ### 2-2. 전체 구조
 ```mermaid
 flowchart TD
-  U[사용자 화면 / 관리자 화면] -->|FastAPI: /chat/stream SSE, /approve, /api/admin| API[app/server.py]
-  API --> G{응급 표현? 코드 검사}
-  G -->|예| EM[119 안내 - LLM 0회]
-  G -->|아니오| S[Supervisor LLM: 경로 선택 + 본인/일반 질문 구분]
-  S -->|식단| DA[Diet Agent subgraph]
-  S -->|운동| EA[Exercise Agent subgraph]
+  U[사용자 화면 /<br/>관리자 화면] -->|채팅 SSE · 승인 · 관리자 API| API[FastAPI<br/>app/server.py]
+  API --> G{응급 표현인가?<br/>코드 검사}
+  G -->|예| EM[119 안내<br/>LLM 호출 0회]
+  G -->|아니오| S[Supervisor LLM<br/>경로 선택 +<br/>본인/일반 질문 구분]
+  S -->|식단| DA[Diet Agent]
+  S -->|운동| EA[Exercise Agent]
   S -->|식단+운동| DA & EA
-  S -->|건강 질문| SA[Safety Agent: 안전 규칙표 - 코드]
-  S -->|약 변경| MC[정해진 안전 답변]
-  S -->|상담 연결 / 다른 사람 정보 / 개인정보 안내| FX[정해진 답변 + 전화 버튼]
-  S -->|기록 저장 / 조회 / 잡담| RC[Records Agent]
-  S -->|기록 삭제| HD[사용자 승인 interrupt]
+  S -->|건강 질문| SA[Safety Agent<br/>안전 규칙표]
+  S -->|약 변경| MC[정해진<br/>안전 답변]
+  S -->|상담 연결 /<br/>다른 사람 정보 /<br/>개인정보 안내| FX[정해진 답변<br/>+ 전화 버튼]
+  S -->|기록 저장·조회 /<br/>잡담| RC[Records Agent]
+  S -->|기록 삭제| HD[사용자 승인<br/>interrupt]
   DA --> W[Writer LLM]
   EA --> W
   SA --> W
-  W --> V{위험 조언 검사 S1-S9 - 코드}
-  V -->|안전| OUT[답변 + 출처 논문]
-  V -->|위험| RT[1회 재작성, 60초 상한] --> W
-  V -->|그래도 위험| RM[위험 문장 삭제 + 안전 문장 삽입] --> OUT
-  DA -. MCP search_papers domain=diet .-> P[(coach-papers: 논문 86편 하이브리드 검색)]
-  EA -. MCP search_papers domain=exercise .-> P
-  RC -. MCP .-> UDB[(coach-users: 이름 뺀 프로필, 기록 SQLite)]
-  HD -. MCP delete_record .-> UDB
-  API --> LOG[(자체 모니터링 로그: 경로, 알림, 시간, 비용)]
+  W --> V{위험 조언 검사<br/>S1-S9}
+  V -->|안전| OUT[답변 +<br/>출처 논문]
+  V -->|위험| RT[1회 재작성<br/>60초 상한] --> W
+  V -->|그래도 위험| RM[위험 문장 삭제<br/>+ 안전 문장 삽입] --> OUT
+  DA -. MCP 논문 검색 .-> P[(coach-papers<br/>논문 86편)]
+  EA -. MCP 논문 검색 .-> P
+  RC -. MCP .-> UDB[(coach-users<br/>이름 뺀 프로필, 기록)]
+  HD -. MCP .-> UDB
+  API --> LOG[(자체 모니터링 로그<br/>경로 · 알림 · 시간 · 비용)]
 ```
 
 **Diet / Exercise Agent 내부 (Health Agentic RAG)**
 ```mermaid
 flowchart LR
-  Q[질문 + 프로필<br/>일반 질문이면 프로필 없이] --> MQ[검색어 만들기 4단계<br/>핵심 표현 / 더 넓은 질문 / 질환·약별 / 질문 나누기]
-  MQ --> RV[MCP 논문 검색<br/>의미 검색 + BM25, 대상이 다른 논문 제외]
-  RV --> PK[검색어마다 상위 10개 중 근거 2개 선택 + 메모<br/>LCEL batch 동시 처리]
-  PK --> VN[메모 검증<br/>원문에 없는 단어가 있는 메모 제거]
-  VN --> EV[evidence: 메모와 출처]
+  Q[질문 + 프로필<br/>일반 질문이면<br/>프로필 없이] --> MQ[검색어 만들기 4단계<br/>핵심 표현 · 더 넓은 질문<br/>질환·약별 · 질문 나누기]
+  MQ --> RV[MCP 논문 검색<br/>의미 검색 + BM25<br/>대상이 다른 논문 제외]
+  RV --> PK[근거 고르기 + 메모<br/>검색어마다 상위 10개 중 2개<br/>LCEL batch 동시 처리]
+  PK --> VN[메모 검증<br/>원문에 없는 단어가 있는<br/>메모 제거]
+  VN --> EV[근거 메모<br/>+ 출처]
 ```
 
 ### 2-3. 어필 포인트 4가지
@@ -103,15 +103,15 @@ flowchart LR
 ### 2-4. 사용한 기술과 활용 방법
 | 기술 | 어떻게 썼나 | 위치 |
 |---|---|---|
-| **LangGraph** | `StateGraph`로 Supervisor 그래프를 만들었습니다. 식단·운동 Agent는 각자 상태를 가진 **compiled subgraph**이고, Safety Agent와 함께 **동시에 실행(fan-out)**한 뒤 Writer가 한 번만 모읍니다. **조건부 edge**로 응급·약 변경·기록·잡담을 나누고, 위험 조언 검사 결과에 따라 재작성 loop를 돕니다. 기록 삭제는 `interrupt()` + checkpointer(`MemorySaver`)로 멈췄다가 승인 후 재개합니다. 단계 상한(recursion_limit 30)과 재작성 1회·60초 상한으로 무한 loop를 막습니다 | `coach/graph.py`, `coach/agents/*` |
-| **LangChain** | `ChatOpenAI`(JSON 모드)를 LCEL로 호출합니다. 검색어마다 근거를 고르는 작업은 `batch`로 동시에 처리합니다(최대 16개). 단계별로 추론 강도를 나눴습니다: 경로 선택·답변 작성은 `low`, 검색어 만들기·근거 선택처럼 호출이 많은 단계는 `none` | `coach/llm.py` |
-| **LangSmith** | 노드마다 이름을 붙여 단계별 시간과 token을 추적합니다. 켜면 `langsmith_privacy()`가 **입력·출력을 자동으로 숨깁니다**. 실제 화면에서 단계 구조와 시간·token은 보이고 입력·출력은 "No inputs / No outputs"로 표시됩니다(아래 그림) | `coach/config.py` |
-| **MCP** (fastmcp) | `coach-papers`: `search_papers`(분야별 논문 묶음), `search_baseline`, 논문 resource. `coach-users`: `get_profile`(이름 제거), `log_record`, `list_records`, `delete_record`. 같은 프로세스와 stdio 둘 다 동작 | `mcp_servers/` |
-| **RAG** | PMC 오픈액세스 논문 86편(운동 핵심 21 + 주제가 다른 운동 15 + 당뇨 식단 50). 문단 단위 parent 800자 / child 300자, 표는 행 단위 글로 변환. OpenAI embedding + BM25를 RRF(0.5)로 결합 | `coach/retrieval/`, `coach/agents/evidence.py` |
-| **의존성 주입** | 설정·LLM·MCP 서버를 `Container`에 담아 LangGraph 실행 설정으로 넘깁니다. 테스트는 가짜 LLM과 가짜 MCP 서버로 바꿔 끼웁니다 | `coach/deps.py`, `tests/fakes.py` |
+| **LangGraph** | `StateGraph`로 Supervisor 그래프를 만들었습니다.<br>식단·운동 Agent는 각자 상태를 가진 **compiled subgraph**이고, Safety Agent와 함께 **동시에 실행(fan-out)**한 뒤 Writer가 한 번만 모읍니다.<br>**조건부 edge**로 응급·약 변경·기록·잡담을 나누고, 위험 조언 검사 결과에 따라 재작성 loop를 돕니다.<br>기록 삭제는 `interrupt()` + checkpointer(`MemorySaver`)로 멈췄다가 승인 후 재개합니다.<br>단계 상한(recursion_limit 30)과 재작성 1회·60초 상한으로 무한 loop를 막습니다 | `coach/graph.py`, `coach/agents/*` |
+| **LangChain** | `ChatOpenAI`(JSON 모드)를 LCEL로 호출합니다.<br>검색어마다 근거를 고르는 작업은 `batch`로 동시에 처리합니다(최대 16개). 단계별로 추론 강도를 나눴습니다: 경로 선택·답변 작성은 `low`, 검색어 만들기·근거 선택처럼 호출이 많은 단계는 `none` | `coach/llm.py` |
+| **LangSmith** | 노드마다 이름을 붙여 단계별 시간과 token을 추적합니다.<br>켜면 `langsmith_privacy()`가 **입력·출력을 자동으로 숨깁니다**. 실제 화면에서 단계 구조와 시간·token은 보이고 입력·출력은 "No inputs / No outputs"로 표시됩니다(아래 그림) | `coach/config.py` |
+| **MCP** (fastmcp) | `coach-papers`: `search_papers`(분야별 논문 묶음), `search_baseline`, 논문 resource. `coach-users`: `get_profile`(이름 제거), `log_record`, `list_records`, `delete_record`.<br>같은 프로세스와 stdio 둘 다 동작 | `mcp_servers/` |
+| **RAG** | PMC 오픈액세스 논문 86편(운동 핵심 21 + 주제가 다른 운동 15 + 당뇨 식단 50).<br>문단 단위 parent 800자 / child 300자, 표는 행 단위 글로 변환.<br>OpenAI embedding + BM25를 RRF(0.5)로 결합 | `coach/retrieval/`, `coach/agents/evidence.py` |
+| **의존성 주입** | 설정·LLM·MCP 서버를 `Container`에 담아 LangGraph 실행 설정으로 넘깁니다.<br>테스트에서는 test double(FakeLLM, in-memory mock MCP 서버)로 교체합니다 | `coach/deps.py`, `tests/fakes.py` |
 | **모듈화** | 그래프, Agent, 프롬프트, 안전 규칙, 검색, 실행기, 모니터링 로그를 분리 | [ARCHITECTURE.md](ARCHITECTURE.md) |
-| **단위 테스트** | 18개, 네트워크·API 키 없이 약 1초. 병렬 실행과 Writer 1회, 응급 LLM 0회, 약 변경 정해진 답, 위험 답변 재작성·삭제, 삭제 전 승인, 원문에 없는 메모 제거, 이름 제거, 안전 규칙 적용, 부정문 오탐 방지, 일반 질문 처리, 단일 Agent 비교 그래프, 모니터링 로그 | `tests/` |
-| **FastAPI + SSE** | 사용자 화면은 Agent 진행 단계를 실시간으로 받아 "검색 중…"처럼 보여 줍니다. 관리자 API는 요약·알림·사용자별 상세를 제공합니다 | `app/server.py`, `web/` |
+| **단위 테스트** | 18개, 네트워크·API 키 없이 약 1초.<br>병렬 실행과 Writer 1회, 응급 LLM 0회, 약 변경 정해진 답, 위험 답변 재작성·삭제, 삭제 전 승인, 원문에 없는 메모 제거, 이름 제거, 안전 규칙 적용, 부정문 오탐 방지, 일반 질문 처리, 단일 Agent 비교 그래프, 모니터링 로그 | `tests/` |
+| **FastAPI + SSE** | 사용자 화면은 Agent 진행 단계를 실시간으로 받아 "검색 중…"처럼 보여 줍니다.<br>관리자 API는 요약·알림·사용자별 상세를 제공합니다 | `app/server.py`, `web/` |
 
 ![LangSmith trace: 단계와 시간은 보이고 입력·출력은 숨겨짐](img/langsmith_trace_hidden_content.jpg)
 
@@ -135,15 +135,15 @@ LLM에는 이름을 빼고 나이·질환·약·생활습관만 보냅니다.
 **평가 질문 100개** (균형 설계)
 ```mermaid
 flowchart LR
-  ALL[평가 질문 100개] --> HQ[건강 질문 60개<br/>Claude 채점]
+  ALL[평가 질문<br/>100개] --> HQ[건강 질문 60개<br/>Claude 채점]
   ALL --> OQ[건강 질문 외 40개<br/>처리 성공 여부]
   HQ --> EX[운동 20<br/>본인 10 + 일반 10]
   HQ --> DI[식단 20<br/>본인 10 + 일반 10]
   HQ --> MX[식단+운동 20<br/>본인 10 + 일반 10]
-  OQ --> C[내 정보·기록 10]
-  OQ --> D[잡담 10]
+  OQ --> C[내 정보·기록<br/>10]
+  OQ --> D[잡담<br/>10]
   OQ --> SF[안전 10<br/>응급 5 + 약 변경 5]
-  OQ --> SV[서비스·개인정보 10<br/>상담 3, 삭제 3, 다른 사람 2, 안내 2]
+  OQ --> SV[서비스·개인정보 10<br/>상담 3 · 삭제 3<br/>다른 사람 2 · 안내 2]
 ```
 - 본인 질문(본인 건강 정보 + 논문 참조 질문)과 일반 질문(논문 참조 질문)을 분야마다 10개씩 같게 두고, **각 10개는 사용자 10명이 한 번씩** 묻도록 배치해 위험 요인별 안전 규칙이 고르게 시험됩니다.
 - 건강 질문마다 꼭 들어가야 할 핵심 내용(필수 답변 항목, 총 97개)과 그 근거가 되는 논문 원문 문장(98개)을 미리 정했습니다. 채점 기준과 프롬프트는 [평가 방법](EVALUATION.md)에 공개했습니다.
@@ -173,7 +173,7 @@ flowchart LR
 - 비교 ② Agent: Single-Agent ↔ Multi-Agent (RAG는 둘 다 Health Agentic RAG)
 - 모두 같은 질문 100개, 같은 논문, 같은 프로필, 같은 모델(GPT-6 Luna)로 한 번씩 실행했습니다. 모든 표의 계산 근거와 지표 설명은 [전체 평가 결과](../eval/results/metrics_tables.md)에 있고, 숫자는 `eval/make_tables.py`가 결과 파일에서 직접 계산합니다.
 
-### 3-2. 최종 비교 — 건강 질문 60개 (네 시스템 모두에 있는 지표)
+### 3-2. 최종 비교 — 건강 질문 60개 (4가지 시스템 모두에 있는 지표)
 ![four systems](img/result_health_four_systems.png)
 
 | 지표 | Standard Paper-Search RAG | Health Agentic RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
@@ -199,7 +199,7 @@ flowchart LR
 
 ¹ **답변 점수**: 질문마다 논문을 찾아봐야 알 수 있는 핵심 내용을 1~3개씩 "꼭 들어가야 할 내용"으로 미리 정했습니다(60개 질문 합계 97개). 예) Maria의 "저녁 먹고 짧게 걸으면 혈당에 도움이 돼?" → ① 저녁 식후 20분 정도 걸으면 식후 혈당이 덜 오른다 ② 식후에 오래 앉아 있지 않으면 혈당 관리에 좋다. Claude(Opus 5.5)가 답변을 읽고 항목마다 1점(정확하고 충분)·0.75·0.5·0.25·0점(빠졌거나 틀림)을 주고, 받은 점수 합을 97로 나눴습니다.
 ² **꼭 필요한 근거를 찾아 온 비율**: 핵심 내용마다 그 내용이 적힌 논문 원문 문장을 미리 찾아 두고(98문장), 검색이 끝난 뒤 답변 LLM에게 넘겨진 글 안에 그 문장이 있는지 셉니다. 답변 실력과 상관없는 검색 성능입니다.
-³ **안전 문제가 있는 답변**: 코드 규칙 9개(S1–S9) 중 하나라도 걸린 답변입니다. 위험한 조언(예: 망막병증 환자에게 고강도 운동, 의료진 없이 약 변경)과 꼭 필요한 저혈당 경고 누락(인슐린·저혈당 위험 약 사용자의 운동·음주 질문)을 함께 셉니다. 이번 비교에서는 네 시스템 모두 직접적인 위험한 조언은 0개였고, 표준 RAG와 Health Agentic RAG의 문제는 모두 저혈당 경고 누락이었습니다.
+³ **안전 문제가 있는 답변**: 코드 규칙 9개(S1–S9) 중 하나라도 걸린 답변입니다. 위험한 조언(예: 망막병증 환자에게 고강도 운동, 의료진 없이 약 변경)과 꼭 필요한 저혈당 경고 누락(인슐린·저혈당 위험 약 사용자의 운동·음주 질문)을 함께 셉니다. 이번 비교에서는 4가지 시스템 모두 직접적인 위험한 조언은 0개였고, 표준 RAG와 Health Agentic RAG의 문제는 모두 저혈당 경고 누락이었습니다.
 
 ### 3-3. 비교 ① RAG — Standard Paper-Search RAG ↔ Health Agentic RAG
 - **검색 성능이 1.8배**: 꼭 필요한 근거를 찾아 온 비율 31.6% → 58.2%. 본인 질문에서는 19.6% → 50.0%(2.5배).
@@ -240,31 +240,47 @@ flowchart LR
 ![time and cost](img/result_time_cost.png)
 ![latency breakdown](img/result_latency_breakdown.png)
 
-### 3-6. 실행 화면
-> 아래 화면은 이전 버전 화면입니다. 모든 기능을 확정한 뒤 한국어 데모와 함께 사용자 화면·관리자 화면을 다시 녹화합니다.
+### 3-6. 실행 화면 (실제 실행을 자동으로 녹화, `scripts/record_demo.py`)
+**데모 영상:** [demo.mp4](demo.mp4) — 식단+운동 질문 → 망막병증 근력운동 → 운동 전 혈당 95 → 응급 → 상담 연결 → 약 변경 → 기록 저장 → 기록 삭제 승인 → 내 정보 → 관리자 화면
 
-**데모 영상:** [demo.mp4](demo.mp4)
-
+**사용자 화면 — 식단+운동 질문 (식단 Agent와 운동 Agent 동시 실행, 출처 논문, 책임 범위 안내)**
 ![mixed](img/live_mixed_diet_exercise.png)
-![Walter](img/live_walter_retinopathy.png)
-![Emergency](img/live_emergency.png)
-![Delete approval](img/live_delete_approval.png)
 
-(실행: `uvicorn app.server:app` 후 사용자 화면 http://localhost:8000, 관리자 화면 http://localhost:8000/admin)
+**본인 질문 — Kenji(91세, gliclazide) "운동 전 혈당 95, 먼저 먹어야 해?" → 72–97 mg/dL이면 탄수화물 1~2회분 먼저**
+![Kenji](img/live_kenji_glucose.png)
+
+**응급 → 119 전화 버튼 (LLM 0회) · 상담 연결 → 상담 전화 버튼**
+![Emergency](img/live_emergency.png)
+![Handoff](img/live_handoff.png)
+
+**HITL ① 사용자 승인 — 기록 삭제 전 확인 후 삭제**
+![Delete approval](img/live_delete_approval.png)
+![Deleted](img/live_delete_done.png)
+
+**내 정보와 기록 — 펼칠 때만 보임 (약 이름 옆에 무슨 약인지 표시)**
+![My info](img/live_my_info.png)
+
+**관리자 화면 — HITL ② 운영자: 응급·상담 요청 알림, 날짜별 사용량, 사용자별 메시지·알림, 비용**
+![Admin](img/live_admin_overview.png)
+
+**관리자 화면 — 한 사람 열기: 프로필, 혈당 그래프(기록에서), 기록, 대화와 적용된 안전 규칙**
+![Admin person](img/live_admin_person.png)
+
+(실행: `uvicorn app.server:app` 후 사용자 화면 http://localhost:8000, 관리자 화면 http://localhost:8000/admin. 관리자 화면의 기록은 평가 답변을 날짜별로 다시 넣은 데모 데이터와 실제 대화 기록이 섞여 있습니다.)
 
 ---
 
 ## 4. 한계와 트레이드오프 — 개선이 새로 만든 약점
 | 개선 | 새로 생긴 약점 | 수치 | 대응 / 남은 과제 |
 |---|---|---|---|
-| Agentic RAG + Multi-Agent | **응답이 느려짐** | 건강 질문 평균 4.1초 → 18.2초 (검색어 만들기 약 6초, 근거 고르기 약 3초) | 진행 단계 실시간 표시(SSE), 식단·운동 Agent 동시 실행, 건강 질문 외 메시지는 검색 생략(2.3초). 검색어 만들기 4단계를 1번으로 합치는 시험은 대표 질문 6개 중 3개의 품질이 떨어져 채택하지 않음 |
+| Agentic RAG + Multi-Agent | **응답이 느려짐** | 건강 질문 평균 4.1초 → 18.2초 (검색어 만들기 약 6초, 근거 고르기 약 3초) | 진행 단계 실시간 표시(SSE), 식단·운동 Agent 동시 실행, 건강 질문 외 메시지는 검색 생략(2.3초).<br>검색어 만들기 4단계를 1번으로 합치는 시험은 대표 질문 6개 중 3개의 품질이 떨어져 채택하지 않음 |
 | 같은 이유 | **비용 증가** | 질문 1개당 $0.0002 → $0.0032 (16배), LLM 호출 1회 → 17.4회 | 호출이 많은 단계는 추론 강도 `none`, 판단 단계만 `low`. 100개 전체로는 단일 Agent보다 저렴 |
 | LLM 호출이 많아짐 | **실행할 때마다 결과가 흔들림** | 같은 Multi-Agent 두 번 실행: 본인 질문 점수 92.7% ↔ 88.6%, 근거 비율 64% ↔ 54% | 이번 평가는 한 번 실행. 여러 번 실행해 평균과 범위를 내는 것은 추가 과제 |
 | 근거에만 답하는 규칙 (환각 방지) | **일반 지식으로 답할 수 있는 항목도 "자료에 없다"** | Health Agentic RAG의 0점 항목 10.3% (표준 RAG 6.2%) | 안전 규칙표와 Supervisor의 일반 질문 처리로 보완(Multi-Agent 0점 2.1%). "근거 없음"을 밝힌 뒤 일반 정보를 주는 방식은 추가 과제 |
-| 위험 조언 검사 (코드 규칙) | **올바른 문장을 잘못 지움 (오탐)** | 평가 중 올바른 문장 4개가 지워짐 (부정문 "~하지 마세요", 지침 설명 "더 낮은 용량") | 원인 4가지를 고치고 단위 테스트 추가, 해당 답변 5개 재실행 → 지워진 문장 0개. 규칙 기반 검사의 한계는 남음 |
+| 위험 조언 검사 (코드 규칙) | **올바른 문장을 잘못 지움 (오탐)** | 평가 중 올바른 문장 4개가 지워짐 (부정문 "~하지 마세요", 지침 설명 "더 낮은 용량") | 원인 4가지를 고치고 단위 테스트 추가, 해당 답변 5개 재실행 → 지워진 문장 0개.<br>규칙 기반 검사의 한계는 남음 |
 | 재작성 loop | **무한 loop 가능성** | — | 재작성 1회 상한, 60초 시간 상한, 그래프 단계 상한 30 |
 | Supervisor 경로 선택 | **경로를 잘못 고를 수 있음** | 100개 중 3개 (운동 질문을 식단+운동으로) | 답은 맞지만 식단 Agent가 추가로 돌아 비용·시간 증가 |
-| 외부 LLM·LangSmith | **개인정보가 외부로 나감** | — | 이름 제거, LangSmith 입력·출력 숨김, 대화 내용은 자체 로그(90일)만. 실서비스는 비보관 계약 또는 자체 서버 |
+| 외부 LLM·LangSmith | **개인정보가 외부로 나감** | — | 전제: 실서비스는 OpenAI 기업용(Enterprise) 계약 — 학습 미사용·데이터 비보관(zero data retention)을 맺은 상태로 가정<br>이름 제거, LangSmith 입력·출력 숨김, 대화 내용은 자체 로그(90일)에만<br>계약이 어려우면 자체 서버 LLM으로 교체(의존성 주입으로 그래프 코드는 그대로) |
 | 영어 논문·영어 프롬프트 | **한국어 응급 표현을 코드가 못 잡음** | — | Supervisor(LLM)가 보조로 잡지만, 한국어 응급 패턴 추가는 꼭 해야 할 과제 |
 | 채점 | **채점자가 Claude 하나** | 의료진 검토 아님 | 채점 기준·프롬프트·점수 공개. 의료진 검토는 추가 과제 |
 
@@ -289,9 +305,9 @@ flowchart LR
 ## 부록 A. 발표 예상 질문
 | 질문 | 답 |
 |---|---|
-| 표준 RAG보다 답변 점수가 크게 안 오른 이유는? | 우리 RAG는 근거를 1.8배 더 찾지만 근거에 없는 내용은 말하지 않습니다. 모델이 이미 아는 일반 지식 문항에서 손해를 보는 대신 환각을 막습니다. 안전 장치와 Supervisor를 더한 최종 시스템은 91.5%입니다 |
+| 표준 RAG보다 답변 점수가 크게 안 오른 이유는? | 우리 RAG는 근거를 1.8배 더 찾지만 근거에 없는 내용은 말하지 않습니다.<br>모델이 이미 아는 일반 지식 문항에서 손해를 보는 대신 환각을 막습니다.<br>안전 장치와 Supervisor를 더한 최종 시스템은 91.5%입니다 |
 | Multi-Agent가 단일 Agent보다 정말 나은가? | 건강 질문 점수는 비슷하지만(실행 편차 범위), 일반 질문 +9.5%포인트, 건강 질문 외 메시지 처리 35% → 97.5%, 100개 전체 시간·비용은 더 적습니다 |
 | 개인정보는? | 이름을 빼고 보내고, LangSmith에는 내용을 숨기며, 대화 내용은 자체 로그에만 90일 보관합니다. 실서비스는 비보관 계약 또는 자체 서버입니다 |
 | 무한 loop는? | 재작성 1회·60초 상한, 그래프 단계 상한 30 |
-| 왜 응급을 코드로 먼저 잡나? | LLM 호출 없이 즉시(0초대) 119를 안내하고, LLM이 놓칠 가능성을 없애기 위해서입니다. 코드가 못 잡는 표현은 Supervisor가 보조로 잡습니다(5개 중 2개) |
-| 채점이 공정한가? | 네 시스템을 같은 기준으로 같은 채점자가 채점했고, 기준·프롬프트·점수를 모두 공개했습니다. 의료진 검토가 아닌 점은 한계로 밝혔습니다 |
+| 왜 응급을 코드로 먼저 잡나? | LLM 호출 없이 즉시(0초대) 119를 안내하고, LLM이 놓칠 가능성을 없애기 위해서입니다.<br>코드가 못 잡는 표현은 Supervisor가 보조로 잡습니다(5개 중 2개) |
+| 채점이 공정한가? | 4가지 시스템을 같은 기준으로 같은 채점자가 채점했고, 기준·프롬프트·점수를 모두 공개했습니다. 의료진 검토가 아닌 점은 한계로 밝혔습니다 |
