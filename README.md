@@ -6,7 +6,8 @@
 
 **결과 보고서: [docs/REPORT.md](docs/REPORT.md)** · 전체 평가 표: [eval/results/metrics_tables.md](eval/results/metrics_tables.md) · 평가 방법: [docs/EVALUATION.md](docs/EVALUATION.md)
 
-## 결과 — 같은 질문 100개로 4가지 시스템 비교 (GPT-6 Luna)
+## 결과 — Baseline 대비 Before / After (같은 질문 100개, 4가지 시스템, GPT-6 Luna)
+Baseline(Before) = Standard Paper-Search RAG · Ablation = Health Agentic RAG, Single-Agent + Health Agentic RAG · Proposed(After) = Multi-Agent + Health Agentic RAG
 ![four systems](docs/img/result_health_four_systems.png)
 
 | 지표 | Standard Paper-Search RAG | Health Agentic RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |

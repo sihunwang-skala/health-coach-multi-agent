@@ -5,7 +5,7 @@
 > 제2형 당뇨병을 앓는 고령자를 위한 근거 기반 **식단·운동 코칭 Multi-Agent** (AI 서비스 개발 Mini Project, 과제 2: 신규 주제 Agent)
 > 이 서비스는 의사가 아니라 코칭 서비스입니다. 진단·치료·처방을 하지 않고, 약이나 증상에 관한 결정은 의사·간호사·약사에게 안내하며, 응급 상황에서는 119를 안내합니다. 예시 사용자 10명은 모두 가상 인물입니다.
 
-보고서 순서는 과제 안내의 발표 순서를 따릅니다: **1. 문제 → 2. 개선·추가 포인트 → 3. Before/After 수치 → 4. 한계와 트레이드오프 → 5. 추가 개선**.
+보고서 순서는 과제 안내의 발표 순서를 따릅니다: **1. 문제 → 2. 개선·추가 포인트 → 3. 성능 평가 (Baseline 대비 Before / After) → 4. 한계와 트레이드오프 → 5. 추가 개선**.
 
 **한 줄 요약**: 같은 질문 100개로 4가지 시스템을 비교했을 때, 우리 Multi-Agent는 건강 질문 답변 점수 91.5%(표준 논문 검색 RAG 75.3%), 안전 문제가 있는 답변 0%(8.3%), 건강 질문 외 메시지 처리 97.5%(57.5%)였고, 대가로 건강 질문 응답 시간이 4.1초에서 18.2초로 늘었습니다.
 
@@ -183,21 +183,22 @@ flowchart LR
 
 ---
 
-## 3. Before / After 수치
+## 3. 성능 평가 — Baseline 대비 Before / After 비교
 
-### 3-1. 비교 방법
-| 이름 | 구성 |
-|---|---|
-| **Standard Paper-Search RAG** (Before) | 질문 하나로 전체 논문에서 비슷한 글 5개를 찾아 LLM이 한 번에 답함. 근거에 없으면 일반 지식으로 답해도 됨 |
-| **Health Agentic RAG** | 우리 검색 방식만, 안전 장치 없음. 근거에 없는 내용은 말하지 않음 |
-| **Single-Agent + Health Agentic RAG** | 위 + 안전 장치. Agent 하나가 모든 메시지 처리 |
-| **Multi-Agent + Health Agentic RAG** (After) | 위 + Supervisor, 식단·운동 Agent 분리, 기록 Agent, 정해진 안전 답변 |
+### 3-1. 실험 설계 (controlled comparison)
+| 시스템 | 역할 | 구성 | 비교 목적 |
+|---|---|---|---|
+| **Standard Paper-Search RAG** | **Baseline (Before)** | Naive RAG: 단일 query → dense top-5 → LLM 1회 생성<br>근거 밖 내용은 모델의 일반 지식으로 보완 허용 | 일반적인 논문 검색 RAG의 기준 성능 |
+| **Health Agentic RAG** | Ablation ① (RAG만) | Query Transformation → Hybrid Retrieval → Evidence Selection → Faithfulness Check → Grounded Generation<br>안전 계층 없음 | Baseline 대비 **검색 파이프라인의 효과**만 분리 |
+| **Single-Agent + Health Agentic RAG** | Ablation ② (단일 Agent) | 위 + 안전 계층(응급 감지, Safety Agent 규칙, 위험 조언 검사)<br>Agent 1개가 모든 메시지 처리, 라우팅 없음 | Multi-Agent의 비교 대상(같은 RAG·같은 안전 계층) |
+| **Multi-Agent + Health Agentic RAG** | **Proposed (After)** | 위 + Supervisor 라우팅·본인/일반 질문 구분, Diet·Exercise Agent 분리(병렬), Records Agent, 정해진 안전 응답 | 최종 서비스 |
 
-- 비교 ① RAG: Standard Paper-Search RAG ↔ Health Agentic RAG
-- 비교 ② Agent: Single-Agent ↔ Multi-Agent (RAG는 둘 다 Health Agentic RAG)
-- 모두 같은 질문 100개, 같은 논문, 같은 프로필, 같은 모델(GPT-6 Luna)로 한 번씩 실행했습니다. 모든 표의 계산 근거와 지표 설명은 [전체 평가 결과](../eval/results/metrics_tables.md)에 있고, 숫자는 `eval/make_tables.py`가 결과 파일에서 직접 계산합니다.
+- **비교 ① RAG 효과**: Baseline ↔ Ablation ① (둘 다 안전 계층 없음)
+- **비교 ② Multi-Agent 효과**: Ablation ② ↔ Proposed (RAG와 안전 계층은 동일, 차이는 Agent 구조뿐)
+- **통제 조건**: 4가지 시스템 모두 같은 질문 100개, 같은 논문 코퍼스 86편, 같은 사용자 프로필(마스킹), 같은 LLM(GPT-6 Luna)으로 질문당 1회 실행
+- **재현성**: 모든 표의 계산 근거와 지표 정의는 [전체 평가 결과](../eval/results/metrics_tables.md)에 있고, 수치는 `eval/make_tables.py`가 결과 파일에서 직접 계산합니다.
 
-### 3-2. 최종 비교 — 건강 질문 60개 (4가지 시스템 모두에 있는 지표)
+### 3-2. 종합 결과 — 건강 질문 60개 (4가지 시스템 공통 지표)
 ![four systems](img/result_health_four_systems.png)
 
 | 지표 | Standard Paper-Search RAG | Health Agentic RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
@@ -225,12 +226,12 @@ flowchart LR
 ² **꼭 필요한 근거를 찾아 온 비율**: 핵심 내용마다 그 내용이 적힌 논문 원문 문장을 미리 찾아 두고(98문장), 검색이 끝난 뒤 답변 LLM에게 넘겨진 글 안에 그 문장이 있는지 셉니다. 답변 실력과 상관없는 검색 성능입니다.
 ³ **안전 문제가 있는 답변**: 코드 규칙 9개(S1–S9) 중 하나라도 걸린 답변입니다. 위험한 조언(예: 망막병증 환자에게 고강도 운동, 의료진 없이 약 변경)과 꼭 필요한 저혈당 경고 누락(인슐린·저혈당 위험 약 사용자의 운동·음주 질문)을 함께 셉니다. 이번 비교에서는 4가지 시스템 모두 직접적인 위험한 조언은 0개였고, 표준 RAG와 Health Agentic RAG의 문제는 모두 저혈당 경고 누락이었습니다.
 
-### 3-3. 비교 ① RAG — Standard Paper-Search RAG ↔ Health Agentic RAG
+### 3-3. 비교 ① RAG 효과 — Baseline ↔ Health Agentic RAG
 - **검색 성능이 1.8배**: 꼭 필요한 근거를 찾아 온 비율 31.6% → 58.2%. 본인 질문에서는 19.6% → 50.0%(2.5배).
 - **답변 점수는 비슷**(75.3% ↔ 73.2%): 답변 규칙이 다르기 때문입니다. 표준 RAG는 근거에 없으면 모델의 일반 지식으로 채우고, GPT-6 Luna는 아는 것이 많아 점수를 받습니다. Health Agentic RAG는 환각을 막으려고 근거에 없는 내용은 말하지 않아 "자료에 없다"고 답한 항목이 0점이 됩니다. 이것이 이번 개선이 만든 맞교환입니다(4절).
 - 답변 점수로 본 RAG 효과는 당뇨 PoC에서 확인했습니다: 같은 식단 본인 질문 50개에서 표준 논문 RAG 0.590 → 최종 Agentic RAG 0.843, 근거 비율 28.9% → 65.1%(PoC 당시 모델 gpt-4o-mini).
 
-### 3-4. 비교 ② Agent — Single-Agent ↔ Multi-Agent
+### 3-4. 비교 ② Multi-Agent 효과 — Single-Agent ↔ Multi-Agent (Proposed)
 ![question kinds](img/result_by_question_kind.png)
 ![other messages](img/result_other_messages.png)
 
@@ -260,7 +261,7 @@ flowchart LR
 - 건강 질문은 약 2.7초 더 걸리고 비용도 약 27% 더 들지만(Supervisor 판단 1회, 식단+운동 질문의 두 Agent 검색), 100개 전체로는 Multi-Agent가 더 빠르고 저렴합니다.
 - 본인 질문 점수는 90.9% ↔ 88.6%로 비슷합니다. 같은 Multi-Agent를 두 번 돌렸을 때도 92.7%와 88.6%로 달라졌으므로(4절), 약 4%포인트 안팎은 실력 차이로 보지 않습니다.
 
-### 3-5. 시간과 비용
+### 3-5. 응답 시간과 비용 (Latency · Cost)
 ![time and cost](img/result_time_cost.png)
 ![latency breakdown](img/result_latency_breakdown.png)
 
