@@ -13,9 +13,6 @@ from coach.llm import LLM, OpenAIJSON
 
 @dataclass
 class Container:
-    # [발표 코드 5 | 공통 연결부: LLM·MCP를 교체 가능하게 연결]
-    # LLM과 MCP를 나중에 바꿔 끼울 수 있게 연결합니다.
-    # 테스트할 때는 실제 API 대신 가짜 도구를 사용합니다.
     settings: Settings
     llm: LLM
     papers_server: Any   # a FastMCP server object (in-process) or a URL / command (out-of-process)

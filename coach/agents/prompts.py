@@ -95,12 +95,7 @@ Task:
 4. Never tell the user to change, skip or stop a medicine; never call a blood-pressure medicine glucose-lowering.
 5. If none of the notes answers the question: write exactly two sentences - that the research papers available to you do
    not cover this question, and that the user should ask their doctor, nurse or pharmacist about it. Add no other facts.
-6. At most about 200 words.
-7. Also give, for Korean readers, "answer_ko": a faithful Korean translation of your whole answer (same meaning and order;
-   keep numbers, units, medicine names and the [PMC...] ids as they are; write "For you:" as "회원님께:" and units such as
-   "calories" in Korean, e.g. "kcal") and "summary_ko": ONE short Korean sentence with the single most important thing to do
-   (no source ids).
-Return JSON {"answer": "...", "answer_ko": "...", "summary_ko": "..."}."""
+6. At most about 200 words. Return JSON {"answer": "..."}."""
 
 WRITER_USER = """User profile: {profile}
 
@@ -122,11 +117,7 @@ advice."""
 PROFILE_REPLY = """You are a friendly diet and exercise coach for an older adult with diabetes. Reply in 1-3 sentences.
 Task: if the message reports an activity or a reading, say it has been recorded (the record is shown below). If it asks
 about the user's own stored information, answer only from the profile and the records below; if they do not have it, say so.
-If the user asks what you can do, say that you answer diet and exercise questions with evidence from research papers and
-safety checks for their conditions and medicines, record their activities and readings, show their records, and connect
-them to the care team.
-Give no health facts or advice. Also give "answer_ko" (a faithful Korean translation of your answer) and "summary_ko" (one
-short Korean sentence). Return JSON {{"answer": "...", "answer_ko": "...", "summary_ko": "..."}}.
+Give no health facts or advice. Return JSON {{"answer": "..."}}.
 
 Profile: {profile}
 Records: {records}
@@ -142,10 +133,3 @@ Evidence:
 {evidence}
 
 Question: {question}"""
-
-
-TRANSLATE = """Translate this answer from a diabetes coaching app into natural Korean for an older adult. Keep the meaning and
-order exactly; keep numbers, units, medicine names and [PMC...] ids as they are. Then write one short Korean sentence with
-the single most important thing to do. Return JSON {{"answer_ko": "...", "summary_ko": "..."}}.
-
-Answer: {answer}"""

@@ -98,9 +98,6 @@ class Embedder:
 
 class HybridIndex:
     def __init__(self, papers_dir: Path, embedder: Embedder, excluded_population: str | None = None, alpha: float = 0.5):
-        # [발표 코드 4-1 | RAG 검색 엔진: Hybrid Retrieval 준비]
-        # 뜻이 비슷한 문장을 찾는 방식과 같은 단어를 찾는 방식을 함께 준비합니다.
-        # 두 방식을 같이 쓰는 것이 Hybrid Retrieval입니다.
         self.parents, self.children, self.meta = build_chunks(papers_dir)
         self.embedder, self.alpha = embedder, alpha
         self.cv = embedder.documents([t for _, t in self.children])
@@ -114,8 +111,6 @@ class HybridIndex:
         self.all_words = set().union(*self.words.values())
 
     def _rrf(self, lists: list[list[int]], weights: list[float], k: int = 60) -> list[int]:
-        # [발표 코드 4-2 | RAG 검색 엔진: 검색 결과 합치기]
-        # 두 검색 결과를 하나의 순서로 합칩니다.
         score: dict[int, float] = {}
         for lst, w in zip(lists, weights):
             for r, x in enumerate(lst):
@@ -130,8 +125,6 @@ class HybridIndex:
         return {k for k, v in self.meta.items() if v["role"] in want}
 
     def search_vec(self, query: str, qvec: np.ndarray, k: int = 10, filter_population: bool = True, domain: str | None = None) -> list[int]:
-        # [발표 코드 4-3 | RAG 검색 엔진: 대상과 분야가 맞는 논문만 남기기]
-        # 사용자와 맞지 않는 대상의 논문이나 다른 분야의 논문은 제외합니다.
         allow = self.allowed(domain)
         n = 120 if allow is None else 400  # a collection filter needs a deeper candidate list
         d = list(np.argsort(-(self.cv @ qvec))[:n])
@@ -153,9 +146,6 @@ class HybridIndex:
 
     def dense_only(self, query: str, k: int = 5) -> tuple[list[int], int]:
         """Baseline retrieval: the question alone, dense top-k, no fusion, no filter (standard RAG)."""
-        # [발표 코드 4-4 | 비교용 Standard RAG 검색]
-        # Standard RAG는 원래 질문 하나로만 논문을 찾습니다.
-        # 보고서의 Before 결과를 만든 검색 방식입니다.
         vecs, tokens = self.embedder.queries([query])
         order, out = np.argsort(-(self.cv @ vecs[0])), []
         for j in order:

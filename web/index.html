@@ -26,8 +26,6 @@ details.panel summary{cursor:pointer;font-weight:600;font-size:14px}
 dl{display:grid;grid-template-columns:max-content 1fr;gap:2px 10px;margin:6px 0;font-size:14px}dt{color:var(--muted)}dd{margin:0}
 .list{max-height:200px;overflow:auto;font-size:14px}.list div{border-bottom:1px solid var(--line);padding:4px 0}
 .adminlink{font-size:13px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;color:var(--ink);text-decoration:none;background:var(--card)}
-.ko{margin-top:10px;padding-top:10px;border-top:1px dashed var(--line)}.ko .lab{font-size:12px;color:var(--accent);font-weight:600}
-.ko .sum{margin-top:6px;font-weight:600}
 footer{font-size:12px;color:var(--muted);line-height:1.5}
 </style></head><body><main>
 <header><h1>Diet &amp; Exercise Coach</h1><span class="meta">Signed in as (demo)</span><select id="user" aria-label="demo user"></select>
@@ -65,7 +63,6 @@ const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt
 function add(html,cls=''){const d=document.createElement('div');d.className='card '+cls;d.innerHTML=html;log.appendChild(d);d.scrollIntoView({behavior:'smooth',block:'end'});return d}
 function chips(){const e=document.getElementById('ex');e.innerHTML='';if(log.children.length)return;ex.forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{document.getElementById('msg').value=t;send()};e.appendChild(b)})}
 function answerHtml(j){let h=`<div class="msg">${esc(j.answer||'')}</div>`;
- if(j.answer_ko)h+=`<div class="ko"><div class="lab">한국어 번역</div><div class="msg">${esc(j.answer_ko)}</div>${j.summary_ko?`<div class="sum">한 줄 요약: ${esc(j.summary_ko)}</div>`:''}</div>`;
  if(j.route==='emergency')h+=`<a class="call" href="tel:119" style="background:var(--warn)">📞 Call 119 now</a>`;
  if(j.route==='handoff')h+=`<a class="call" href="tel:0000000000" style="background:var(--accent)">📞 Call care team (demo number)</a>`;
  if(j.sources&&j.sources.length)h+=`<div class="meta" style="margin-top:6px">Research used: ${j.sources.map(s=>`<a href="https://pmc.ncbi.nlm.nih.gov/articles/${s}/" target="_blank" rel="noopener">${s}</a>`).join(', ')}</div>`;
@@ -73,12 +70,12 @@ function answerHtml(j){let h=`<div class="msg">${esc(j.answer||'')}</div>`;
  if(['diet','exercise','diet_exercise'].includes(j.route))h+=`<div class="meta">General information, not medical advice.</div>`;
  return h}
 async function approve(tid,yes){const r=await fetch('/approve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:sel.value,thread_id:tid,approve:yes})});
- const j=await r.json();add(answerHtml(j));loadMe()}
+ const j=await r.json();add(`<div class="msg ${yes?'ok':''}">${esc(j.answer)}</div>`);loadMe()}
 function send(){const inp=document.getElementById('msg'),m=inp.value.trim();if(!m)return;inp.value='';add(`<div class="msg">${esc(m)}</div>`,'me');chips();
  thinking.textContent='…';const es=new EventSource(`/chat/stream?user_id=${sel.value}&message=${encodeURIComponent(m)}`);
  es.onmessage=e=>{const j=JSON.parse(e.data);if(!j.done){const s=STEP[j.step];if(s)thinking.textContent='Coach is '+s+'…';return}
   es.close();thinking.textContent='';const d=add(answerHtml(j));loadMe();
-  if(j.interrupt){const q=document.createElement('div');q.style.marginTop='8px';q.innerHTML=`<div class="warn">${esc(j.interrupt.question)}</div>${j.interrupt.question_ko?`<div class="warn">${esc(j.interrupt.question_ko)}</div>`:''}`;
+  if(j.interrupt){const q=document.createElement('div');q.style.marginTop='8px';q.innerHTML=`<div class="warn">${esc(j.interrupt.question)}</div>`;
    const y=document.createElement('button');y.textContent='Approve';y.onclick=()=>{approve(j.thread_id,true);q.remove()};
    const n=document.createElement('button');n.className='ghost';n.textContent='Cancel';n.style.marginLeft='6px';n.onclick=()=>{approve(j.thread_id,false);q.remove()};q.append(y,n);d.appendChild(q)}};
  es.onerror=()=>{es.close();thinking.textContent='';add('<div class="msg warn">Sorry, something went wrong. Please try again.</div>')}}

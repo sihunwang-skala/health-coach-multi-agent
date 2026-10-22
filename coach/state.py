@@ -23,8 +23,6 @@ class CoachState(TypedDict, total=False):
     dropped_notes: list[dict]
     safety_notes: list[dict]             # rule table hits (Safety Agent)
     answer: str
-    answer_ko: str                       # Korean translation of the answer (shown under the original)
-    summary_ko: str                      # one-line Korean summary
     issues: list[dict]
     retries: int
     removed: list[str]

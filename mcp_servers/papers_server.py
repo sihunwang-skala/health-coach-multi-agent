@@ -33,9 +33,6 @@ def _hit(i: int) -> dict:
 def search_papers(queries: list[str], k: int = 10, domain: str = "") -> dict:
     """Top-k paper passages per query (hybrid retrieval, other-population papers filtered out). domain = "diet" or
     "exercise" searches that agent's paper collection only; empty = all papers."""
-    # [발표 코드 3-1 | MCP: 논문 검색 기능을 tool로 공개]
-    # MCP는 Agent가 논문 검색 기능을 사용하게 해 주는 연결 통로입니다.
-    # 실제 논문 검색은 MCP 서버가 담당합니다.
     tops, tokens = index().search(queries, k, domain or None)
     return {"results": {q: [_hit(i) for i in ids] for q, ids in tops.items()}, "embed_tokens": tokens}
 
@@ -43,9 +40,6 @@ def search_papers(queries: list[str], k: int = 10, domain: str = "") -> dict:
 @mcp.tool
 def search_baseline(question: str, k: int = 5) -> dict:
     """Standard-RAG retrieval for the Before system: the question only, dense top-k, no filter."""
-    # [발표 코드 3-2 | MCP: Standard RAG 비교용 tool]
-    # 비교 대상인 Standard RAG가 논문을 찾는 방식입니다.
-    # 질문 하나로 단순하게 검색합니다.
     ids, tokens = index().dense_only(question, k)
     return {"results": [_hit(i) for i in ids], "embed_tokens": tokens}
 

@@ -5,7 +5,7 @@ import time
 
 from coach.agents.common import deps, llm_json, timed
 from coach.agents.prompts import SUPERVISOR
-from coach.safety.rules import KO_REPLIES, EMERGENCY_REPLY, HANDOFF_REPLY, MED_CHANGE_REPLY, OTHER_USER_REPLY, PRIVACY_INFO_REPLY, is_emergency
+from coach.safety.rules import EMERGENCY_REPLY, HANDOFF_REPLY, MED_CHANGE_REPLY, OTHER_USER_REPLY, PRIVACY_INFO_REPLY, is_emergency
 
 ROUTES = {"handoff", "other_user", "privacy_info", "emergency", "diet", "exercise", "diet_exercise", "med_change", "log", "my_data", "delete_record", "chat"}
 
@@ -26,12 +26,12 @@ async def supervisor(state, config):
 
 @timed("emergency_reply")
 async def emergency_reply(state, config):
-    return ko(EMERGENCY_REPLY)
+    return {"answer": EMERGENCY_REPLY}
 
 
 @timed("med_change_reply")
 async def med_change_reply(state, config):
-    return ko(MED_CHANGE_REPLY)
+    return {"answer": MED_CHANGE_REPLY}
 
 
 FIXED = {"handoff": HANDOFF_REPLY, "other_user": OTHER_USER_REPLY, "privacy_info": PRIVACY_INFO_REPLY}
@@ -40,10 +40,4 @@ FIXED = {"handoff": HANDOFF_REPLY, "other_user": OTHER_USER_REPLY, "privacy_info
 @timed("fixed_reply")
 async def fixed_reply(state, config):
     """Service and privacy situations: fixed, reviewed text (no LLM, no papers)."""
-    return ko(FIXED[state["route"]])
-
-
-def ko(reply: str) -> dict:
-    """A fixed reply with its reviewed Korean translation and one-line summary."""
-    t, summary = KO_REPLIES.get(reply, ("", ""))
-    return {"answer": reply, "answer_ko": t, "summary_ko": summary}
+    return {"answer": FIXED[state["route"]]}

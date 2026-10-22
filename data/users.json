@@ -52,7 +52,7 @@
  {
   "id": "u04",
   "name": "Robert Brown",
-  "age": 66,
+  "age": 58,
   "gender": "male",
   "conditions": [
    "type 2 diabetes",
@@ -158,7 +158,7 @@
  {
   "id": "u10",
   "name": "Walter Schmidt",
-  "age": 65,
+  "age": 56,
   "gender": "male",
   "conditions": [
    "type 2 diabetes",

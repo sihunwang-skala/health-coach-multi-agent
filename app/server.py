@@ -183,7 +183,7 @@ async def chat_stream(user_id: str, message: str, deps: Container = Depends(get_
                     final["interrupt"] = out[0].value if out else None
                     continue
                 out = out or {}
-                final.update({k: v for k, v in out.items() if k in ("answer", "answer_ko", "summary_ko", "route", "safety_notes", "retries", "removed")})
+                final.update({k: v for k, v in out.items() if k in ("answer", "route", "safety_notes", "retries", "removed")})
                 for dom, ev in (out.get("evidence") or {}).items():
                     final.setdefault("notes", []).extend((ev or {}).get("notes") or [])
                     final.setdefault("domains", []).append(dom)
@@ -192,8 +192,7 @@ async def chat_stream(user_id: str, message: str, deps: Container = Depends(get_
         tracelog.log_event(user_id, message, {**final, "latency_s": round(time.time() - t, 2), "calls": u.calls,
                                               "tokens_in": u.tokens_in, "tokens_out": u.tokens_out,
                                               "cost": round(u.cost(s.price_in, s.price_out, s.price_embed), 5)})
-        yield "data: " + json.dumps({"done": True, "answer": final.get("answer", ""), "answer_ko": final.get("answer_ko", ""),
-                                     "summary_ko": final.get("summary_ko", ""), "route": final.get("route"),
+        yield "data: " + json.dumps({"done": True, "answer": final.get("answer", ""), "route": final.get("route"),
                                      "interrupt": final.get("interrupt"), "thread_id": tid,
                                      "sources": sorted({n.get("source") for n in final.get("notes", []) if n.get("source")}),
                                      "safety_notes": final.get("safety_notes", []), "latency_s": round(time.time() - t, 2),
