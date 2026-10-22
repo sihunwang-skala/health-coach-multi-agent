@@ -42,7 +42,7 @@ async def _checked(config, step, prompt, earlier, question, stepback=False):
 
 @timed("make_queries")
 async def make_queries(state, config):
-    q, prof = state["message"], "User profile (health fields): " + state["profile"] + "\n"
+    q, prof = state["message"], ("User profile (health fields): " + state["profile"] + "\n") if state["profile"] else ""
     topic, dom = TOPIC[state["domain"]], state["domain"]
     terms = [t for pat, t in MED_TERMS if re.search(pat, state["profile"].lower())]
     if dom == "diet":
@@ -65,7 +65,8 @@ async def make_queries(state, config):
 @timed("retrieve_mcp")
 async def retrieve(state, config):
     d = deps(config)
-    r = await d.papers("search_papers", queries=state["queries"], k=d.settings.top_k, domain=state["domain"])
+    r = await d.papers("search_papers", queries=state["queries"], k=d.settings.top_k,
+                       domain="" if state["domain"] == "all" else state["domain"])
     config["configurable"]["usage"].embed_tokens += r.get("embed_tokens", 0)
     titles = {h["pmcid"]: h["title"] for hs in r["results"].values() for h in hs}
     return {"results": r["results"], "titles": titles}
@@ -73,7 +74,7 @@ async def retrieve(state, config):
 
 @timed("pick_notes")
 async def pick_notes(state, config):
-    prof = "User profile (health fields): " + state["profile"] + "\n"
+    prof = ("User profile (health fields): " + state["profile"] + "\n") if state["profile"] else ""
     batch = []
     for q in state["queries"]:
         hits = state["results"].get(q, [])
@@ -133,7 +134,9 @@ def evidence_node(domain: str):
     """Parent-graph node for one research agent: runs the compiled subgraph with its own state and returns only its result
     under evidence[domain], so the diet and exercise agents can run in parallel without overwriting each other."""
     async def node(state, config):
-        out = await _SUBGRAPH.ainvoke({"message": state["message"], "profile": state["profile"], "domain": domain,
+        # a general question is searched without the user's conditions and medicines (diabetes PoC router: about_user)
+        prof = state["profile"] if state.get("about_user", True) else ""
+        out = await _SUBGRAPH.ainvoke({"message": state["message"], "profile": prof, "domain": domain,
                                        "timings": {}, "trace": []}, config)
         keep = {k: out.get(k) for k in ("queries", "results", "picks", "notes", "dropped_notes")}
         return {"evidence": {domain: keep}, "titles": out.get("titles", {}),

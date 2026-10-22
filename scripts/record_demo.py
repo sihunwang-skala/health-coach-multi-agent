@@ -42,14 +42,14 @@ def main():
         def wait_cards(k, timeout_s):
             for _ in range(int(timeout_s / 0.4)):
                 snap()
-                if page.evaluate("document.querySelectorAll('#log > .card').length") > k:
+                if page.evaluate("document.querySelectorAll('#log > .card:not(.me)').length") > k:
                     return
                 page.wait_for_timeout(250)
             raise TimeoutError("no answer")
         page.goto(URL)
         page.wait_for_timeout(800)
         for user, msg, shot, approve in scenes:
-            n = page.locator("#log > .card").count()
+            n = page.locator("#log > .card:not(.me)").count()
             page.select_option("#user", user)
             page.fill("#msg", "")
             for i in range(0, len(msg), 6):
@@ -61,7 +61,7 @@ def main():
             if approve:
                 page.screenshot(path=str(IMG / f"{shot}.png"))
                 snap(4)
-                page.locator("#log > .card").first.locator("button", has_text="Approve").click()
+                page.locator("#log > .card:not(.me)").last.locator("button", has_text="Approve").click()
                 wait_cards(n + 1, 30)
                 snap(8)
                 shot = shot.replace("approval", "done")

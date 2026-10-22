@@ -2,51 +2,100 @@
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Diet & Exercise Coach</title>
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--ink:#1d2430;--muted:#667085;--line:#e4e7ec;--accent:#2f6fed;--warn:#b42318;--ok:#067647}
-@media (prefers-color-scheme: dark){:root{--bg:#111418;--card:#1a1f26;--ink:#e6e9ef;--muted:#98a2b3;--line:#2b323c;--accent:#6c9cff;--warn:#f97066;--ok:#47cd89}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,"Noto Sans KR",sans-serif}
-main{max-width:860px;margin:0 auto;padding:16px;display:grid;gap:12px}
-header h1{font-size:20px;margin:4px 0}header p{margin:0;color:var(--muted);font-size:13px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
-.row{display:flex;gap:8px;flex-wrap:wrap}select,input,button{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
-input{flex:1;min-width:200px}button{background:var(--accent);color:#fff;border:0;cursor:pointer}button.secondary{background:transparent;color:var(--ink);border:1px solid var(--line)}
-#steps{display:flex;gap:6px;flex-wrap:wrap}.step{font-size:12px;padding:3px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
-.msg{white-space:pre-wrap}.user{color:var(--muted)}.meta{font-size:12px;color:var(--muted)}.warn{color:var(--warn)}.ok{color:var(--ok)}
-.examples button{background:transparent;color:var(--accent);border:1px dashed var(--line);font-size:13px}
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1d2430;--muted:#667085;--line:#e4e7ec;--accent:#2f6fed;--me:#e8efff;--warn:#b42318;--ok:#067647}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#111418;--card:#1a1f26;--ink:#e6e9ef;--muted:#98a2b3;--line:#2b323c;--accent:#6c9cff;--me:#1f2a40;--warn:#f97066;--ok:#47cd89}}
+*{box-sizing:border-box}html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,system-ui,"Noto Sans KR",sans-serif}
+main{max-width:760px;margin:0 auto;padding:12px 16px 24px;display:flex;flex-direction:column;gap:10px;min-height:100%}
+header{display:flex;align-items:center;gap:8px;flex-wrap:wrap}header h1{font-size:18px;margin:0;flex:1;min-width:180px}
+select,input,button{font:inherit;padding:9px 12px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
+button{background:var(--accent);color:#fff;border:0;cursor:pointer}button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.notice{font-size:13px;color:var(--muted);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+.notice b{color:var(--ink)}
+#log{display:flex;flex-direction:column;gap:10px;flex:1}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;max-width:92%}
+.card.me{align-self:flex-end;background:var(--me);border-color:transparent}
+.msg{white-space:pre-wrap}.meta{font-size:12px;color:var(--muted)}.warn{color:var(--warn)}.ok{color:var(--ok)}
+.call{display:inline-block;margin-top:8px;color:#fff;padding:10px 16px;border-radius:10px;text-decoration:none;font-weight:600}
+#thinking{font-size:13px;color:var(--muted);min-height:18px}
+.composer{position:sticky;bottom:0;background:var(--bg);padding-top:6px;display:flex;gap:8px}
+.composer input{flex:1;min-width:0}
+.chips{display:flex;gap:6px;flex-wrap:wrap}.chips button{background:transparent;color:var(--accent);border:1px dashed var(--line);font-size:13px;padding:6px 10px;text-align:left}
+details.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 12px}
+details.panel summary{cursor:pointer;font-weight:600;font-size:14px}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:2px 10px;margin:6px 0;font-size:14px}dt{color:var(--muted)}dd{margin:0}
+.list{max-height:200px;overflow:auto;font-size:14px}.list div{border-bottom:1px solid var(--line);padding:4px 0}
+.adminlink{font-size:13px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;color:var(--ink);text-decoration:none;background:var(--card)}
+footer{font-size:12px;color:var(--muted);line-height:1.5}
 </style></head><body><main>
-<header><h1>Diet &amp; Exercise Coach — older adults with type 2 diabetes</h1>
-<p>Multi-agent demo (synthetic users). Not medical advice — for medicines or symptoms ask your doctor, nurse or pharmacist. In an emergency call 119.</p></header>
-<div class="card row"><select id="user"></select><input id="msg" placeholder="Ask about diet or exercise…"><button id="send">Send</button></div>
-<div class="card examples row" id="ex"></div>
-<div class="card"><div class="meta">Agent steps (live, SSE)</div><div id="steps"></div></div>
-<div id="log" style="display:grid;gap:10px"></div>
+<header><h1>Diet &amp; Exercise Coach</h1><span class="meta">Signed in as (demo)</span><select id="user" aria-label="demo user"></select>
+<a href="/admin" class="adminlink">Care-team screen →</a></header>
+
+<div class="notice"><b>This is a coaching service, not a doctor.</b> It gives general information and lifestyle suggestions from published
+research. It does not diagnose, treat or prescribe. Do not start, stop or change a medicine because of an answer here — ask your
+doctor, nurse or pharmacist. <b>In an emergency call 119.</b></div>
+
+<div id="log"></div>
+<div id="thinking" aria-live="polite"></div>
+<div class="chips" id="ex"></div>
+<div class="composer"><input id="msg" placeholder="Ask about food, drinks or exercise…" autocomplete="off"><button id="send">Send</button></div>
+
+<details class="panel" id="recentBox"><summary>My recent questions</summary><div class="list" id="recent"></div></details>
+<details class="panel" id="meBox"><summary>Show my information and records</summary><div id="me" class="meta">Loading…</div></details>
+
+<footer>
+Answers are general health information for adults with type 2 diabetes, written by an AI from research papers. They can be incomplete
+or wrong and are not a substitute for professional medical advice, diagnosis or treatment. Decisions about your health and medicines
+are made by you together with your care team; the service operator is not liable for decisions made only on the basis of this
+information. Your name is not sent to the AI model. All people in this demo are synthetic.
+</footer>
 </main>
 <script>
-const users={u01:"Maria (68, metformin)",u02:"Daniel (72, numb feet)",u03:"Grace (75, CKD 3)",u04:"Robert (66, hypertension)",u05:"Linda (79, glimepiride, falls)",u06:"Kenji (81, gliclazide, low muscle)",u07:"Sofia (70, glimepiride, BP)",u08:"James (77, insulin)",u09:"Dorothy (84, insulin, cane)",u10:"Walter (69, insulin, retinopathy)"};
-const ex=["Should I take a walk after dinner, and how should I eat my rice so it doesn't spike my blood sugar?","Is one can of soda a day really that bad for me?","Would a short walk after dinner help my blood sugar?","I have proliferative retinopathy. Can I keep lifting heavy weights?","Can I skip my insulin before tennis so I don't go low?","I'm sweating, shaky and confused after my walk.","I walked 30 minutes after dinner today.","Delete my last record, it was wrong.","Is hot yoga safe for me?"];
-const sel=document.getElementById('user');for(const[k,v]of Object.entries(users)){const o=document.createElement('option');o.value=k;o.textContent=v;sel.appendChild(o)}
-const exd=document.getElementById('ex');ex.forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{document.getElementById('msg').value=t;send()};exd.appendChild(b)});
-function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
-function add(html){const d=document.createElement('div');d.className='card';d.innerHTML=html;document.getElementById('log').prepend(d);return d}
-async function approve(tid,yes){const r=await fetch('/approve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:sel.value,thread_id:tid,approve:yes})});const j=await r.json();add(`<div class="msg ${yes?'ok':''}">${esc(j.answer)}</div>`)}
-function send(){const m=document.getElementById('msg').value.trim();if(!m)return;const steps=document.getElementById('steps');steps.innerHTML='';
- const es=new EventSource(`/chat/stream?user_id=${sel.value}&message=${encodeURIComponent(m)}`);
- es.onmessage=e=>{const j=JSON.parse(e.data);if(!j.done){const s=document.createElement('span');s.className='step';s.textContent=j.step+(j.seconds?` ${j.seconds.toFixed(1)}s`:'');steps.appendChild(s);return}
-  es.close();let h=`<div class="msg user">${esc(users[sel.value])}: ${esc(m)}</div><div class="msg">${esc(j.answer||'')}</div>`;
-  if(j.safety_notes&&j.safety_notes.length)h+=`<div class="meta warn">Safety rules applied: ${j.safety_notes.map(s=>s.id+' ['+s.source+']').join(', ')}</div>`;
-  if(j.sources&&j.sources.length)h+=`<div class="meta">Sources: ${j.sources.map(s=>`<a href="https://pmc.ncbi.nlm.nih.gov/articles/${s}/" target="_blank">${s}</a>`).join(', ')}</div>`;
-  h+=`<div class="meta">route: ${j.route} · ${j.latency_s}s · ${j.calls} LLM calls · $${j.cost}</div>`;const d=add(h);
-  if(j.interrupt){const q=document.createElement('div');q.className='row';q.innerHTML=`<span class="warn">${esc(j.interrupt.question)}</span>`;const y=document.createElement('button');y.textContent='Approve';y.onclick=()=>{approve(j.thread_id,true);q.remove()};const n=document.createElement('button');n.className='secondary';n.textContent='Cancel';n.onclick=()=>{approve(j.thread_id,false);q.remove()};q.append(y,n);d.appendChild(q)}}}
-function showRecord(r,label){const steps=document.getElementById('steps');steps.innerHTML='';
- (r.trace||[]).forEach(n=>{const s=document.createElement('span');s.className='step';const t=(r.timings||{})[n];s.textContent=n+(t?` ${t.toFixed(1)}s`:'');steps.appendChild(s)});
- let h=`<div class="meta">${label}</div><div class="msg user">${esc(users[r.user]||r.user)}: ${esc(r.q)}</div><div class="msg">${esc(r.answer||'')}</div>`;
- if(r.safety_notes&&r.safety_notes.length)h+=`<div class="meta warn">Safety rules applied: ${r.safety_notes.map(s=>s.id+' ['+s.source+']').join(', ')}</div>`;
- const src=[...new Set((r.notes||[]).map(n=>n.source).filter(Boolean))];if(src.length)h+=`<div class="meta">Sources: ${src.join(', ')}</div>`;
- if(r.removed&&r.removed.length)h+=`<div class="meta warn">Removed by the safety check after 1 retry: ${esc(r.removed.join(' '))}</div>`;
- if(r.interrupt_shown)h+=`<div class="row"><span class="warn">${esc(r.interrupt_shown.question)}</span><button>Approve</button><button class="secondary">Cancel</button></div>`;
- h+=`<div class="meta">route: ${r.route} · ${r.latency_s}s · ${r.calls} LLM calls · $${r.cost} · retries ${r.retries||0}</div>`;add(h)}
-const P=new URLSearchParams(location.search);
-if(P.get('replay')){P.get('replay').split(',').reverse().forEach(id=>fetch('/replay/'+id+'?system='+(P.get('system')||'after')).then(r=>r.json()).then(r=>showRecord(r,'Recorded evaluation run ('+(P.get('system')||'after')+'): '+id)))}
-if(P.get('q')){sel.value=P.get('user')||'u01';document.getElementById('msg').value=P.get('q');setTimeout(send,300)}
-document.getElementById('send').onclick=send;document.getElementById('msg').addEventListener('keydown',e=>{if(e.key==='Enter')send()});
+const P=new URLSearchParams(location.search),users={};
+const ex=["Should I take a walk after dinner, and how should I eat my rice so it doesn't spike my blood sugar?","Is one can of soda a day really that bad for me?",
+ "I have proliferative retinopathy. Can I keep lifting heavy weights?","I walked 30 minutes after dinner today.","Delete my last record, it was wrong.","I want to talk to a nurse."];
+const sel=document.getElementById('user'),log=document.getElementById('log'),thinking=document.getElementById('thinking');
+const STEP={guard:"checking for an emergency",supervisor:"understanding your question","diet.make_queries":"planning diet searches","exercise.make_queries":"planning exercise searches",
+ "diet.retrieve":"searching diet research","exercise.retrieve":"searching exercise research","diet.pick_notes":"reading diet papers","exercise.pick_notes":"reading exercise papers",
+ "diet.verify_notes":"checking notes","exercise.verify_notes":"checking notes",safety_agent:"checking safety rules for you",writer:"writing the answer",validate:"checking the answer for unsafe advice",
+ retry:"rewriting a safer answer",records:"opening your records"};
+const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+function add(html,cls=''){const d=document.createElement('div');d.className='card '+cls;d.innerHTML=html;log.appendChild(d);d.scrollIntoView({behavior:'smooth',block:'end'});return d}
+function chips(){const e=document.getElementById('ex');e.innerHTML='';if(log.children.length)return;ex.forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{document.getElementById('msg').value=t;send()};e.appendChild(b)})}
+function answerHtml(j){let h=`<div class="msg">${esc(j.answer||'')}</div>`;
+ if(j.route==='emergency')h+=`<a class="call" href="tel:119" style="background:var(--warn)">📞 Call 119 now</a>`;
+ if(j.route==='handoff')h+=`<a class="call" href="tel:0000000000" style="background:var(--accent)">📞 Call care team (demo number)</a>`;
+ if(j.sources&&j.sources.length)h+=`<div class="meta" style="margin-top:6px">Research used: ${j.sources.map(s=>`<a href="https://pmc.ncbi.nlm.nih.gov/articles/${s}/" target="_blank" rel="noopener">${s}</a>`).join(', ')}</div>`;
+ if(j.safety_notes&&j.safety_notes.length)h+=`<div class="meta">Safety checks for your conditions were applied.</div>`;
+ if(['diet','exercise','diet_exercise'].includes(j.route))h+=`<div class="meta">General information, not medical advice.</div>`;
+ return h}
+async function approve(tid,yes){const r=await fetch('/approve',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({user_id:sel.value,thread_id:tid,approve:yes})});
+ const j=await r.json();add(`<div class="msg ${yes?'ok':''}">${esc(j.answer)}</div>`);loadMe()}
+function send(){const inp=document.getElementById('msg'),m=inp.value.trim();if(!m)return;inp.value='';add(`<div class="msg">${esc(m)}</div>`,'me');chips();
+ thinking.textContent='…';const es=new EventSource(`/chat/stream?user_id=${sel.value}&message=${encodeURIComponent(m)}`);
+ es.onmessage=e=>{const j=JSON.parse(e.data);if(!j.done){const s=STEP[j.step];if(s)thinking.textContent='Coach is '+s+'…';return}
+  es.close();thinking.textContent='';const d=add(answerHtml(j));loadMe();
+  if(j.interrupt){const q=document.createElement('div');q.style.marginTop='8px';q.innerHTML=`<div class="warn">${esc(j.interrupt.question)}</div>`;
+   const y=document.createElement('button');y.textContent='Approve';y.onclick=()=>{approve(j.thread_id,true);q.remove()};
+   const n=document.createElement('button');n.className='ghost';n.textContent='Cancel';n.style.marginLeft='6px';n.onclick=()=>{approve(j.thread_id,false);q.remove()};q.append(y,n);d.appendChild(q)}};
+ es.onerror=()=>{es.close();thinking.textContent='';add('<div class="msg warn">Sorry, something went wrong. Please try again.</div>')}}
+async function loadUsers(){const l=await (await fetch('/api/users')).json();
+ l.forEach(u=>{users[u.id]=u.name;const o=document.createElement('option');o.value=u.id;o.textContent=u.name;sel.appendChild(o)});
+ let saved=null;try{saved=localStorage.getItem('coach_user')}catch(e){}sel.value=P.get('user')||saved||'u01';loadMe()}
+async function loadMe(){try{localStorage.setItem('coach_user',sel.value)}catch(e){}
+ const j=await (await fetch('/api/me/'+sel.value)).json(),p=j.profile||{};
+ document.getElementById('recent').innerHTML=(j.chats||[]).map(c=>`<div><span class="meta">${esc(c.ts.replace('T',' ').slice(5,16))}</span> ${esc(c.message)}</div>`).join('')||'<div class="meta">None yet</div>';
+ const meds=(p.medications||[]).map(m=>`${esc(m.name)} <span class="meta">(${esc(m.kind)})</span>`).join('<br>');
+ const recs=(j.records||[]).map(r=>`<div><span class="meta">${esc(r.ts.replace('T',' ').slice(5,16))}</span> ${esc(r.text.replace('[demo] ',''))}</div>`).join('')||'<div class="meta">No records yet</div>';
+ document.getElementById('me').innerHTML=`<dl><dt>Name</dt><dd>${esc(p.name)} · ${p.age} · ${esc(p.gender)}</dd><dt>Conditions</dt><dd>${esc((p.conditions||[]).join(', '))}</dd>
+  <dt>Medicines</dt><dd>${meds}</dd><dt>Activity</dt><dd>${esc(p.activity)}</dd><dt>Eating</dt><dd>${esc(p.diet)}</dd><dt>Goal</dt><dd>${esc(p.goal)}</dd></dl>
+  <div class="meta">My records (latest 20)</div><div class="list">${recs}</div>`}
+function showRecord(r,label){add(`<div class="msg">${esc(r.q)}</div>`,'me');
+ const src=[...new Set((r.notes||[]).map(n=>n.source).filter(Boolean))];
+ add(`<div class="meta">${esc(label)}</div>`+answerHtml({...r,sources:src}))}
+sel.onchange=()=>{log.innerHTML='';chips();loadMe()};
+document.getElementById('send').onclick=send;document.getElementById('msg').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.isComposing)send()});
+loadUsers().then(()=>{chips();
+ if(P.get('replay'))P.get('replay').split(',').forEach(id=>fetch('/replay/'+id+'?system='+(P.get('system')||'after')).then(r=>r.json()).then(r=>showRecord(r,'Recorded evaluation run: '+id)));
+ if(P.get('q')){document.getElementById('msg').value=P.get('q');setTimeout(send,300)}});
 </script></body></html>

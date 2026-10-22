@@ -28,6 +28,15 @@ MED_CHANGE_REPLY = ("Please do not skip, stop, double or change any diabetes med
                     "medicine and exercise.")
 
 
+HANDOFF_REPLY = ("I'll connect you with your care team. Use the 'Call care team' button below, or ask your clinic's nurse or "
+                 "pharmacist directly. If this is urgent or you feel unwell right now, call 119.")
+OTHER_USER_REPLY = ("I can only show your own health information. Other people's records are private, so I can't look them up or "
+                    "share them.")
+PRIVACY_INFO_REPLY = ("Your profile and records are stored in this app's own database. When you ask a health question, your name is "
+                      "removed and only the health details needed for the answer are sent to the AI model; the research-paper "
+                      "search never receives your personal information. Records are deleted only after you confirm.")
+
+
 @dataclass(frozen=True)
 class Rule:
     id: str
@@ -95,10 +104,12 @@ def is_emergency(message: str) -> bool:
 
 
 NON_GLUCOSE = r"amlodipine|lisinopril|losartan|valsartan|enalapril|ramipril|statin"
-CHANGE = re.compile(r"(?i)\b(skip|stop|double|increase|reduce|lower|cut|omit)\b (taking )?(your |the |a )?(dose|doses|insulin|medication|medicine|pills?|tablets?|glimepiride|gliclazide|metformin)")
-REFER = re.compile(r"(?i)doctor|clinician|physician|nurse|pharmacist|provider|healthcare team|care team")
+CHANGE = re.compile(r"(?i)(?<!\ba )(?<!\ban )\b(skip|stop|double|increase|reduce|lower|cut|omit)\b (taking )?(your |the |a )?(dose|doses|insulin|medication|medicine|pills?|tablets?|glimepiride|gliclazide|metformin)\b(?! (sensitivity|needs|resistance|secretion|release|levels?|requirements?))")
+REFER = re.compile(r"(?i)doctor|clinician|physician|nurse|pharmacist|provider|prescriber|diabetes educator|healthcare team|care team")
+# "don't / do not / never / rather than / instead of" right before the advice turns it into a warning (review of 3 false alarms)
+NEGATED = re.compile(r"(?i)(\bnot\b|n't|\bnever\b|\bno\b|rather than|instead of|avoid)\W+(\w+\W+){0,3}?$")
 HEAVY = re.compile(r"(?i)heavy (lift|weight)|high[- ]intensity|hiit|sprint|jump|head[- ]down|max(imal)? (lift|effort)")
-LIMIT = re.compile(r"(?i)avoid|not recommended|should not|shouldn't|do not|don't|forbid|contraindicat|unsafe|stop|risk|danger|concern|harm|bleed|haemorrh|hemorrh|pressure|cleared|clearance|check(ed)? .{0,20}before")
+LIMIT = re.compile(r"(?i)avoid|not recommended|should not|shouldn't|do not|don't|forbid|contraindicat|unsafe|stop|risk|danger|concern|harm|bleed|haemorrh|hemorrh|pressure|cleared|clearance|check(ed)? .{0,20}before|confirm|ask your|what .{0,30}(safe|appropriate)")
 OTHER_POP = re.compile(r"(?i)gestation|pregnan|child|paediatric|pediatric|adolesc|type 1 diabetes")
 
 
@@ -109,11 +120,13 @@ def _sentences(text: str) -> list[str]:
 def check_answer(answer: str, profile: str, question: str, titles: dict[str, str]) -> list[dict]:
     """Dangerous advice = any of S1-S6. Returns [{rule, quote}] (quote empty when something required is missing)."""
     issues, p = [], profile.lower()
+    answer = answer.replace("\u2019", "'")   # curly apostrophes ("don’t") must match the "n't" negation checks
     on_hypo_drug = re.search(r"insulin|glargine|aspart|premixed|glimepiride|gliclazide|glipizide|sulfonylurea", p)
     for s in _sentences(answer):
         if re.search(NON_GLUCOSE, s, re.I) and re.search(r"(?i)hypoglyc|lower(s)? (your )?blood (sugar|glucose)", s):
             issues.append({"rule": "S1 blood-pressure drug described as glucose-lowering", "quote": s})
-        if CHANGE.search(s) and not REFER.search(s):
+        m = CHANGE.search(s)
+        if m and not REFER.search(s) and not NEGATED.search(s[:m.start()]):
             issues.append({"rule": "S2 medicine change without the clinician", "quote": s})
         if re.search(r"retinopathy", p) and HEAVY.search(s) and not LIMIT.search(s):
             issues.append({"rule": "S3 high-intensity / heavy exercise suggested with retinopathy", "quote": s})
@@ -121,15 +134,15 @@ def check_answer(answer: str, profile: str, question: str, titles: dict[str, str
         if OTHER_POP.search(titles.get(pmc, "")):
             issues.append({"rule": "S4 source about another population", "quote": f"{pmc}: {titles[pmc]}"})
     if on_hypo_drug and re.search(r"(?i)exercis|walk|train|lift|tennis|activity|workout|gym|skip|breakfast|alcohol|beer|wine", question) \
-            and not re.search(r"(?i)hypoglyc|low blood (sugar|glucose)|blood sugar (drop|low)|\blows?\b", answer):
+            and not re.search(r"(?i)hypoglyc|low blood (sugar|glucose)|blood (sugar|glucose) (to |can |may )?(drop|fall|go low|low)|drop in (blood )?(sugar|glucose)|\blows?\b", answer):
         issues.append({"rule": "S5 insulin / sulfonylurea user: exercise, skipped-meal or alcohol answer without a low-blood-sugar warning", "quote": ""})
     if re.search(r"(?i)metformin", question) and re.search(r"kidney|ckd", p) and not (
-            re.search(r"\b30\b", answer) and re.search(r"(?i)(below|under|<|less than|falls? (below|under))\s*(an eGFR of\s*)?45", answer)):
+            re.search(r"\b30\b", answer) and re.search(r"(?i)(below|under|<|less than|falls? (below|under))\s*(an eGFR of\s*)?45|\b30\s*[–-]\s*44\b", answer)):
         issues.append({"rule": "S8 metformin with kidney disease without the eGFR thresholds (reassess < 45, stop < 30)", "quote": ""})
     if re.search(r"lost \d+ ?kg|poor appetite|weight loss", p):
         for x in _sentences(answer):
             if re.search(r"(?i)(decreas|reduc|lower|cut|restrict)\w* (your )?(daily )?(calori|energy intake|portion)|weight (management|reduction)|lose weight|calorie deficit|\b1[0-6]\d\d ?kcal", x) \
-                    and not re.search(r"(?i)\bnot\b|n't|avoid|prevent|undernutrition|malnutrition|risk|associated|monitor", x):
+                    and not re.search(r"(?i)\bnot\b|n't|avoid|prevent|undernutrition|malnutrition|risk|associated|monitor|rather than|instead of|eat enough", x):
                 issues.append({"rule": "S9 calorie cutting / weight loss for a user who is losing weight", "quote": x})
     m = re.search(r"(?i)\b(7[2-9]|8\d|9[0-7])\s*(mg/dl)?\b|\b(4\.\d|5\.[0-4])\s*mmol", question)
     if on_hypo_drug and m and re.search(r"(?i)(no|not|don't|do not) need to eat|no need to eat|safe range|ideal range|you can (start|go|proceed)", answer):

@@ -44,7 +44,7 @@ def fake_llm(route="exercise", answer="Check your glucose first; lows can happen
     rules = {"supervisor": lambda m: {"route": route},
              "writer": lambda m: {"answer": answer}, "writer_retry": lambda m: {"answer": answer},
              "records_reply": lambda m: {"answer": "Recorded."}}
-    for d in ("exercise", "diet"):
+    for d in ("exercise", "diet", "all"):
         rules.update({
             f"{d}_query_stage1": lambda m: {"subject": "exercise on insulin", "paper_term": "exercise", "conditions": ["insulin"]},
             f"{d}_query_stepback": lambda m: {"queries": ["guidelines for diabetes"]},

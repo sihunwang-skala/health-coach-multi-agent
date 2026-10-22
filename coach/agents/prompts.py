@@ -10,23 +10,35 @@ for something they cannot answer (the user's own records), misses the second top
 answer where a fixed safety reply is needed.
 
 Task: choose exactly one route for the message:
+- "emergency": the user describes symptoms happening NOW that may be an emergency - chest pain or tightness, trouble
+  breathing, fainting, confusion, blurred vision with dizziness, signs of a severe low (shaking, sweating, confusion) or a
+  very low or very high reading. These get an immediate 119 reply. (A code check catches most of these first; you are the
+  backup for wording it misses.)
 - "med_change": ONLY when the user asks to skip, stop, double, reduce or otherwise change a medicine or its dose on their own
   (e.g. "can I skip my insulin before walking?"). Questions about what a medicine does, its side effects, whether it is still
   safe with a condition (e.g. "is my metformin still okay with my kidneys?") or how food, alcohol or exercise interact with it
   need research evidence: "diet" (food, drink, kidneys, medicines) or "exercise".
 - "delete_record": the user asks to delete or remove a logged record.
+- "handoff": the user asks to talk to a person - a nurse, doctor, pharmacist, the care team or customer support.
+- "other_user": the user asks for another person's health information or records.
+- "privacy_info": the user asks how their data is stored, used or shared.
 - "log": the user reports something to record - an activity done, a meal, steps, a glucose reading - without asking a question.
 - "my_data": the answer is the user's own stored information (their medicines, conditions, logged records, totals).
 - "diet": a question that needs evidence about food, drinks, meals, meal timing, nutrients or alcohol (only).
 - "exercise": a question that needs evidence about exercise or physical activity (only).
 - "diet_exercise": a question that needs BOTH (e.g. "should I walk after dinner and how should I eat my rice?").
 - "chat": greetings, thanks, small talk, questions about the assistant.
-Return JSON {{"route": "...", "reason": "..."}}
+Also give about_user: true if the message asks about the user's own health, diet, habits or medicines ("my", "I", "for me",
+"should I"); false if it asks in general terms ("people with diabetes", "older adults", "what do guidelines recommend") - even
+when the user belongs to that group. (General questions get a general answer; only the user's own questions get searches
+built from their conditions and medicines.)
+Return JSON {{"route": "...", "about_user": true/false, "reason": "..."}}
 
 User profile (health fields): {profile}
 Message: {message}"""
 
-TOPIC = {"exercise": "exercise and physical activity", "diet": "diet, food, drinks, meal timing and nutrients"}
+TOPIC = {"exercise": "exercise and physical activity", "diet": "diet, food, drinks, meal timing and nutrients",
+         "all": "diabetes care: diet, food, drinks, exercise, physical activity and medicines"}
 
 PAIR = ("Keep the user's own words (foods, drinks, activities, amounts, how often, time of day, medicine names) as written and "
         "add the term research papers use next to them (e.g. heavy weights -> heavy weights (resistance training), soda -> soda "
@@ -94,6 +106,13 @@ Safety notes (rule table, always apply when relevant):
 {safety}
 
 Question: {question}"""
+
+GENERAL_QUESTION = """
+
+This is a GENERAL question (not about the user's own case). Answer it fully in general terms first, using every note that
+answers it, including any number or recommendation the question asks for. Then add at most two short sentences that start
+with "For you:" and give the safety notes that matter most for this user. Do not replace the general answer with personal
+advice."""
 
 PROFILE_REPLY = """You are a friendly diet and exercise coach for an older adult with diabetes. Reply in 1-3 sentences.
 Task: if the message reports an activity or a reading, say it has been recorded (the record is shown below). If it asks

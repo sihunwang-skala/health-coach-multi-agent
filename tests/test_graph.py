@@ -68,3 +68,27 @@ def test_mixed_question_runs_diet_and_exercise_agents_in_parallel_then_one_write
     assert r["domains"] == ["diet", "exercise"]
     assert "diet_agent" in r["trace"] and "exercise_agent" in r["trace"] and r["trace"].count("writer") == 1
     assert {"R1", "D3"} <= {s["id"] for s in r["safety_notes"]}   # exercise and diet rules both fired
+
+
+def test_general_question_is_searched_without_the_profile_and_answered_generally():
+    seen = {}
+    llm = fake_llm()
+    llm.rules["supervisor"] = lambda m: {"route": "exercise", "about_user": False}
+    stage1, writer = llm.rules["exercise_query_stage1"], llm.rules["writer"]
+    llm.rules["exercise_query_stage1"] = lambda m: (seen.setdefault("search", m[-1][1]), stage1(m))[1]
+    llm.rules["writer"] = lambda m: (seen.setdefault("writer", m[-1][1]), writer(m))[1]
+    deps, _ = container(llm)
+    r = run(run_after(build_graph(), deps, "u1", "How many minutes of exercise do guidelines recommend?"))
+    assert r["about_user"] is False
+    assert "insulin" not in seen["search"]            # the user's medicines do not narrow a general search
+    assert "GENERAL question" in seen["writer"]        # the writer answers in general terms first
+
+
+def test_single_agent_comparison_graph_has_no_supervisor():
+    from coach.graph import build_single_agent_graph
+    deps, logs = container()
+    r = run(run_after(build_single_agent_graph(), deps, "u1", "I walked 30 minutes"))
+    assert "supervisor" not in r["trace"] and "all_agent" in r["trace"]
+    assert logs == []                                  # one agent cannot save records - the gap the multi-agent design closes
+    r = run(run_after(build_single_agent_graph(), deps, "u1", "I'm sweating, shaky and confused after my walk"))
+    assert r["route"] == "emergency" and r["calls"] == 0

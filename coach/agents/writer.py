@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 
 from coach.agents.common import deps, llm_json, timed
-from coach.agents.prompts import WRITER_SYSTEM, WRITER_USER
+from coach.agents.prompts import GENERAL_QUESTION, WRITER_SYSTEM, WRITER_USER
 from coach.safety.rules import check_answer
 
 
@@ -15,6 +15,8 @@ async def writer(state, config):
                       for n in ev.get("notes", [])) or "(none)"
     safety = "\n".join(f"- {s['advice']} [{s['source']}]" for s in state.get("safety_notes", [])) or "(none)"
     user = WRITER_USER.format(profile=state["profile"], notes=notes, safety=safety, question=state["message"])
+    if state.get("about_user") is False:
+        user += GENERAL_QUESTION
     if state.get("issues"):
         user += ("\n\nYour previous answer had these safety problems; write it again without them:\n- "
                  + "\n- ".join(f"{i['rule']}: {i['quote']}" for i in state["issues"]))

@@ -21,7 +21,7 @@ async def run_after(graph, deps: Container, user_id: str, message: str, thread_i
     snap = graph.get_state(cfg)
     pending = [i.value for t_ in snap.tasks for i in (t_.interrupts or [])]
     s = deps.settings
-    return {"system": "after", "answer": st.get("answer", ""), "route": st.get("route", ""), "trace": st.get("trace", []),
+    return {"system": "after", "answer": st.get("answer", ""), "route": st.get("route", ""), "about_user": st.get("about_user"), "trace": st.get("trace", []),
             "timings": st.get("timings", {}),
             "queries": [q for ev in st.get("evidence", {}).values() for q in ev.get("queries") or []],
             "notes": [n for ev in st.get("evidence", {}).values() for n in ev.get("notes") or []],

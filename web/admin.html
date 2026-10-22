@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Care-team Monitor</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#f6f7f9;--card:#fff;--ink:#1d2430;--muted:#667085;--line:#e4e7ec;--accent:#2f6fed;--warn:#b42318;--warnbg:#fef3f2;--amber:#b54708;--ok:#067647;
+ --c1:#2f6fed;--c2:#12b76a;--c3:#98a2b3;--c4:#f04438}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#111418;--card:#1a1f26;--ink:#e6e9ef;--muted:#98a2b3;--line:#2b323c;--accent:#6c9cff;--warn:#f97066;--warnbg:#2a1715;--amber:#fdb022;--ok:#47cd89;
+ --c1:#6c9cff;--c2:#47cd89;--c3:#667085;--c4:#f97066}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,system-ui,"Noto Sans KR",sans-serif}
+main{max-width:1200px;margin:0 auto;padding:16px;display:grid;gap:12px}
+header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}header h1{font-size:20px;margin:0}header p{margin:0;color:var(--muted);font-size:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}@media(max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}}@media(max-width:520px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi b{display:block;font-size:22px}.kpi span{color:var(--muted);font-size:12px}.kpi.alert b{color:var(--warn)}
+.g2{display:grid;grid-template-columns:2fr 1fr;gap:12px}.g11{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:900px){.g2,.g11{grid-template-columns:1fr}}
+h2{font-size:14px;margin:0 0 8px}.meta{font-size:12px;color:var(--muted)}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:6px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:500}
+tr.pick{cursor:pointer}tr.pick:hover{background:var(--bg)}tr.sel{background:var(--bg)}
+.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}
+.tag.emergency{background:var(--warn);color:#fff;border-color:var(--warn)}.tag.handoff{color:var(--amber);border-color:var(--amber)}.tag.med_change,.tag.other_user{color:var(--accent);border-color:var(--accent)}
+.open{color:var(--warn);font-weight:600}.handled{color:var(--ok)}
+button,select{font:inherit;padding:4px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+.scroll{max-height:340px;overflow:auto}.wrap{overflow-x:auto}
+.msg{white-space:pre-wrap;font-size:13px}.q{color:var(--muted)}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:2px 10px;margin:6px 0}dt{color:var(--muted)}dd{margin:0}
+canvas{max-height:240px}
+</style></head><body><main>
+<header><h1>Care-team Monitor</h1><p>Synthetic users and demo history. Names are shown only on this screen; the AI agents and the logs see user ids.</p>
+<a href="/" style="margin-left:auto;font-size:13px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;color:var(--ink);text-decoration:none;background:var(--card)">← User screen</a></header>
+
+<section class="kpis" id="kpis"></section>
+
+<section class="g2">
+ <div class="card"><h2>Messages per day (last 14 days)</h2><canvas id="perDay"></canvas></div>
+ <div class="card"><h2>What people asked (route mix)</h2><canvas id="routes"></canvas></div>
+</section>
+
+<section class="card"><h2>Alerts — emergencies, call requests, medicine changes, other people's data</h2>
+ <div class="row meta" style="margin-bottom:6px">Show <select id="af"><option value="open">open</option><option value="all">all</option></select></div>
+ <div class="scroll wrap"><table id="alerts"></table></div></section>
+
+<section class="g11">
+ <div class="card"><h2>All users (click a row to open one person)</h2><div class="wrap"><table id="users"></table></div></div>
+ <div class="card"><h2>Messages per person · cost per day</h2><canvas id="byUser"></canvas><canvas id="cost" style="margin-top:8px"></canvas></div>
+</section>
+
+<section class="card" id="person"><h2>One person</h2><div class="meta">Choose a user above.</div></section>
+</main>
+<script>
+const ALERT={emergency:"Emergency",handoff:"Call request",med_change:"Medicine change",other_user:"Other person's data"};
+const ROUTE={...ALERT,diet:"Diet",exercise:"Exercise",diet_exercise:"Diet + exercise",log:"Save a record",my_data:"My data",delete_record:"Delete a record",chat:"Chat",privacy_info:"How my data is used"};
+const label=r=>ROUTE[r]||r;
+const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const H={};try{const t=localStorage.getItem('coach_admin_token');if(t)H['X-Admin-Token']=t}catch(e){}
+const get=u=>fetch(u,{headers:H}).then(r=>r.json());
+let NAMES={},charts={},current=null;
+function chart(id,cfg){charts[id]?.destroy();Chart.defaults.color=css('--muted');Chart.defaults.borderColor=css('--line');charts[id]=new Chart(document.getElementById(id),cfg)}
+const tag=a=>`<span class="tag ${a}">${label(a)}</span>`;
+const when=t=>esc((t||'').replace('T',' ').slice(5,16));
+
+async function load(){
+ const [s,users]=await Promise.all([get('/api/admin/summary'),get('/api/admin/users')]);
+ users.forEach(u=>NAMES[u.id]=u.name);
+ const k=[["Messages (14 days)",s.messages],["Active users",s.active_users+" / "+users.length],["Open alerts",s.open_alerts,"alert"],
+  ["Avg. advice answer time",(s.advice_latency_avg??'–')+" s"],["Safety rewrites / removed sentences",s.safety_retries+" / "+s.removed_sentences],["LLM cost (14 days)","$"+s.cost.toFixed(3)]];
+ document.getElementById('kpis').innerHTML=k.map(([l,v,c])=>`<div class="card kpi ${c||''}"><b>${v}</b><span>${l}</span></div>`).join('');
+ const cols=[css('--c1'),css('--c2'),css('--c3'),css('--c4')];
+ chart('perDay',{type:'bar',data:{labels:s.days.map(d=>d.slice(5)),datasets:Object.entries(s.per_day).map(([g,v],i)=>({label:g,data:v,backgroundColor:cols[i]}))},
+  options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true,ticks:{precision:0}}},plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}}});
+ const r=Object.entries(s.routes).sort((a,b)=>b[1]-a[1]);
+ chart('routes',{type:'bar',data:{labels:r.map(x=>label(x[0])),datasets:[{data:r.map(x=>x[1]),backgroundColor:r.map(x=>ALERT[x[0]]?css('--c4'):css('--c1'))}]},
+  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{precision:0}}}}});
+ chart('byUser',{type:'bar',data:{labels:users.map(u=>u.name.split(' ')[0]),datasets:[{label:'messages',data:users.map(u=>u.messages||0),backgroundColor:css('--c1')},
+  {label:'alerts',data:users.map(u=>u.alerts||0),backgroundColor:css('--c4')}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}},scales:{y:{ticks:{precision:0}}}}});
+ chart('cost',{type:'line',data:{labels:s.days.map(d=>d.slice(5)),datasets:[{label:'LLM cost per day ($)',data:s.cost_per_day,borderColor:css('--c2'),tension:.3}]},
+  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}}});
+ document.getElementById('users').innerHTML=`<tr><th>Name</th><th>Age</th><th>Conditions</th><th>Msgs</th><th>Alerts</th><th>Last message</th></tr>`+
+  users.map(u=>`<tr class="pick ${u.id===current?'sel':''}" data-id="${u.id}"><td>${esc(u.name)}</td><td>${u.age}</td><td>${esc(u.conditions.filter(c=>c!=='type 2 diabetes').join(', ')||'—')}</td>
+  <td>${u.messages||0}</td><td>${u.open_alerts?`<span class="open">${u.open_alerts} open</span>`:(u.alerts||0)}</td><td class="meta">${when(u.last_ts)}</td></tr>`).join('');
+ document.querySelectorAll('#users tr.pick').forEach(tr=>tr.onclick=()=>person(tr.dataset.id));
+ alerts();
+}
+async function alerts(){
+ const a=await get('/api/admin/alerts?status='+document.getElementById('af').value);
+ document.getElementById('alerts').innerHTML=`<tr><th>When</th><th>Type</th><th>Person</th><th>Message</th><th>Status</th><th></th></tr>`+(a.length?a.map(x=>`<tr>
+  <td class="meta">${when(x.ts)}</td><td>${tag(x.alert)}</td><td><a href="#person" data-id="${x.user_id}" class="pl">${esc(NAMES[x.user_id]||x.user_id)}</a></td>
+  <td class="msg">${esc(x.message)}</td><td class="${x.alert_status}">${x.alert_status}</td>
+  <td>${x.alert_status==='open'?`<button data-ev="${x.id}">Mark handled</button>`:''}</td></tr>`).join(''):'<tr><td colspan="6" class="meta">No alerts</td></tr>');
+ document.querySelectorAll('#alerts button').forEach(b=>b.onclick=async()=>{await fetch('/api/admin/alerts/'+b.dataset.ev,{method:'POST',headers:{...H,'Content-Type':'application/json'},body:'{"status":"handled"}'});load()});
+ document.querySelectorAll('#alerts a.pl').forEach(a=>a.onclick=()=>person(a.dataset.id));
+}
+async function person(id){
+ current=id;document.querySelectorAll('#users tr.pick').forEach(tr=>tr.classList.toggle('sel',tr.dataset.id===id));
+ const j=await get('/api/admin/users/'+id),p=j.profile;
+ const g=j.records.filter(r=>/blood sugar (\d+)/.test(r.text)).map(r=>({x:r.ts.slice(5,10),y:+r.text.match(/blood sugar (\d+)/)[1]})).reverse();
+ document.getElementById('person').innerHTML=`<h2>${esc(p.name)} · ${p.age} · ${esc(p.gender)}</h2><div class="g11">
+  <div><dl><dt>Conditions</dt><dd>${esc(p.conditions.join(', '))}</dd><dt>Medicines</dt><dd>${p.medications.map(m=>`${esc(m.name)} <span class="meta">(${esc(m.kind)})</span>`).join('<br>')}</dd>
+  <dt>Activity</dt><dd>${esc(p.activity)}</dd><dt>Mobility</dt><dd>${esc(p.mobility)}</dd><dt>Eating</dt><dd>${esc(p.diet)}</dd><dt>Goal</dt><dd>${esc(p.goal)}</dd></dl>
+  <h2 style="margin-top:10px">Blood sugar from their records</h2><canvas id="glu"></canvas>
+  <h2 style="margin-top:10px">Records</h2><div class="scroll"><table>${j.records.map(r=>`<tr><td class="meta">${when(r.ts)}</td><td>${esc(r.text.replace('[demo] ',''))}</td></tr>`).join('')||'<tr><td class="meta">none</td></tr>'}</table></div></div>
+  <div><h2>Conversations (${j.events.length})</h2><div class="scroll" style="max-height:640px"><table>${j.events.map(e=>`<tr><td class="meta">${when(e.ts)}<br>${e.alert?tag(e.alert):esc(label(e.route))}
+   ${e.safety_rules?`<br><span class="meta">rules ${esc(e.safety_rules)}</span>`:''}</td><td><div class="msg q">${esc(e.message)}</div><details><summary class="meta">answer · ${e.latency_s??'–'} s · $${(e.cost||0).toFixed(4)}</summary><div class="msg">${esc(e.answer)}</div></details></td></tr>`).join('')}</table></div></div></div>`;
+ chart('glu',{type:'line',data:{labels:g.map(x=>x.x),datasets:[{label:'mg/dL',data:g.map(x=>x.y),borderColor:css('--c1'),tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+ document.getElementById('person').scrollIntoView({behavior:'smooth'});
+}
+document.getElementById('af').onchange=alerts;
+load();setInterval(()=>{load();if(current)get('/api/admin/users/'+current)},30000);
+</script></body></html>

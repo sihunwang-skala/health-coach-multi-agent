@@ -38,6 +38,12 @@ def profile_text(u: dict) -> str:
             f"goal: {u['goal']}")
 
 
+def full_profiles() -> list[dict]:
+    """Server-side only (user and admin screens): the stored profiles WITH names. Not an MCP tool, so no agent or LLM
+    can read names."""
+    return [json.loads(p) for (p,) in _db().execute("SELECT profile FROM users ORDER BY id").fetchall()]
+
+
 @mcp.tool
 def get_profile(user_id: str) -> dict:
     """The user's health profile as text (masked: no name)."""

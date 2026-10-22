@@ -46,14 +46,27 @@ def _parse(text: str) -> dict:
             return {}
 
 
-class OpenAIJSON:
-    """LangChain ChatOpenAI in JSON mode (LCEL runnable: invoke / batch)."""
+THINK_STEPS = {"supervisor", "writer", "writer_retry", "baseline_answer", "judge"}
 
-    def __init__(self, model: str = "gpt-4o-mini", max_concurrency: int = 16):
+
+class OpenAIJSON:
+    """LangChain ChatOpenAI in JSON mode (LCEL runnable: invoke / batch). Reasoning models (gpt-5 / gpt-6 families) get a
+    reasoning effort per step: 'think' steps (routing, answer writing, judging) a little reasoning, the high-volume steps none."""
+
+    def __init__(self, model: str = "gpt-6-luna", max_concurrency: int = 16, effort_fast: str = "none", effort_think: str = "low"):
         from langchain_openai import ChatOpenAI
 
-        self.chat = ChatOpenAI(model=model, temperature=0, model_kwargs={"response_format": {"type": "json_object"}})
+        kw = {"model_kwargs": {"response_format": {"type": "json_object"}}}
+        if model.startswith(("gpt-5", "gpt-6", "o")):
+            self.fast = ChatOpenAI(model=model, reasoning_effort=effort_fast, **kw)
+            self.think = ChatOpenAI(model=model, reasoning_effort=effort_think, **kw)
+        else:
+            self.fast = self.think = ChatOpenAI(model=model, temperature=0, **kw)
+        self.chat = self.fast
         self.max_concurrency = max_concurrency
+
+    def _client(self, step: str):
+        return self.think if step in THINK_STEPS else self.fast
 
     @staticmethod
     def _count(step, msg, usage):
@@ -61,12 +74,12 @@ class OpenAIJSON:
         usage.add(step, u.get("input_tokens", 0), u.get("output_tokens", 0))
 
     def json(self, step, messages, usage):
-        msg = self.chat.invoke(messages, config={"run_name": step})
+        msg = self._client(step).invoke(messages, config={"run_name": step})
         self._count(step, msg, usage)
         return _parse(msg.content)
 
     def json_batch(self, step, batch, usage):
-        msgs = self.chat.batch(batch, config={"max_concurrency": self.max_concurrency, "run_name": step})
+        msgs = self._client(step).batch(batch, config={"max_concurrency": self.max_concurrency, "run_name": step})
         for m in msgs:
             self._count(step, m, usage)
         return [_parse(m.content) for m in msgs]

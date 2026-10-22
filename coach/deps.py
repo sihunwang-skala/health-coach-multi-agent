@@ -37,4 +37,5 @@ def default_container() -> Container:
     from mcp_servers.user_server import mcp as users
 
     s = Settings()
-    return Container(settings=s, llm=OpenAIJSON(s.model), papers_server=papers, users_server=users)
+    return Container(settings=s, llm=OpenAIJSON(s.model, effort_fast=s.effort_fast, effort_think=s.effort_think),
+                     papers_server=papers, users_server=users)

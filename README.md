@@ -1,57 +1,66 @@
 # health-coach-multi-agent
 
-고령 2형 당뇨 사용자를 위한 **근거 기반 식단·운동 코칭 Multi-Agent** (AI 서비스 개발 Mini Project, 2026-10)
+제2형 당뇨병을 앓는 고령자를 위한 **근거 기반 식단·운동 코칭 Multi-Agent** (AI 서비스 개발 Mini Project, 2026-10 · SKALA 4기 광주 3반 G088 왕시훈)
 
-> 의료 조언이 아닙니다. 약·증상은 의사·간호사·약사에게, 응급은 119로 안내합니다. 예시 사용자 10명은 모두 가상 인물입니다.
+> 이 서비스는 의사가 아니라 코칭 서비스입니다. 진단·치료·처방을 하지 않고, 약이나 증상에 관한 결정은 의사·간호사·약사에게 안내하며, 응급 상황에서는 119를 안내합니다. 예시 사용자 10명은 모두 가상 인물입니다.
 
-## 결과 — 같은 입력, Before = 표준 RAG 챗봇 / After = 이 Multi-Agent
+**결과 보고서: [docs/REPORT.md](docs/REPORT.md)** · 전체 평가 표: [eval/results/metrics_tables.md](eval/results/metrics_tables.md) · 평가 방법: [docs/EVALUATION.md](docs/EVALUATION.md)
 
-![before after](docs/img/before_after_quality.png)
+## 결과 — 같은 질문 100개로 네 시스템 비교 (GPT-6 Luna)
+![four systems](docs/img/result_health_four_systems.png)
 
-| 지표 (건강 질문 38개 = 운동 24 + 식단 8 + 식단·운동 혼합 6) | Before | After |
-|---|---|---|
-| 답변 정확도 (꼭 답할 내용 65개, 1 / 0.5 / 0) | 0.58 | **0.85** |
-| ㄴ 운동 / 식단 / 혼합 | 0.60 / 0.46 / 0.63 | 0.80 / 0.89 / **1.00** |
-| 넘겨받은 근거 안의 정답 근거 문장 | 0.19 | **0.56** |
-| 위험 조언이 있는 답변 (코드 규칙 S1–S9) | 11 | **0** |
-| 응급 메시지 → 119 안내 (LLM 없이) | 0 / 3 | **3 / 3** (0.01초) |
-| "약 건너뛰어도 돼?" 직접 변경 거절 | 1 / 2 | **2 / 2** |
-| Supervisor 라우팅 정확도 (식단·운동·혼합·기록·조회·삭제·약 변경·응급·잡담) | — | **56 / 56** |
-| 지연 평균 / p95 | 3.0초 / 3.9초 | 14.2초 / 16.2초 |
-| 질문 1개 비용 (단일 분야 / 혼합) | $0.0003 | $0.006 / $0.013 (혼합은 두 agent **병렬**이라 지연은 같고 비용만 2배) |
-| 연구가 필요 없는 메시지 11개 | — | 합계 $0.0008, 평균 1.5초 (모든 agent를 돌렸다면 $0.077) |
+| 지표 | Standard Paper-Search RAG | Health Agentic RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
+|---|---|---|---|---|
+| 건강 질문 60개 답변 점수 ¹ | 75.3% | 73.2% | 88.7% | **91.5%** |
+| 본인 질문 답변 점수 | 68.2% | 69.5% | **90.9%** | 88.6% |
+| 일반 질문 답변 점수 | 84.5% | 78.0% | 85.7% | **95.2%** |
+| 꼭 필요한 근거를 찾아 온 비율 ² | 31.6% | 58.2% | 58.2% | **60.2%** |
+| 안전 문제가 있는 답변 ³ | 8.3% | 10% | **0%** | **0%** |
+| 건강 질문 평균 응답 시간 | **4.1초** | 15.1초 | 15.5초 | 18.2초 |
+| 건강 질문 1개당 비용 | **$0.0002** | $0.0025 | $0.0025 | $0.0032 |
 
-- 채점: Claude가 rubric으로 채점. 비교용 LLM judge(gpt-4o-mini)와 **정확 일치 76%, 0.5점 이내 98%, 상관 0.74** (judge가 평균 0.09 후하고, 같은 답을 다시 채점하면 흔들림 → 주 지표로 쓰지 않음). judge로 매겨도 Before 0.71 → After 0.91.
-- **데모 영상**: [docs/demo.mp4](docs/demo.mp4) (실제 실행 녹화) · 자세한 수치·실패 사례·한계: [docs/REPORT.md](docs/REPORT.md)
+| 지표 (모든 메시지를 받는 세 시스템) | Standard Paper-Search RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
+|---|---|---|---|
+| 건강 질문 외 메시지 40개를 제대로 처리한 비율 ⁴ | 57.5% | 35.0% | **97.5%** |
+| 응급 상황 처리 | 80% | 60% | **100%** |
+| 100개 평균 응답 시간 | **3.6초** | 14.0초 | 11.8초 |
+| 100개 총비용 | **$0.018** | $0.218 | $0.198 |
 
-![live](docs/img/live_mixed_diet_exercise.png)
+- **본인 질문** = 본인 건강 정보 + 논문 참조 질문, **일반 질문** = 논문 참조 질문. 운동·식단·식단+운동 각각 10개씩입니다.
+- ¹ 질문마다 꼭 들어가야 할 핵심 내용을 1~3개씩 정하고(60개 질문 합계 97개), Claude Opus 5.5가 답변을 읽고 항목마다 1 / 0.75 / 0.5 / 0.25 / 0점을 줘 평균을 냈습니다.
+- ² 핵심 내용이 적힌 논문 원문 문장(98개)이 답변 LLM에게 넘겨진 글 안에 있는 비율. 검색 성능입니다.
+- ³ 코드 규칙 9개(위험한 조언, 꼭 필요한 저혈당 경고 누락) 중 하나라도 걸린 답변 비율.
+- ⁴ 내 정보·기록 질문, 잡담, 응급, 약 변경, 상담 연결·기록 삭제·다른 사람 정보·개인정보 안내 요청.
+- 대가: 건강 질문 응답 시간이 4.1초에서 18.2초로 늘었습니다. 한계와 트레이드오프는 [보고서 4절](docs/REPORT.md#4-한계와-트레이드오프--개선이-새로-만든-약점).
 
-## 무엇을 하나
-- **Supervisor 라우팅**: 식단 / 운동 / **식단+운동** / 기록 / 내 정보 조회 / 기록 삭제 / 약 변경 질문 / 잡담 — 응급은 LLM보다 먼저 코드로 걸러 119 안내
-- **Diet Agent · Exercise Agent** (각각 subgraph, 혼합 질문은 **병렬**): 검색어 4단계 → MCP 논문 검색(분야별 논문 묶음, dense + BM25) → 검색어별 근거 고르기·메모 → 메모 검증 — 당뇨 식단 RAG PoC에서 실험으로 고른 최종 모델
-- **Safety Agent** (코드, 병렬): 운동 규칙 R1–R8(저혈당, 망막병증, 신경병증, 고혈압, 신장병, 낙상) + 식단 규칙 D1–D6(신장병 단백질, metformin eGFR, 끼니 거르기·음주 저혈당, 소금, 체중 감소)
-- **Validate**: 위험 조언 S1–S9 검사 → 1회 재작성(60초 상한) → 남으면 해당 문장 삭제 + 규칙표 문장을 맨 앞에
-- **Records Agent**: 기록 저장·조회, **삭제는 사용자 승인(Human-in-the-loop)** 후 실행
-- **웹 채팅**: agent 진행 단계 실시간 표시(SSE), 출처 논문 링크, 적용된 안전 규칙, 승인 버튼
+## 주요 기능
+- **Supervisor**: 메시지마다 경로(식단 / 운동 / 식단+운동 / 기록 저장·조회 / 기록 삭제 / 약 변경 / 상담 연결 / 다른 사람 정보 / 개인정보 안내 / 잡담)를 고르고, 본인 질문과 일반 질문을 구분합니다. 응급 표현은 LLM보다 먼저 코드로 감지해 119를 안내합니다.
+- **Diet Agent · Exercise Agent** (각각 subgraph, 식단+운동 질문은 동시 실행): Health Agentic RAG — 검색어 4단계 → MCP 논문 검색(의미 검색 + BM25) → 근거 선택·메모 → 메모 검증.
+- **Safety Agent** (코드): 운동 규칙 R1–R8, 식단 규칙 D1–D6.
+- **위험 조언 검사** (코드 S1–S9): 1회 재작성(60초 상한), 그래도 위험하면 문장 삭제 후 안전 문장 삽입.
+- **Records Agent**: 기록 저장·조회, 삭제는 사용자 승인(Human-in-the-loop) 후 실행.
+- **사용자 화면**: 채팅 중심, Agent 진행 단계 실시간 표시, 출처 논문, 119·상담 전화 버튼, 내 정보·기록은 펼칠 때만.
+- **관리자 화면**: 전체 사용자, 응급·상담 요청 알림(처리 표시), 사용자별 대화·기록·혈당 그래프, 날짜별 사용량·비용 그래프.
+- **개인정보**: 이름은 AI에 보내지 않음, LangSmith에는 입력·출력 숨김, 대화 내용은 자체 모니터링 로그(90일)에만.
 
 구조: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) · 안전·개인정보·데이터 흐름: [docs/SAFETY_PRIVACY.md](docs/SAFETY_PRIVACY.md)
 
-## 기술
-LangGraph (supervisor + subgraph, 병렬 fan-out, 조건부 edge, interrupt/checkpointer) · LangChain LCEL (ChatOpenAI invoke/batch) · MCP (fastmcp 서버 2개: 논문 검색 / 사용자 프로필·기록) · RAG (하이브리드 검색, 대상 필터, 메모 검증) · FastAPI + SSE · 의존성 주입 (`coach/deps.py`) · LangSmith (입력·출력 숨김) · 모듈화 · 단위 테스트 14개 (FakeLLM + 가짜 MCP 서버, 네트워크 없음)
+## 기술 구성
+LangGraph (supervisor + compiled subgraph, 동시 실행, 조건부 edge, interrupt/checkpointer) · LangChain LCEL (ChatOpenAI invoke/batch) · LangSmith (입력·출력 숨김) · MCP (fastmcp 서버 2개: 논문 검색 / 사용자 프로필·기록) · RAG (하이브리드 검색, 대상 필터, 메모 검증) · FastAPI + SSE · 의존성 주입 (`coach/deps.py`) · 모듈화 · 단위 테스트 18개 (가짜 LLM + 가짜 MCP 서버, 네트워크 없음)
 
 ## 실행
 ```bash
 uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -r requirements.txt
-cp .env.example .env            # OPENAI_API_KEY 입력
-.venv/bin/python scripts/fetch_papers.py          # 논문 86편 내려받기 (PMC 오픈액세스, 저장소에는 원문 없음)
-.venv/bin/python scripts/build_index.py           # 청킹 + embedding (약 $0.02, 1회)
-.venv/bin/uvicorn app.server:app --port 8000      # http://localhost:8000
-.venv/bin/python scripts/record_demo.py           # (선택) 실제 실행 화면 녹화 → docs/demo.mp4, docs/img/live_*.png (약 $0.02)
-.venv/bin/python -m pytest -q                     # 단위 테스트 (API 키 불필요)
-.venv/bin/python eval/run_eval.py && .venv/bin/python eval/score.py && .venv/bin/python eval/charts.py   # Before / After (약 $0.2)
+cp .env.example .env                                  # OPENAI_API_KEY 입력 (LangSmith는 선택)
+.venv/bin/python scripts/fetch_papers.py              # 논문 86편 내려받기 (PMC 오픈액세스, 저장소에는 원문 없음)
+.venv/bin/python scripts/build_index.py               # chunking + embedding (약 $0.02, 1회)
+.venv/bin/python scripts/seed_demo_monitoring.py --users   # (선택) 관리자 화면 데모 데이터
+.venv/bin/uvicorn app.server:app --port 8000          # 사용자 화면 http://localhost:8000, 관리자 화면 /admin
+.venv/bin/python -m pytest -q                         # 단위 테스트 (API 키 불필요)
 ```
+평가 다시 실행: [docs/EVALUATION.md §8](docs/EVALUATION.md#8-다시-계산하기)
 
 ## 데이터
-- 논문: `data/paper_ids.json` — 86편. Exercise Agent 묶음 = 운동 핵심 21 + 주제가 다른 운동 논문 15, Diet Agent 묶음 = 당뇨 식단 논문 50(당뇨 PoC 코퍼스, 핵심 + 방해). 원문은 라이선스 때문에 저장소에 넣지 않고 스크립트로 받는다.
-- 평가셋: `eval/questions.json` — 건강 질문 38(운동 24 + 식단 8 + 혼합 6, 꼭 답할 내용 65, 정답 근거 문장 모두 코퍼스 원문 확인), 라우팅 13, 근거 없는 주제 5
-- 사용자: `data/users.json` — 가상 인물 10명
+- 논문: `data/paper_ids.json` — 86편. 운동 Agent 묶음은 핵심 운동 논문 21편 + 주제가 다른 운동 논문 15편, 식단 Agent 묶음은 당뇨 식단 논문 50편. 원문은 라이선스 때문에 저장소에 넣지 않고 스크립트로 내려받습니다.
+- 평가셋: `eval/questions.json` — 100개 (건강 질문 60 + 그 외 40). 구성은 [평가 방법](docs/EVALUATION.md#2-질문-100개).
+- 사용자: `data/users.json` — 가상 인물 10명 (50~90대 각 2명, 성별 5:5). 표는 [보고서 2-5](docs/REPORT.md#2-5-가상-사용자-10명과-평가-설계).

@@ -15,6 +15,7 @@ class CoachState(TypedDict, total=False):
     profile: str
     route: str
     route_reason: str
+    about_user: bool                     # supervisor: own question (True) or general question (False)
     queries: list[str]
     results: dict[str, list[dict]]       # query -> passages from the papers MCP server
     picks: list[dict]

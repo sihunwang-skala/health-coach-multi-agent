@@ -14,7 +14,9 @@ except ImportError:  # pragma: no cover
 
 @dataclass(frozen=True)
 class Settings:
-    model: str = os.environ.get("COACH_MODEL", "gpt-4o-mini")
+    model: str = os.environ.get("COACH_MODEL", "gpt-6-luna")
+    effort_fast: str = os.environ.get("COACH_EFFORT_FAST", "none")   # high-volume steps: query chain, picker, short replies
+    effort_think: str = os.environ.get("COACH_EFFORT_THINK", "low")  # supervisor, writer (routing and safety-following errors)
     embed_model: str = os.environ.get("COACH_EMBED_MODEL", "text-embedding-3-small")
     data_dir: Path = ROOT / "data"
     cache_dir: Path = ROOT / "cache"
@@ -24,8 +26,8 @@ class Settings:
     rrf_alpha: float = 0.5     # BM25 weight in the dense + BM25 fusion
     max_retries: int = 1       # safety retry cap ...
     time_budget_s: float = 60  # ... and wall-clock cap, whichever comes first (review item 5)
-    price_in: float = 0.15     # gpt-4o-mini $ per 1M tokens
-    price_out: float = 0.60
+    price_in: float = float(os.environ.get("COACH_PRICE_IN", "0.10"))    # gpt-6-luna $ per 1M tokens (gpt-4o-mini: 0.15)
+    price_out: float = float(os.environ.get("COACH_PRICE_OUT", "0.50"))  # (gpt-4o-mini: 0.60); reasoning tokens bill as output
     price_embed: float = 0.02
     excluded_population: str = r"(?i)gestation|pregnan|child|paediatric|pediatric|adolesc|type 1 diabetes|cystic fibrosis"
     extra: dict = field(default_factory=dict)
