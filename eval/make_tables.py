@@ -81,7 +81,7 @@ def score_rows(hs_list, systems):
     for label, hs in hs_list:
         vals = [sum(pts(s, hs)) / len(pts(s, hs)) for s in systems]
         top.append((label, bold_best([pct(sum(pts(s, hs)), len(pts(s, hs))) for s in systems], vals)))
-        base.append((label.replace("**", ""), [f"{num(sum(pts(s, hs)))} ÷ {len(pts(s, hs))}" for s in systems]))
+        base.append((label.replace("**", ""), [f"{num(sum(pts(s, hs)))} / {len(pts(s, hs))}" for s in systems]))
     return top, base
 
 
@@ -91,7 +91,7 @@ def gold_rows(hs_list, systems):
         tot = sum(len(h["gold"]) for h in hs)
         found = [sum(gold_found(h, RES[s][h["id"]]) for h in hs) for s in systems]
         top.append((label, bold_best([pct(f, tot) for f in found], found)))
-        base.append((label.replace("**", ""), [f"{f} ÷ {tot}" for f in found]))
+        base.append((label.replace("**", ""), [f"{f} / {tot}" for f in found]))
     return top, base
 
 
@@ -118,13 +118,13 @@ def step1():
     mw = [sum(all(r == "S5" for r in v) for v in fl[s].values()) for s in ALL4]
     rows.append(("　└ 위험한 조언을 한 답변", bold_best([pct(x, len(H)) for x in da], da, high=False)))
     rows.append(("　└ 꼭 필요한 저혈당 경고가 빠진 답변", bold_best([pct(x, len(H)) for x in mw], mw, high=False)))
-    base = [("답변 점수 = 받은 점수 합 ÷ 필수 답변 항목", [f"{num(sum(vals[s]))} ÷ {n}" for s in ALL4]),
-            ("만점(1점) 항목", [f"{sum(x == 1 for x in vals[s])} ÷ {n}" for s in ALL4]),
-            ("일부만 답한 항목", [f"{sum(0 < x < 1 for x in vals[s])} ÷ {n}" for s in ALL4]),
-            ("빠졌거나 틀린 항목", [f"{sum(x == 0 for x in vals[s])} ÷ {n}" for s in ALL4]),
-            ("안전 문제가 있는 답변", [f"{x} ÷ {len(H)}" for x in sp]),
-            ("　└ 위험한 조언", [f"{x} ÷ {len(H)}" for x in da]),
-            ("　└ 저혈당 경고 누락", [f"{x} ÷ {len(H)}" for x in mw])]
+    base = [("답변 점수 = 받은 점수 합 / 필수 답변 항목", [f"{num(sum(vals[s]))} / {n}" for s in ALL4]),
+            ("만점(1점) 항목", [f"{sum(x == 1 for x in vals[s])} / {n}" for s in ALL4]),
+            ("일부만 답한 항목", [f"{sum(0 < x < 1 for x in vals[s])} / {n}" for s in ALL4]),
+            ("빠졌거나 틀린 항목", [f"{sum(x == 0 for x in vals[s])} / {n}" for s in ALL4]),
+            ("안전 문제가 있는 답변", [f"{x} / {len(H)}" for x in sp]),
+            ("　└ 위험한 조언", [f"{x} / {len(H)}" for x in da]),
+            ("　└ 저혈당 경고 누락", [f"{x} / {len(H)}" for x in mw])]
     out = table("지표", rows, ALL4) + "\n계산 근거:\n" + table("항목", base, ALL4)
     which = {s: ", ".join(f"{k}({'·'.join(sorted(set(v)))})" for k, v in fl[s].items()) or "없음" for s in ALL4}
     out += "\n안전 문제가 걸린 질문:\n| 시스템 | 질문 (걸린 규칙) |\n|---|---|\n" + "".join(f"| {NAMES[s]} | {which[s]} |\n" for s in ALL4)
@@ -133,12 +133,12 @@ def step1():
 
 def step2():
     top, base = score_rows(GROUPS + TOTALS, ALL4)
-    return table("질문 종류", top, ALL4) + "\n계산 근거 (받은 점수 합 ÷ 필수 답변 항목 수; 질문 종류마다 질문 10개, 전체는 30개):\n" + table("질문 종류", base, ALL4)
+    return table("질문 종류", top, ALL4) + "\n계산 근거 (받은 점수 합 / 필수 답변 항목 수; 질문 종류마다 질문 10개, 전체는 30개):\n" + table("질문 종류", base, ALL4)
 
 
 def step3():
     top, base = gold_rows(GROUPS + TOTALS + [("**전체**", H)], ALL4)
-    return table("질문 종류", top, ALL4) + "\n계산 근거 (찾아 온 정답 근거 문장 ÷ 정답 근거 문장 수):\n" + table("질문 종류", base, ALL4)
+    return table("질문 종류", top, ALL4) + "\n계산 근거 (찾아 온 정답 근거 문장 / 정답 근거 문장 수):\n" + table("질문 종류", base, ALL4)
 
 
 def step4():
@@ -179,8 +179,8 @@ def step5():
         xs = [x for x in O if f(x)]
         ok = [sum(hd[s][x["id"]] for x in xs) for s in MSG3]
         top.append((lbl, bold_best([pct(o, len(xs), 0) if len(xs) == 10 else pct(o, len(xs)) for o in ok], ok)))
-        base.append((lbl.replace("**", "").replace(" ⁴", ""), [f"{o} ÷ {len(xs)}" for o in ok]))
-    out = table("메시지 묶음", top, MSG3) + "\n계산 근거 (제대로 처리한 메시지 ÷ 메시지 수):\n" + table("메시지 묶음", base, MSG3)
+        base.append((lbl.replace("**", "").replace(" ⁴", ""), [f"{o} / {len(xs)}" for o in ok]))
+    out = table("메시지 묶음", top, MSG3) + "\n계산 근거 (제대로 처리한 메시지 / 메시지 수):\n" + table("메시지 묶음", base, MSG3)
     rows = [(lbl, [f"{np.mean([RES[s][x['id']]['latency_s'] for x in O if f(x)]):.1f}초" for s in MSG3]) for lbl, f in OGROUPS]
     out += "\n메시지 묶음별 평균 응답 시간:\n" + table("메시지 묶음", rows, MSG3)
     rows = [(lbl, [f"${sum(RES[s][x['id']]['cost'] for x in O if f(x)):.4f}" for s in MSG3]) for lbl, f in OGROUPS]
@@ -200,9 +200,9 @@ def step5():
     ok100 = sum(A[k]["route"] == v for k, v in exp_all.items())
     split = sum(A[h["id"]].get("about_user") == (h["type"] == "A") for h in H)
     out += ("\nMulti-Agent의 경로 선택 정확도:\n| 항목 | 정확도 | 계산 근거 |\n|---|---|---|\n"
-            f"| Supervisor 경로 선택 (건강 질문 외 40개) | {pct(ok40, 40, 0)} | {ok40} ÷ 40 |\n"
-            f"| Supervisor 경로 선택 (100개 전체) | {pct(ok100, 100, 0)} | {ok100} ÷ 100 |\n"
-            f"| 본인 질문·일반 질문 구분 (건강 질문 60개) | {pct(split, 60, 0)} | {split} ÷ 60 |\n")
+            f"| Supervisor 경로 선택 (건강 질문 외 40개) | {pct(ok40, 40, 0)} | {ok40} / 40 |\n"
+            f"| Supervisor 경로 선택 (100개 전체) | {pct(ok100, 100, 0)} | {ok100} / 100 |\n"
+            f"| 본인 질문·일반 질문 구분 (건강 질문 60개) | {pct(split, 60, 0)} | {split} / 60 |\n")
     return out
 
 
@@ -230,13 +230,13 @@ def final():
             row("질문 1개당 비용 ⁶", [np.mean([RES[s][h["id"]]["cost"] for h in H]) for s in ALL4], lambda x: f"${x:.4f}", False),
             row("질문 1개당 LLM 호출 수", [np.mean([RES[s][h["id"]]["calls"] for h in H]) for s in ALL4], lambda x: f"{x:.1f}회", False)]
     out += table("지표", rows, ALL4)
-    base = [("답변 점수", [f"{num(sum(v[s]))} ÷ {n}" for s in ALL4]),
-            ("본인 질문 답변 점수", [f"{num(sum(pts(s, A)))} ÷ {len(pts(s, A))}" for s in ALL4]),
-            ("일반 질문 답변 점수", [f"{num(sum(pts(s, B)))} ÷ {len(pts(s, B))}" for s in ALL4]),
-            ("만점 항목", [f"{sum(x == 1 for x in v[s])} ÷ {n}" for s in ALL4]),
-            ("0점 항목", [f"{sum(x == 0 for x in v[s])} ÷ {n}" for s in ALL4]),
-            ("근거 비율", [f"{gf[s]} ÷ {tg}" for s in ALL4]),
-            ("안전 문제 답변", [f"{len(fl[s])} ÷ {len(H)}" for s in ALL4])]
+    base = [("답변 점수", [f"{num(sum(v[s]))} / {n}" for s in ALL4]),
+            ("본인 질문 답변 점수", [f"{num(sum(pts(s, A)))} / {len(pts(s, A))}" for s in ALL4]),
+            ("일반 질문 답변 점수", [f"{num(sum(pts(s, B)))} / {len(pts(s, B))}" for s in ALL4]),
+            ("만점 항목", [f"{sum(x == 1 for x in v[s])} / {n}" for s in ALL4]),
+            ("0점 항목", [f"{sum(x == 0 for x in v[s])} / {n}" for s in ALL4]),
+            ("근거 비율", [f"{gf[s]} / {tg}" for s in ALL4]),
+            ("안전 문제 답변", [f"{len(fl[s])} / {len(H)}" for s in ALL4])]
     out += "\n계산 근거:\n" + table("항목", base, ALL4)
     out += "\n### 8-2. 메시지 100개 전체 (모든 메시지를 받는 3가지 시스템에 있는 지표)\nHealth Agentic RAG는 건강 질문 60개에만 쓰는 비교용이라 이 표에서 뺐습니다.\n"
     hd = G["handled"]
@@ -258,11 +258,11 @@ def final():
             row("token 합계 (100개)", [sum(r.get("tokens_in", 0) + r.get("tokens_out", 0) for r in allrows[s]) for s in MSG3],
                 lambda x: f"약 {x / 1e4:.0f}만", False)]
     out += table("지표", rows, MSG3)
-    base = [("건강 질문 답변 점수", [f"{num(sum(v[s]))} ÷ {n}" for s in MSG3]),
-            ("안전 문제 답변", [f"{len(fl[s])} ÷ {len(H)}" for s in MSG3]),
-            ("제대로 처리한 메시지", [f"{sum(hd[s][x['id']] for x in O)} ÷ {len(O)}" for s in MSG3]),
-            ("응급 상황 처리", [f"{sum(hd[s][x['id']] for x in em)} ÷ {len(em)}" for s in MSG3]),
-            ("약 변경 거절", [f"{sum(hd[s][x['id']] for x in md)} ÷ {len(md)}" for s in MSG3])]
+    base = [("건강 질문 답변 점수", [f"{num(sum(v[s]))} / {n}" for s in MSG3]),
+            ("안전 문제 답변", [f"{len(fl[s])} / {len(H)}" for s in MSG3]),
+            ("제대로 처리한 메시지", [f"{sum(hd[s][x['id']] for x in O)} / {len(O)}" for s in MSG3]),
+            ("응급 상황 처리", [f"{sum(hd[s][x['id']] for x in em)} / {len(em)}" for s in MSG3]),
+            ("약 변경 거절", [f"{sum(hd[s][x['id']] for x in md)} / {len(md)}" for s in MSG3])]
     out += "\n계산 근거:\n" + table("항목", base, MSG3)
     return out
 
