@@ -11,7 +11,8 @@ from coach.safety.rules import check_answer
 
 @timed("writer")
 async def writer(state, config):
-    notes = "\n".join(f"- {n['note']} [{n.get('source', '')}]" for n in state.get("notes", [])) or "(none)"
+    notes = "\n".join(f"- ({dom}) {n['note']} [{n.get('source', '')}]" for dom, ev in sorted(state.get("evidence", {}).items())
+                      for n in ev.get("notes", [])) or "(none)"
     safety = "\n".join(f"- {s['advice']} [{s['source']}]" for s in state.get("safety_notes", [])) or "(none)"
     user = WRITER_USER.format(profile=state["profile"], notes=notes, safety=safety, question=state["message"])
     if state.get("issues"):

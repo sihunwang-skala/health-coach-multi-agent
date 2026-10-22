@@ -13,8 +13,10 @@ def test_exercise_route_runs_evidence_and_safety_agents_in_parallel():
     deps, _ = container()
     r = run(run_after(build_graph(), deps, "u1", "Can I try interval training?"))
     assert r["route"] == "exercise"
-    for node in ("supervisor", "make_queries", "retrieve_mcp", "pick_notes", "verify_notes", "safety_agent", "writer", "validate"):
+    for node in ("supervisor", "exercise_agent", "exercise.make_queries", "exercise.retrieve_mcp", "exercise.pick_notes",
+                 "exercise.verify_notes", "safety_agent", "writer", "validate"):
         assert node in r["trace"]
+    assert "diet_agent" not in r["trace"] and r["domains"] == ["exercise"]
     assert r["trace"].count("supervisor") == 1
     assert any(s["id"] == "R1" for s in r["safety_notes"])  # rule table fired for the insulin user
     assert r["notes"] and r["issues"] == []
@@ -29,7 +31,7 @@ def test_emergency_skips_the_llm():
 def test_med_change_gets_fixed_reply():
     deps, _ = container(fake_llm(route="med_change"))
     r = run(run_after(build_graph(), deps, "u1", "Can I skip my insulin before tennis?"))
-    assert "do not skip" in r["answer"].lower() and "make_queries" not in r["trace"]
+    assert "do not skip" in r["answer"].lower() and "exercise_agent" not in r["trace"]
 
 
 def test_unsafe_answer_is_retried_once_then_removed():
@@ -54,7 +56,15 @@ def test_delete_needs_human_approval():
 
 def test_note_not_in_passages_is_dropped():
     llm = fake_llm()
-    llm.rules["picker"] = lambda m: {"best": [1], "notes": [{"note": "Avoid flying across time zones with insulin pumps.", "source": "PMC6546780"}]}
+    llm.rules["exercise_picker"] = lambda m: {"best": [1], "notes": [{"note": "Avoid flying across time zones with insulin pumps.", "source": "PMC6546780"}]}
     deps, _ = container(llm)
     r = run(run_after(build_graph(), deps, "u1", "Can I fly across time zones?"))
     assert not r["notes"] and r["dropped_notes"]
+
+
+def test_mixed_question_runs_diet_and_exercise_agents_in_parallel_then_one_writer():
+    deps, _ = container(fake_llm(route="diet_exercise"))
+    r = run(run_after(build_graph(), deps, "u1", "Should I walk after dinner and skip breakfast?"))
+    assert r["domains"] == ["diet", "exercise"]
+    assert "diet_agent" in r["trace"] and "exercise_agent" in r["trace"] and r["trace"].count("writer") == 1
+    assert {"R1", "D3"} <= {s["id"] for s in r["safety_notes"]}   # exercise and diet rules both fired

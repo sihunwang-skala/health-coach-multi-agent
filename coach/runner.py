@@ -22,10 +22,16 @@ async def run_after(graph, deps: Container, user_id: str, message: str, thread_i
     pending = [i.value for t_ in snap.tasks for i in (t_.interrupts or [])]
     s = deps.settings
     return {"system": "after", "answer": st.get("answer", ""), "route": st.get("route", ""), "trace": st.get("trace", []),
-            "timings": st.get("timings", {}), "queries": st.get("queries", []), "notes": st.get("notes", []),
-            "dropped_notes": st.get("dropped_notes", []), "safety_notes": st.get("safety_notes", []),
+            "timings": st.get("timings", {}),
+            "queries": [q for ev in st.get("evidence", {}).values() for q in ev.get("queries") or []],
+            "notes": [n for ev in st.get("evidence", {}).values() for n in ev.get("notes") or []],
+            "dropped_notes": [n for ev in st.get("evidence", {}).values() for n in ev.get("dropped_notes") or []],
+            "domains": sorted(st.get("evidence", {})), "safety_notes": st.get("safety_notes", []),
             "issues": st.get("issues", []), "retries": st.get("retries", 0), "removed": st.get("removed", []),
-            "passages": sorted({h["pid"] for p in st.get("picks", []) for h in st.get("results", {}).get(p["query"], []) if h["pid"] in p["best"]}),
+            "passages": sorted({h["pid"] for ev in st.get("evidence", {}).values() for p in ev.get("picks") or []
+                                for h in (ev.get("results") or {}).get(p["query"], []) if h["pid"] in p["best"]}),
+            "passage_texts": [h["text"] for ev in st.get("evidence", {}).values() for p in ev.get("picks") or []
+                              for h in (ev.get("results") or {}).get(p["query"], []) if h["pid"] in p["best"]],
             "latency_s": round(time.time() - t, 2), "calls": u.calls, "tokens_in": u.tokens_in, "tokens_out": u.tokens_out,
             "embed_tokens": u.embed_tokens, "cost": round(u.cost(s.price_in, s.price_out, s.price_embed), 6),
             "by_step": u.by_step, "interrupt": pending[0] if pending else None, "thread_id": tid}
@@ -45,6 +51,7 @@ async def run_before(deps: Container, user_id: str, message: str) -> dict:
     j = await asyncio.to_thread(deps.llm.json, "baseline_answer", [("user", BASELINE.format(profile=prof, evidence=ev, question=message))], u)
     s = deps.settings
     return {"system": "before", "answer": str(j.get("answer", "")), "route": "rag", "passages": [h["pid"] for h in r["results"]],
+            "passage_texts": [h["text"] for h in r["results"]],
             "titles": {h["pmcid"]: h["title"] for h in r["results"]}, "latency_s": round(time.time() - t, 2), "calls": u.calls,
             "tokens_in": u.tokens_in, "tokens_out": u.tokens_out, "embed_tokens": u.embed_tokens,
             "cost": round(u.cost(s.price_in, s.price_out, s.price_embed), 6), "retries": 0}

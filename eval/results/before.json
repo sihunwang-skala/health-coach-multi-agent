@@ -1090,5 +1090,466 @@
   "embed_tokens": 12,
   "cost": 0.000253,
   "retries": 0
+ },
+ "Maria-D1": {
+  "kind": "health",
+  "user": "u01",
+  "q": "Is one can of soda a day really that bad for me?",
+  "system": "before",
+  "answer": "Yes, consuming one can of soda a day can be detrimental to your health, especially with type 2 diabetes. Sugar-sweetened beverages (SSBs) like soda are linked to weight gain, increased risk of cardiovascular disease (CVD), and higher mortality rates. Each can of soda typically contains about 35-37.5 grams of sugar and 140-150 calories, contributing significantly to your daily caloric intake and added sugar consumption [PMC8778490]. Studies show that consuming one or more SSBs daily is associated with an 8% higher risk of CVD mortality for each additional serving [PMC8778490]. Additionally, SSBs can negatively impact blood sugar levels, making it harder to manage diabetes effectively. Reducing or eliminating soda from your diet could help lower your blood sugar after meals and improve overall health.",
+  "route": "rag",
+  "passages": [
+   4625,
+   4596,
+   4613,
+   4598,
+   4626
+  ],
+  "passage_texts": [
+   "Consistent with the literature on clinical outcomes, evidence has shown a link between SSB intake and mortality. Our previous analysis in the Nurses’ Health Study (NHS) and Health Professional Follow-Up study (HPFS) found a positive dose–response association between SSBs and mortality that was largely driven by CVD mortality, with stronger associations observed among women than among men73. Consuming two or more SSBs per day was associated with a 31% higher risk of death from CVD (RR 1.31, 95% CI 1.15–1.50) than consuming none or less than one SSB per month73. A 2021 meta-analysis of six cohort studies found an 8% higher risk of CVD mortality per one serving per day increment in SSB (RR 1.08, 95% CI 1.04–1.13)40.",
+   "Obesity is a complex condition that results from various physiological, environmental, behavioural and sociopolitical factors, which all contribute to a positive energy balance. Maintaining a healthy weight is in large part a function of modifiable lifestyle choices4 that are shaped by the broader food environment, including availability, price and marketing5. Among these factors, sugar-sweetened beverages (SSBs) have emerged as an important risk factor, with a robust body of evidence linking SSBs to weight gain and risk of T2DM, cardiovascular disease (CVD) and certain cancers6. Collectively, SSBs are the largest source of added sugar in the diet; a typical 12 fl oz (355 ml) serving of soda delivers 35.0–37.5 g of sugar and 140–150 calories (Box 1). Numerous health authorities have called for reductions in SSB consumption. In addition, a number of public policies have been implemented to limit SSB intake in order to improve health and curtail escalating health-care costs.",
+   "Consistent with the literature on weight gain and T2DM, accumulating evidence has also linked intake of SSBs to risk of CVD. For example, a meta-analysis of seven prospective cohort studies found that SSB consumption was associated with a 9% higher risk of CVD when comparing extreme categories of intake (none or less than one per month versus one or more per day) (relative risk (RR) 1.09, 95% CI 1.01–1.18)40. The association was linear, with each one-serving per day increase in SSB intake associated with an 8% higher risk of CVD (RR 1.08, 95% CI 1.02–1.14). In stratified analysis, each serving per day increment was associated with a 15% higher risk of CHD (RR 1.15, 95% CI 1.09–1.22), whereas no significant association was observed with stroke (RR 1.05, 95% CI 0.95–1.16)40.",
+   "According to national survey data from the USA, intake of SSBs has declined modestly since the early 2000s7, but consumption levels remain high. Between 2011 and 2014, US adults were estimated to consume 145 kcal per day from SSBs, which corresponds to 6.5% of daily calories8. This intake level alone nearly meets the daily recommendation of no more than 10% of total calories coming from added sugar9 or free sugar (added sugars plus sugars that are naturally present in honey, syrup and fruit juices)10 suggested by multiple health authorities including the Dietary Guidelines for Americans and WHO. In the US population, higher intakes have been reported among youth and young adults, among non-Hispanic Black individuals and among Hispanic men and women, compared with other demographics8. These intake trends track with disparities in obesity and chronic disease prevalence. Similar trends of a decline or plateauing of SSB intake have been observed in other high-income countries. By contrast, intake of SSBs is increasing in many low-income and middle-income countries (LMICs), as widespread urbanization and economic development have increased the availability of these beverages5. A survey of SSB consumption in adults in 187 countries found that intake was higher in middle-income countries compared with either high-income or low-income countries11. Of the seven super-regions (groupings of world regions) evaluated, SSB consumption was highest in Latin America and the Caribbean, with a steady rise in intake from 1990 to 2015, and intake was lowest in Asia, with generally higher intakes observed among men than among women in all global regions (Fig. 1). In comparing global intakes of SSBs in individual countries in 1990 and 2015, marked increases are observed in countries in South and Central America, and parts of southern and north Africa (Fig. 2).Fig.",
+   "In 2019, the Reasons for Geographic and Racial Differences in Stroke (REGARDS) study, found that each additional serving per day of SSBs was associated with an 11% higher risk of all-cause mortality (RR 1.11, 95% CI 1.03–1.19)74. However, no association was observed for CHD mortality, possibly owing to the limited number of cases. Positive associations between SSB intake and mortality have also been found in the UK Biobank75 and the Western New York Exposures and Breast Cancer (WEB) Study76. In a 2020 study in Mexico, an estimated 6.9% (95% CI 5.4–8.5%) of adult deaths were attributable to SSBs, representing 40,842 excess deaths per year77. Similarly, based on NHANES data for 2012, an estimated 7.4% of all cardiometabolic-related deaths in the US were attributable to intake of SSBs78."
+  ],
+  "titles": {
+   "PMC8778490": "The role of sugar-sweetened beverages in the global epidemics of obesity and chronic diseases"
+  },
+  "latency_s": 3.53,
+  "calls": 1,
+  "tokens_in": 1401,
+  "tokens_out": 175,
+  "embed_tokens": 13,
+  "cost": 0.000315,
+  "retries": 0
+ },
+ "Grace-D1": {
+  "kind": "health",
+  "user": "u03",
+  "q": "How much protein should I eat per day?",
+  "system": "before",
+  "answer": "For older adults, including those over 60 years, the recommended daily protein intake is approximately 1.2 to 1.6 grams of protein per kilogram of body weight. This is higher than the general recommendation of 0.8 g/kg/day for younger adults. Given your age and condition, aiming for around 1.2 to 1.6 g/kg/day would be beneficial to help maintain muscle mass and strength, especially since older adults often experience anabolic resistance, which means they require more protein to achieve the same muscle-building effects as younger individuals [PMC8599603]. Additionally, it's advisable to space your protein intake throughout the day, aiming for about 20 to 35 grams of protein per meal to maximize muscle protein synthesis [PMC8599603]. If you have specific dietary restrictions or concerns due to your chronic kidney disease, it's best to consult with a healthcare provider or a dietitian for personalized advice.",
+  "route": "rag",
+  "passages": [
+   4340,
+   4337,
+   4335,
+   4338,
+   4526
+  ],
+  "passage_texts": [
+   "Optimal protein intake following exercise is body mass dependent and can be calculated by 0.24–0.3 g/kg of body mass for young people (< 30 years of age), and 0.4 g/kg of body mass for adults (> 60 years of age) [21]. BM, body massTable 1Examples of protein sources for athletes (or practical meals for older adults) at ~ 20 g, and optimal meals for older adults at ~ 35 g at each eating occasionGuide/practical~ 21 g pro/mealOptimal (> 60 years)~ 35 g pro/mealBreakfast/post-training1 cup cooked oatmeal (6 g protein)1/2 scoop whey protein isolate (15 g protein)2 eggs (12 g protein)2 slices whole grain bread (7 g protein)½ cup low fat cottage cheese (14 g protein)Morning snack1/2 cup low fat cottage cheese (14 g protein)10 roasted almonds (6 g protein)1 scoop whey protein isolate (30 g protein)¼ cup Greek yogurt (5 g protein)Lunch100 g turkey breast (15 g protein)2 slices whole grain bread (7 g protein)100 g turkey breast (15 g protein)2 slices whole grain bread (7 g protein)1.5 cups 1% milk (13 g protein)Dinner/post-training3 oz chicken breast (24 g protein)4 oz chicken breast (32 g protein)½ cup cooked quinoa (3.5 g protein)Pre-sleep20 g casein protein shake35 g casein protein shake",
+   "Indeed, long-term RE can augment anabolic sensitivity and augment skeletal muscle mass and strength in older adults [20]. However, older people experience a decline in the skeletal muscle protein synthetic response to protein ingestion, termed anabolic resistance [21] and, therefore, nutritional strategies to optimize the benefits of physical activity are imperative. Of note, ingesting 20 g of whey protein (the quantity recommended to enhance MPS in most athletes [22]) does not maximize MPS in older people either acutely [19] or chronically when combined with RE [23]. These findings are supported by data suggesting that older people require ~ 40% more dietary protein after exercise to maximize MPS, compared to that required by younger adults [21]. For example, a serving of 35 g (~ 0.4 g/kg/serving) of protein is required to maximize rates of MPS for the average US male over 60 years (88 kg) [24]. Nonetheless, we acknowledge that ~ 35 g of protein can be a daunting quantity of protein for older people to ingest at a single meal. Despite a lower protein target than “optimal”, aiming to consume protein quantities similar to athlete recommendations (~ 20 g protein/serving) may be considered a more practical approach. Furthermore, 20 g protein per eating occasion will also contribute to achieving augmented daily protein recommendations for older people (1.2–1.6 g/kg/day) [25]. To this end, a daily timetable of protein ingestion for both athletes and older people is displayed in Fig. 1 with examples of protein-containing meals at the suggested doses in Table 1.",
+   "Recommendations for daily protein intakes for athletes (1.2–2.0 g/kg/day) [9] are above the Institute of Medicine guidelines for adults (> 18 years) (0.8 g/kg/day) [10]. Athletes require a greater dietary protein intake to support the repair and replacement of damaged proteins, muscle hypertrophy (if desired), and the reconditioning of various tissues (muscle, bone, and connective tissues) following training [10]. Further, a recent meta-analysis showed that protein supplementation accounted for 9% of total strength gained during resistance exercise (RE) training [11]. A previous meta-analysis [12] has also highlighted the benefits of increasing daily protein intake on lean body mass (LBM) during training in both younger and older adults. Protein supplementation may also facilitate adaptation to endurance exercise training. Greater improvements in V̇O2max were observed following 12 weeks of cycling in a group ingesting additional casein protein compared to a placebo group [13].",
+   "Spacing protein ingestion more evenly throughout the day (3–4 doses or meals, 0.25 g/kg and 0.4 g/kg of protein in young and older people, respectively) is also considered optimal to maximize the benefits of daily protein ingestion and benefits from exercise-induced anabolic sensitivity [26]. Typically, adults in both the USA [27] and the UK [28] exhibit a highly skewed pattern of daily protein intake where more than 50% of total protein is consumed at one meal (lunch or dinner).",
+   "The current recommendation for protein consumption is based on the lowest amount of protein required to maintain a neutral nitrogen balance. Therefore, the amount of protein ingested should be enough to balance the loss of nitrogen throughout the day and enough to maintain bodily proteins. The actual protein consumption recommendations are based on a meta-analysis conducted by Rand et al. (2003) [116], who evaluated 19 nitrogen balance studies performed in adults. The results of this study originated the current recommendations of 0.66 g/kg/d and 0.8 g/kg/d as the estimated average requirement (EAR) and recommended dietary allowance (RDA), respectively. However, some criticism has been raised in recent years whether these recommendations are really optimal for older adults."
+  ],
+  "titles": {
+   "PMC8599603": "Eat like an athlete: insights of sports nutrition science to support active aging in healthy older adults",
+   "PMC8746908": "Strategies to Prevent Sarcopenia in the Aging Process: Role of Protein Intake and Exercise"
+  },
+  "latency_s": 3.63,
+  "calls": 1,
+  "tokens_in": 1281,
+  "tokens_out": 191,
+  "embed_tokens": 9,
+  "cost": 0.000307,
+  "retries": 0
+ },
+ "Grace-D2": {
+  "kind": "health",
+  "user": "u03",
+  "q": "Is my metformin still okay with my kidneys?",
+  "system": "before",
+  "answer": "To determine if your metformin is still appropriate given your chronic kidney disease (CKD) stage 3, it's important to assess your estimated glomerular filtration rate (eGFR). Metformin can be continued if your eGFR is between 45 and 60 mL/min/1.73 m², but it should be used with caution and monitored closely if your eGFR is between 30 and 45 mL/min/1.73 m². If your eGFR falls below 30 mL/min/1.73 m², metformin should be discontinued (source: [PMC4170131]). Given your age and frailty, it's crucial to have regular check-ups with your healthcare provider to monitor your kidney function and adjust your medication as needed. Always consult your doctor before making any changes to your medication.",
+  "route": "rag",
+  "passages": [
+   1501,
+   1502,
+   1567,
+   1500,
+   1825
+  ],
+  "passage_texts": [
+   "Despite these concerns and published case reports (85), current data indicate the overall risk of metformin-associated lactic acidosis is low (86,87). It has been suggested that eGFR may be a more appropriate measure to assess continued metformin use considering that the serum creatinine level can translate into widely varying eGFR levels depending on race, age, and muscle mass (73). In turn, a recent review proposed metformin use should be reevaluated at an eGFR <45 mL/min/1.73 m2 with a reduction in maximum dose to 1,000 mg/day and discontinued when <30 mL/min/1.73 m2 (Table 4) (83). However, metformin should be discontinued in situations that are associated with a high risk of acute kidney injury, such as sepsis, hypotension, acute myocardial infarction, and use of radiographic contrast or other nephrotoxic agents.",
+   "Recommended dose adjustments for metformin based on eGFR eGFR (mL/min/1.73 m2): ≥60; Proposed action: No contraindication to metformin eGFR (mL/min/1.73 m2): Monitor kidney function annually eGFR (mL/min/1.73 m2): <60 and ≥45; Proposed action: Continue use eGFR (mL/min/1.73 m2): Increase monitoring of renal function (every 3–6 months) eGFR (mL/min/1.73 m2): <45 and ≥30; Proposed action: Prescribe metformin with caution eGFR (mL/min/1.73 m2): Use lower dose (e.g., 50%, or half-maximal dose) eGFR (mL/min/1.73 m2): Closely monitor renal function (every 3 months) eGFR (mL/min/1.73 m2): Do not start new patients on metformin eGFR (mL/min/1.73 m2): <30; Proposed action: Stop metformin",
+   "Recommended dose adjustments for metformin based on eGFR eGFR (mL/min/1.73 m2): ≥60; Proposed action: No contraindication to metformin eGFR (mL/min/1.73 m2): Monitor kidney function annually eGFR (mL/min/1.73 m2): <60 and ≥45; Proposed action: Continue use eGFR (mL/min/1.73 m2): Increase monitoring of renal function (every 3–6 months) eGFR (mL/min/1.73 m2): <45 and ≥30; Proposed action: Prescribe metformin with caution eGFR (mL/min/1.73 m2): Use lower dose (e.g., 50%, or half-maximal dose) eGFR (mL/min/1.73 m2): Closely monitor renal function (every 3 months) eGFR (mL/min/1.73 m2): Do not start new patients on metformin eGFR (mL/min/1.73 m2): <30; Proposed action: Stop metformin",
+   "Metformin use is contraindicated, per current U.S. Food and Drug Administration (FDA) prescribing information, in men with a serum creatinine ≥1.5 mg/dL and in women with a serum creatinine ≥1.4 mg/dL. Metformin should also be used cautiously in patients with conditions that interfere with the metabolism and excretion of lactic acid, such as heart failure and liver disease, and during acute illness and/or instances of tissue hypoxia (82,83). Although lactic acidosis occurs in people with diabetes regardless of metformin use, the role of metformin per se in lactic acidosis is controversial at best. However, metformin may predispose to lactic acidosis in the event of serious intercurrent illness (84).",
+   "Metformin is still a first-choice drug, also for elderly people. Its safety in the treatment of seniors has been confirmed in several studies. Its advantages are: efficiency in decreasing HbA1c level, beneficial effect on body mass and lipid profile, and the fact that metformin is a medication which improves the prognosis [18]. Nevertheless, this drug has its limitations when used with seniors. It is not recommended for persons who suffer from renal insufficiency (GFR < 30 ml/min/1.73 m2), cardiac insufficiency (NYHA class III and IV), and chronic respiratory failure. Metformin should be also stopped in hypoxia (e.g. cardiac infarction, stroke, severe infection, dehydration). Therapy should start with small doses, e.g. 500 mg once a day, which are consecutively increased every 7-14 days until the final dose is obtained, to avoid side effects causing problems with the digestive system. The maximum dose in elderly should be 2000 mg or less, depending on renal insufficiency."
+  ],
+  "titles": {
+   "PMC4170131": "Diabetic Kidney Disease: A Report From an ADA Consensus Conference",
+   "PMC5509969": "Diabetes in the elderly"
+  },
+  "latency_s": 3.14,
+  "calls": 1,
+  "tokens_in": 1211,
+  "tokens_out": 177,
+  "embed_tokens": 11,
+  "cost": 0.000288,
+  "retries": 0
+ },
+ "Robert-D1": {
+  "kind": "health",
+  "user": "u04",
+  "q": "Are my daily beers a problem for my diabetes?",
+  "system": "before",
+  "answer": "Consuming alcohol, such as beer, can impact blood glucose levels and overall diabetes management. While moderate alcohol consumption may not be harmful for everyone, it can lead to fluctuations in blood sugar levels, especially if consumed in excess or without food. Alcohol can also interfere with the effectiveness of diabetes medications like metformin. Additionally, regular consumption of two or three beers a day may contribute to weight gain and affect your dietary habits, which are crucial for managing type 2 diabetes effectively [PMC10903815]. It's important to monitor your blood glucose levels and consult with your healthcare provider about your alcohol intake to ensure it aligns with your diabetes management plan.",
+  "route": "rag",
+  "passages": [
+   954,
+   3324,
+   983,
+   990,
+   4379
+  ],
+  "passage_texts": [
+   "Thus, allostasis describes the body’s ability to adjust to stressful environments through various physiological processes [3] which has been studied and becomes especially relevant in the context of diabetes [4]. Patients undergo persistent physiological stress due to dysregulation in insulin and glucose metabolism, leading to adaptations in hormonal and neural systems aimed at restoring balance [5]. Irregular eating patterns or frequent snacking can significantly impact the body’s allostatic load, posing challenges to glucose regulation and potentially contributing to insulin resistance. Prioritizing changes lifestyle holds particular significance in effectively managing diabetes. Studies have shown that after 4 months of adequate nutritional education, both the dietary intake and lifestyle of patients significantly improve [6]; also, lifestyle adjustments can reduce the incidence of type 2 diabetes (RR = 0.53 (95% CI: 0.41, 0.67)), p < 0.001 according to data from a meta-analysis [7].",
+   "The recommended activities are all pure or predominantly aerobic with the recommendation to avoid a competitive engagement longer than one hour [30]. It is advisable to use a cardiofrequency device that allows instantaneous measurement of the heart rate and to set audible alarms if the set frequency is exceeded. The exercise session should last 30 to 60 min, and blood glucose could be checked one hour after exercise to decide whether or not to take carbohydrates. Anaerobic sports or sports characterized by isometric or strength exercises, fighting sports with physical contact, activities involving frequent head shaking and scuba diving require special caution and should be carefully evaluated on a case-by-case basis.",
+   "There appears to be a correlation between the frequency of daily meals and both chronic diseases and positive changes in biochemical markers related to type 2 diabetes. Based on the studies reviewed in this work, it is hypothesized that consuming fewer meals during the day is associated with improvements in fasting plasma glucose and C-peptide in subjects with type 2 diabetes. In addition to the benefit of frequency-based feeding control in the control of blood glucose excursions, it has been demonstrated that reduced meal frequency is also considered beneficial for weight loss.",
+   "Individuals with diabetes face challenges in adopting healthy eating habits, particularly within the obesogenic environment caused by current lifestyle and unhealthy dietary patterns, leading to persistence of deleterious eating practices, impacting both health and metabolic control. Reducing meal frequency appears to be an optimal approach since, according to recent studies, the intake of 2 to 3 meals instead of 6 meals per day promotes weight loss and glycemic control in subjects with type 2 diabetes. Time Restricted Feeding is a dietary strategy that does not restrict caloric intake or food composition, it only addresses feeding periodicity by prioritizing intake during the active phase and restricting it to less than 10 hours per day. This approach has been demonstrated benefits in reducing fasting and postprandial glycemic variability as well as weight loss. Skipping breakfast, a common practice influenced by current lifestyle, disrupts the circadian cycle leading to postprandial hyperglycemia, insulin deficiency, increased glycosylated hemoglobin, and weight gain. On the other hand, pre-bedtime snacks have not been shown to benefit diabetic subjects in glycemic control.",
+   "Many individuals struggle to balance the demands of CFRD management with other obligations [9]. In fact, studies reveal that relatively few people with CFRD monitor their blood glucoses consistently. In one study, only 50% of individuals monitored their glucoses daily, some monitoring as little as every 14 days [9]. Some cite forgetting or attempting to avoid pain as reasons for inconsistent monitoring [2], [9] (Table 3). In addition, some parents feel that they are inflicting pain upon their child by checking their blood glucose levels and avoid monitoring due to child resistance. Many individuals who are accustomed to performing CF care at home report embarrassment at having to manage their CFRD in public settings [2]."
+  ],
+  "titles": {
+   "PMC10903815": "Meal frequency strategies for the management of type 2 diabetes subjects: A systematic review",
+   "PMC7739324": "Beneficial Effects of Physical Activity in Diabetic Patients",
+   "PMC8649788": "Cystic fibrosis-related diabetes: The patient perspective☆"
+  },
+  "latency_s": 2.34,
+  "calls": 1,
+  "tokens_in": 966,
+  "tokens_out": 133,
+  "embed_tokens": 10,
+  "cost": 0.000225,
+  "retries": 0
+ },
+ "Linda-D1": {
+  "kind": "health",
+  "user": "u05",
+  "q": "Is it okay if I skip breakfast?",
+  "system": "before",
+  "answer": "Skipping breakfast can have mixed effects, especially for individuals with type 2 diabetes. Some studies suggest that skipping breakfast may lead to poorer glycemic control and higher postprandial glucose levels, particularly if you tend to eat larger meals later in the day [PMC7031264]. However, other evidence indicates that skipping breakfast does not necessarily cause negative metabolic effects, as the duration of overnight fasting may play a significant role [PMC7031264]. Given your age, diabetes, and concerns about falling, it might be beneficial to establish a more regular eating schedule that includes breakfast to help manage your blood sugar levels and maintain energy throughout the day. It's important to consult with your healthcare provider to tailor a meal plan that suits your needs and lifestyle.",
+  "route": "rag",
+  "passages": [
+   2714,
+   2710,
+   2713,
+   2711,
+   2709
+  ],
+  "passage_texts": [
+   "Likewise, despite routine evidences indicating that skipping breakfast resulted in an increased BMI and an overcompensation of energy consumed later during the day, no causality has been established40,41. Zilberter and Zilberter also discussed indirect potential benefits of omitting breakfast in relation to intermittent fasting where the suppression of appetite could lead to voluntary caloric reduction and caloric restriction may have profound metabolic effects on human health39,42,43.",
+   "Emerging evidence also suggests that chrononutrition is influenced by an individual’s “chronotype”. Chronotype is a behaviour manifestation of an individual’s internal circadian clock system, whereby they can be classified to have a preference for the morning or evening9. Individuals with an “evening chronotype” or also termed “later chronotype” are biologically driven to consume foods later in the day31. There has been a relatively strong association between breakfast skipping and insulin resistance or type 2 diabetes shown in some studies. In a 16-year follow-up cohort study, using the Cox proportional hazards analysis, it was shown that after adjusting for known risk factors of T2D including BMI, US men who skipped breakfast had a 21% higher risk of developing T2D compared with men who consumed breakfast32. In another randomised crossover trial, 10 women underwent a 2-week intervention with a 2-week washout period of either skipping or consuming breakfast. The study demonstrated that omitting breakfast led to a significantly higher energy intake, fasting total and LDL cholesterol, and a significantly lower postprandial insulin sensitivity33.",
+   "However, there is another body of evidence suggesting that breakfast is not the most important meal of the day, rather, it is ‘just another meal’ as there has yet to be an established causal relationship between skipping breakfast and its negative metabolic implications. The authors highlighted that in most breakfast studies comparing the effects of consuming or skipping breakfast, the duration of overnight fast was not accounted for39. This was an important confounder that should be considered. For example, two breakfast consumers both had their last meals at 2200 h the night before, one ate breakfast the next morning at 0600 h compared with one that consumed breakfast only at 1000 h, the difference in duration of overnight fast could potentially be the cause for a prominent difference metabolically. Conversely, regardless of time of meal consumed, similar durations of overnight fast may have resulted in similar metabolic profiles.",
+   "Individuals who have a preference for late-night dinner consumption (later chronotypes) may have a tendency to skip breakfast the following morning34. This may be due to insufficient time to eat during the day or due to reduced hunger in the morning. A large cross-sectional study in healthy Japanese individuals, after adjusting for body mass index (BMI), showed that breakfast skipping was not the sole cause of hyperglycaemia but also a result of late-night dinner consumption35. Kobayashi et al. reported that healthy males who skipped breakfast and then consumed large meals at lunch and dinner, had greater postprandial glucose, especially after dinner36. An acute study in type 2 diabetics, who were classified as later chronotypes and skipped breakfast, had poorer glycaemic control as indicated by their significantly higher HbA1c values31. A cross-sectional study by Sakai et al. reported that there was an independent association of having a late-night dinner and skipping breakfast with poor glycaemic control in individuals with type 2 diabetes37.",
+   "Considerable epidemiological evidences have shown that the disruption of the biological circadian clock is negatively associated with various metabolic diseases such as obesity, cardiovascular disease, gastrointestinal problems and diabetes4,22. Shift workers tend to have a higher basal metabolic index (BMI) compared with day workers23,24. Several studies displayed a negative relationship between shift work and metabolism. Shift workers exhibited a lowered glucose and lipid tolerance following a change from day to night shift work25–27. Insulin resistance was also demonstrated to be more recurrent in shift workers who were 50 years or younger28. Another study equated the risk of shift work to the risk of smoking one pack of cigarettes a day in spite of controlling for other confounders and risk factors29. The complexity of the phenotypic expression of obesity is influenced by numerous factors such as stress, social rhythm, altered patterns of transcriptional genes, altered glucose and lipid homoeostasis, disruption of the central and peripheral oscillators and a decreased thermogenic response during night eating30."
+  ],
+  "titles": {
+   "PMC7031264": "Chrononutrition in the management of diabetes"
+  },
+  "latency_s": 2.66,
+  "calls": 1,
+  "tokens_in": 1079,
+  "tokens_out": 153,
+  "embed_tokens": 8,
+  "cost": 0.000254,
+  "retries": 0
+ },
+ "Sofia-D1": {
+  "kind": "health",
+  "user": "u07",
+  "q": "Are my salty side dishes a problem?",
+  "system": "before",
+  "answer": "Yes, your salty pickled side dishes could be a problem, especially since you have hypertension. It's recommended to restrict sodium intake to less than 2,300 mg per day, and ideally to around 1,500 mg daily for better blood pressure management [PMC8057793]. High sodium intake can contribute to elevated blood pressure, so it's important to maximize approaches to lower your salt intake. You might consider using sodium-free herbs and spices to flavor your meals instead of relying on salty options [PMC4170131]. Additionally, transitioning to fresh, unseasoned foods can help you manage both your blood pressure and diabetes more effectively.",
+  "route": "rag",
+  "passages": [
+   1525,
+   1524,
+   3634,
+   3692,
+   1574
+  ],
+  "passage_texts": [
+   "Nutrient: Use fresh cooked foods, purchase unseasoned options of foods, put sauces/flavorings on side Nutrient: Weight management; Concept: If overweight, work on weight reduction; How?: Decrease calories, increase calorie utilization through a regular exercise program, avoid excessively high-protein diets (i.e., >20% kcal from protein); What?: Balanced proportions of protein, carbohydrate, and fat within individualized approach to maintain euglycemia; Quantity: Based on individually determined ideal/healthy body weight, gradual weight loss toward goal to allow for altered eating pattern, ongoing modifications in diet as weight goal approached and glycemia management is modified",
+   "Nutrient: Fat; Concept: Omega-9 and omega-3 fatty acids as a component of fat source; How?: Enrich diet with olive oil, fish oil, and vegetarian sources of omega-3 fatty acids, de-emphasize saturated fat sources and generic vegetable oils that are enriched in omega-6 fatty acids; What?: Include olive oil/canola oil−based margarines and fats, choose omega-3–enriched whole-grain breads and cereals when available; Quantity: Within meal plan for calories and palatability Nutrient: Sodium; Concept: Maximize approaches to lower sodium and salt intake; How?: Reduce free salt use; What?: Use sodium-free fresh and dried herbs, spices, and herbal blends, when available; Quantity: 1,500–3,000 mg daily; transition toward lower range of intake",
+   "endationsMicronutrients and other dietary recommendationsMicronutrientsNo specific recommendations madeInclusion of micronutrients (chromium, alpha-lipoic acid, magnesium and zinc) as adjunct to standard carebNo specific recommendations madeEnsure adequate micronutrient intake through diet and exogenous sourcesSaltRestricted sodium intake: <2300 mg/daycRestricted intake of dietary salt: <5 g/daycRestricted intake of dietary salt: ≤6 g/dayConcordant with all the current recommendations.",
+   "Micronutrients; ADA: No specific recommendations made; RSSDI: Inclusion of micronutrients (chromium, alpha-lipoic acid, magnesium and zinc) as adjunct to standard careb; ICMR: No specific recommendations made; CoMeND: Ensure adequate micronutrient intake through diet and exogenous sources Salt; ADA: Restricted sodium intake: <2300 mg/dayc; RSSDI: Restricted intake of dietary salt: <5 g/dayc; ICMR: Restricted intake of dietary salt: ≤6 g/day; CoMeND: Concordant with all the current recommendations. Also restrict non-salt sources of sodium (eg ajinomoto) Alcohol/tobacco; ADA: Alcohol allowed in moderation; RSSDI: Avoid alcohol; cessation of tobacco use; ICMR: Moderate alcohol consumption; cessation of any form of tobacco use; CoMeND: Concordant with ICMR guidelines",
+   "Nutrient: Fat; Concept: Omega-9 and omega-3 fatty acids as a component of fat source; How?: Enrich diet with olive oil, fish oil, and vegetarian sources of omega-3 fatty acids, de-emphasize saturated fat sources and generic vegetable oils that are enriched in omega-6 fatty acids; What?: Include olive oil/canola oil−based margarines and fats, choose omega-3–enriched whole-grain breads and cereals when available; Quantity: Within meal plan for calories and palatability Nutrient: Sodium; Concept: Maximize approaches to lower sodium and salt intake; How?: Reduce free salt use; What?: Use sodium-free fresh and dried herbs, spices, and herbal blends, when available; Quantity: 1,500–3,000 mg daily; transition toward lower range of intake"
+  ],
+  "titles": {
+   "PMC4170131": "Diabetic Kidney Disease: A Report From an ADA Consensus Conference",
+   "PMC8057793": "Consensus on Medical Nutrition Therapy for Diabesity (CoMeND) in Adults: A South Asian Perspective"
+  },
+  "latency_s": 2.17,
+  "calls": 1,
+  "tokens_in": 943,
+  "tokens_out": 132,
+  "embed_tokens": 8,
+  "cost": 0.000221,
+  "retries": 0
+ },
+ "James-D1": {
+  "kind": "health",
+  "user": "u08",
+  "q": "Can I have a glass of wine with dinner?",
+  "system": "before",
+  "answer": "Yes, you can have a glass of wine with dinner. Moderate alcohol consumption, such as a glass of wine, is generally considered acceptable for individuals with type 2 diabetes, as long as it is done in moderation and does not interfere with your medications or overall health. However, it's important to monitor your blood sugar levels, as alcohol can affect glucose levels. Since you are on insulin and metformin, be cautious about potential hypoglycemia, especially if you skip meals or exercise. Always consult your healthcare provider for personalized advice.",
+  "route": "rag",
+  "passages": [
+   2294,
+   2272,
+   2295,
+   2282,
+   2297
+  ],
+  "passage_texts": [
+   "Physical activity may be associated with blood glucose fluctuations leading to hypoglycemia. Early hypoglycemia may occur immediately after exercise and delayed or nocturnal hypoglycemia may occur many hours after physical activity, even overnight, following periods of activity in the afternoon and evening [29]. The use of CGMS in our study facilitated the tracking of glucose homeostasis during periods of daily activity, particularly hypoglycemia during nocturnal periods. As stated previously in the Bacchi’s study [19], a single 60 min aerobic exercise session before dinner had the potential to increase the late-onset hypoglycemia risk in patients with type 2 diabetes. However, in the present study there were no sustained glucose-lowering effects or subsequent nocturnal hypoglycemia following the exercise day. This may be attributable to the short timeframe and the moderate-intensity of exercise in our study. So, we support short-term MIE after dinner in patients with type 2 diabetes.",
+   "Postprandial hyperglycemia is associated with an increased risk of diabetes complications [1–4], particularly in patients with type 2 diabetes [5,6]. Therefore, better management of postprandial hyperglycemia is an important target in type 2 diabetes treatment. Despite the use of antihyperglycemic drugs and the consumption of a healthy diet, postprandial hyperglycemia and acute glucose swings remain the main characteristics of patients with type 2 diabetes [7,8]. Therefore, more treatment strategies to reduce the prevalence of postprandial hyperglycemia are required. Structured exercise has long been considered a cornerstone for type 2 diabetes treatment [9]. Many studies have demonstrated that exercising during the postprandial period causes acute reductions in postprandial blood glucose [10–16]. However, post-dinner exercise has not always been differentially investigated, and most of the results have been derived from laboratory studies and no real-life conditions. In China, people are accustomed to exercising after dinner. To our knowledge, such effect of a bout of post-dinner exercise on glycemic levels in Chinese patients with type 2 diabetes has not been reported.",
+   "Previous study findings have demonstrated that blunting of postprandial spikes in glucose improves inflammation, endothelial function and reduces carotid intima-media thickness [30,31]. The current study data indicated that short MIE after dinner improved postprandial hyperglycemia and may improve cardiovascular risk profiles in type 2 diabetes. Most previous studies had been performed in a sedentary environment, in strict laboratory conditions, as the control rather than involving daily activities. Although the interference from possible confounding events would be eliminated under strict laboratory conditions, the ecological effectiveness may have compromised [23]. It would be more easily evidenced that exercise can blunt postprandial hyperglycemia in normal daily activity condition than in a strict laboratory setting. The present study took a 20-min MIE, which was more feasible for sedentary individuals. Greater benefit can be achieved from simple exercise for most inactive patients with diabetes.",
+   "The CGMS data were downloaded to a personal computer and converted into glycemic values for further analysis. The postprandial glucose total area under the curve (tAUC) for the standardized dinner was computed using the trapezoid method. Peak and mean glucose during the exercise session were also calculated. Peak post-dinner glucose values were obtained from the highest value recorded within 2 h or 3 h of dinner onset. Glucose spikes following dinner were calculated as the difference between the peak post-dinner glucose and pre-dinner glucose levels. The mean amplitude of glycemic excursions (MAGE) and other plasma glucose fluctuation parameters, such as the mean blood glucose (MBG) and the standard deviation of blood glucose (SDBG), were calculated.",
+   "We have demonstrated that a short session of moderate-intensity post-dinner exercise improves postprandial hyperglycemia and glycemic fluctuations in Chinese patients with type 2 diabetes, with no potential subsequent hypoglycemia risk. The data presented here could be promising for diabetes self-management education. In the future, it may be helpful to modulate exercise to improve cardiovascular complications in Chinese patients with type 2 diabetes."
+  ],
+  "titles": {
+   "PMC6190726": "Twenty Minute Moderate-Intensity Post-Dinner Exercise Reduces the Postprandial Glucose Response in Chinese Patients with Type 2 Diabetes"
+  },
+  "latency_s": 2.69,
+  "calls": 1,
+  "tokens_in": 1024,
+  "tokens_out": 111,
+  "embed_tokens": 10,
+  "cost": 0.00022,
+  "retries": 0
+ },
+ "Dorothy-D1": {
+  "kind": "health",
+  "user": "u09",
+  "q": "How much should I eat each day at my age?",
+  "system": "before",
+  "answer": "At your age (84 years), it's important to focus on balanced meals that provide adequate protein and carbohydrates, especially considering your diabetes and chronic kidney disease. Aim for about 35 grams of protein at each meal to support your health needs. Good protein sources include eggs, low-fat cottage cheese, and turkey breast [PMC8599603]. For carbohydrates, if your activity level is light (mostly sitting), you should target about 3-5 grams of carbohydrates per kilogram of body mass per day [PMC8599603]. Since you are mostly sedentary, focus on smaller, frequent meals with soft foods that are easy to digest. It's also crucial to monitor your blood sugar levels and adjust your intake accordingly. Always consult with your healthcare provider or a dietitian for personalized advice tailored to your specific health conditions.",
+  "route": "rag",
+  "passages": [
+   4360,
+   4362,
+   4363,
+   4340,
+   4353
+  ],
+  "passage_texts": [
+   "Examples of protein sources for athletes (or practical meals for older adults) at ~ 20 g, and optimal meals for older adults at ~ 35 g at each eating occasion Breakfast/post-training; Guide/practical~ 21 g pro/meal: 1 cup cooked oatmeal (6 g protein)1/2 scoop whey protein isolate (15 g protein); Optimal (> 60 years)~ 35 g pro/meal: 2 eggs (12 g protein)2 slices whole grain bread (7 g protein)½ cup low fat cottage cheese (14 g protein) Morning snack; Guide/practical~ 21 g pro/meal: 1/2 cup low fat cottage cheese (14 g protein)10 roasted almonds (6 g protein); Optimal (> 60 years)~ 35 g pro/meal: 1 scoop whey protein isolate (30 g protein)¼ cup Greek yogurt (5 g protein)",
+   "Daily carbohydrate intake guidelines based on physical activity level. Suggested ranges accommodate likely variations in individual goals specifically related to body composition. Lower intakes should be targeted to accommodate weight loss and fat loss, whereas upper targets should be considered for weight maintenance or gain Rest day; Daily physical activity level: Light; Activity duration (min): 0; Example activity: Daily living; Target carbohydrate intake g/kg BM/day: 3–5 Exercise (3–5 days/week); Daily physical activity level: Moderate; Activity duration (min): 20–60; Example activity: Brisk walking, swimming, cycling, general yard work, gardening, Yoga, Resistance exercise*, Yoga, calisthenics; Target carbohydrate intake g/kg BM/day: 5–6",
+   "Daily physical activity level: Heavy; Activity duration (min): 60 +; Example activity: Jogging, running, swimming laps, heavy yard/gardening work; Target carbohydrate intake g/kg BM/day: 5–8",
+   "Optimal protein intake following exercise is body mass dependent and can be calculated by 0.24–0.3 g/kg of body mass for young people (< 30 years of age), and 0.4 g/kg of body mass for adults (> 60 years of age) [21]. BM, body massTable 1Examples of protein sources for athletes (or practical meals for older adults) at ~ 20 g, and optimal meals for older adults at ~ 35 g at each eating occasionGuide/practical~ 21 g pro/mealOptimal (> 60 years)~ 35 g pro/mealBreakfast/post-training1 cup cooked oatmeal (6 g protein)1/2 scoop whey protein isolate (15 g protein)2 eggs (12 g protein)2 slices whole grain bread (7 g protein)½ cup low fat cottage cheese (14 g protein)Morning snack1/2 cup low fat cottage cheese (14 g protein)10 roasted almonds (6 g protein)1 scoop whey protein isolate (30 g protein)¼ cup Greek yogurt (5 g protein)Lunch100 g turkey breast (15 g protein)2 slices whole grain bread (7 g protein)100 g turkey breast (15 g protein)2 slices whole grain bread (7 g protein)1.5 cups 1% milk (13 g protein)Dinner/post-training3 oz chicken breast (24 g protein)4 oz chicken breast (32 g protein)½ cup cooked quinoa (3.5 g protein)Pre-sleep20 g casein protein shake35 g casein protein shake",
+   "Increased body fatness and increased abdominal obesity are linked to the increased incidence of non-insulin-dependent diabetes mellitus amongst older people [66]. Thus, guidance of how carbohydrate intake may be modified to match daily energy requirements of exercise is presented in Table 2. Table 2Daily carbohydrate intake guidelines based on physical activity level. Suggested ranges accommodate likely variations in individual goals specifically related to body composition. Lower intakes should be targeted to accommodate weight loss and fat loss, whereas upper targets should be considered for weight maintenance or gainDaily physical activity levelActivity duration (min)Example activityTarget carbohydrate intake g/kg BM/dayRest dayLight0Daily living3–5Exercise (3–5 days/week)Moderate20–60Brisk walking, swimming, cycling, general yard work, gardening, Yoga, Resistance exercise*, Yoga, calisthenics5–6Heavy60 + Jogging, running, swimming laps, heavy yard/gardening work5–8"
+  ],
+  "titles": {
+   "PMC8599603": "Eat like an athlete: insights of sports nutrition science to support active aging in healthy older adults"
+  },
+  "latency_s": 2.59,
+  "calls": 1,
+  "tokens_in": 1074,
+  "tokens_out": 166,
+  "embed_tokens": 11,
+  "cost": 0.000261,
+  "retries": 0
+ },
+ "Maria-M1": {
+  "kind": "health",
+  "user": "u01",
+  "q": "Should I take a walk after dinner, and how should I eat my rice so it doesn't spike my blood sugar?",
+  "system": "before",
+  "answer": "Yes, taking a walk after dinner can help lower your blood sugar levels. A short session of moderate-intensity exercise, like walking for about 20 minutes, has been shown to reduce post-meal blood glucose spikes in individuals with type 2 diabetes [PMC6190726]. This can be particularly effective after your evening meal. \n\nRegarding your rice consumption, consider portion control and pairing it with protein or fiber-rich foods, which can help slow down the absorption of carbohydrates and minimize blood sugar spikes. Eating smaller portions of rice and balancing it with vegetables or lean proteins can be beneficial. Additionally, try to avoid consuming soda, as it can lead to rapid increases in blood sugar levels. Instead, opt for water or unsweetened beverages.",
+  "route": "rag",
+  "passages": [
+   2293,
+   2273,
+   2274,
+   2271,
+   2291
+  ],
+  "passage_texts": [
+   "The findings in our study also concur with those of Colberg et al. [14], who found that 20 minutes of self-paced mild-to-moderate-intensity walking may be more effective at lowering the glycemic impact of the evening meal in type 2 diabetes compared with pre-meal exercise or no exercise, but they did not use CGMS to assess the blood glucose fluctuations. However, in the Hatamoto et al. study [28], the post-dinner peak glucose for 120 min was not significantly different between the postprandial exercise group and the no exercise group in young active healthy individuals. We speculate the reason for this difference resulted from young active healthy people being selected for the latter group and, possibly, exercise was more effective for postprandial hyperglycemia in patients with diabetes.",
+   "However, exercise may lead to nocturnal hypoglycemia in children with type 1 diabetes [17,18] or a potential increase in a late-onset hypoglycemia risk for patients with type 2 diabetes [19]. For this reason, it was necessary to investigate whether a session of moderate-intensity exercise (MIE) after dinner could result in nocturnal hypoglycemia. In clinical practice, most nocturnal hypoglycemic episodes are missed. The continuous glucose monitoring system (CGMS) can record blood glucose for several days, which can be easily used to monitor exercise and activities of daily living, particularly during the night. A previous trial has shown that moderate-intensity walking after an evening meal may blunt postprandial glycemia, compared with pre-dinner exercise or no exercise in American individuals with type 2 diabetes, but CGMS was not performed [14].",
+   "Aside from regular exercise, more evidence [20,21] has suggested that non-exercise physical activities play an independent role in restoring or maintaining optimal glycemic control. Most previous laboratory studies have focused on the effects of post-meal exercise versus no exercise on blood glucose [10–16], and less attention has been paid to the comparison between exercise and daily activities. In this regard, a recent clinical trial [22] has shown that a single session of MIE had a greater impact on daily blood glucose homeostasis than repeated sessions of daily activities. However, this study had been restricted to exercise after breakfast and strictly defined daily activities. Moreover, another group [23] used normal daily activities as the control condition, however, the walking exercise protocols were performed during the lunchtime period. Therefore, the effects of exercise after dinner on glycemic control, using the CGMS, for type 2 diabetes in a real-life setting are unknown.",
+   "For the non-exercise control days, patients pursued normal daily activities but refrained from unusual strenuous physical activity. On the exercise days, participants walked on a treadmill for 20 minutes after dinner, with a heart rate reserve of 40%.ResultsPost-dinner moderate-intensity exercise reduced the 2-hour postprandial glucose spike, mean glucose level, and peak glucose level compared to the control condition. The cumulative glucose total area under the curve during 1-hour post-exercise was lower with exercise than under the control condition. The 12-hour standard deviation of blood glucose and the coefficient variation of glucose were significantly lower in the with exercise day compared to the control day, although the 12-hour mean amplitude of glycemic fluctuations did not reach statistical significance. No nocturnal hypoglycemia subsequently occurred on the exercise day.ConclusionsA short session of moderate-intensity post-dinner exercise can improve postprandial hyperglycemia and glycemic excursions in Chinese patients with type 2 diabetes, with no potential hypoglycemia risk at a later period.",
+   "Although the 12-h MAGE of CGM did not differ between experimental days, the 12-h SDBG and the CV of glucose did change with exercise. It appears that a short session of exercise after dinner can provide further improvement of glycemic fluctuations in the short term. Furthermore, the moderate-intensity exercise did not increase the hypoglycemic episodes as compared with the control condition in subsequent nocturnal periods. As described, the blunting effect of postprandial exercise on blood glucose elevations has been well established [10–16]. A short session of moderate intensity exercise after breakfast decreases glucose levels in participants with type 2 diabetes, but the effect does not persist after lunch without additional exercise [10,11,16]. In the present study, the sustained glucose-lowering effects of 20 min MIE after dinner also did not extend to subsequent periods. Post-breakfast exercise significantly blunted the 2-h peak glucose and the 2-h glucose AUC, with the lowest peak postprandial glucose excursion observed with post-meal exercise and metformin combined [26]."
+  ],
+  "titles": {
+   "PMC6190726": "Twenty Minute Moderate-Intensity Post-Dinner Exercise Reduces the Postprandial Glucose Response in Chinese Patients with Type 2 Diabetes"
+  },
+  "latency_s": 2.22,
+  "calls": 1,
+  "tokens_in": 1150,
+  "tokens_out": 155,
+  "embed_tokens": 24,
+  "cost": 0.000266,
+  "retries": 0
+ },
+ "Robert-M1": {
+  "kind": "health",
+  "user": "u04",
+  "q": "I lift weights and have a few beers after the gym. Is that okay for my blood pressure and diabetes?",
+  "system": "before",
+  "answer": "Lifting weights can be beneficial for building muscle, but it’s important to monitor your blood pressure, especially since you have hypertension. Avoid holding your breath during strength exercises to prevent dangerous spikes in blood pressure [PMC12031090]. Additionally, after intense exercise, blood glucose levels may rise due to stress responses, so it's advisable to check your glucose levels before and after workouts [PMC6546780]. Regarding alcohol, moderate consumption (like a few beers) can be acceptable, but it’s essential to consider how it affects your blood sugar and overall health. Alcohol can interfere with blood sugar control and may lead to dehydration, especially if consumed after exercise [PMC6546780]. Always consult with your healthcare provider to tailor advice specifically for your health conditions.",
+  "route": "rag",
+  "passages": [
+   3324,
+   2357,
+   1382,
+   2347,
+   4265
+  ],
+  "passage_texts": [
+   "The recommended activities are all pure or predominantly aerobic with the recommendation to avoid a competitive engagement longer than one hour [30]. It is advisable to use a cardiofrequency device that allows instantaneous measurement of the heart rate and to set audible alarms if the set frequency is exceeded. The exercise session should last 30 to 60 min, and blood glucose could be checked one hour after exercise to decide whether or not to take carbohydrates. Anaerobic sports or sports characterized by isometric or strength exercises, fighting sports with physical contact, activities involving frequent head shaking and scuba diving require special caution and should be carefully evaluated on a case-by-case basis.",
+   "Elevations in blood glucose are more likely following high-intensity or resistance exercise [39, 40]. This is likely due a number of mechanisms including an increased stress response leading to hormones such as catecholamines inducing gluconeogenesis and glycogenolysis [41]. A prolonged aerobic cool down has been recommended to minimize glycaemic excursions [24].",
+   "All training plans included additional safety guidelines. However, some information was missing, e.g.:It was not always mentioned that patients with (insulin-treated) diabetes should monitor their glucose levels before, during and after exercise to avoid hypoglycemia [16].It was not always mentioned that patients with high blood pressure should avoid holding their breath during strength exercises to prevent exorbitantly high and dangerous blood pressure peaks [16].",
+   "easier to predict) is in the morning before breakfast (dependent on glucose level).A person with a glucose level frequently within the red area of the Action Plan should be reviewed by a Diabetes Healthcare Professional.Individuals with retinopathy should avoid higher intensity aerobic and resistance exercises (with large increases in systolic blood pressure), head-down activities, jumping or jarring activities. These all increase haemorrhage risk.Appropriate fluid intake is necessary to minimize dehydration and risk of heat stress. Increasing fluid intake is important when the glucose level is high.",
+   "Recommendation 46: In patients with mild non-proliferative retinopathy, all activities are permitted, but yearly eye examination is necessary to check the progression. Patients with moderate non-proliferative disease should avoid activities, like powerlifting, which may significantly increase blood pressure. In cases of severe non-proliferative and unstable proliferative retinopathy, doing physical activities that may increase intraocular pressure and risk of hemorrhage (such as high intensity aerobic or strength exercise, head-down activities, breath-holding, jumping, and jarring) is forbidden. During a vitreous hemorrhage, no exercise should be done (level D)."
+  ],
+  "titles": {
+   "PMC7739324": "Beneficial Effects of Physical Activity in Diabetic Patients",
+   "PMC6546780": "Resources to Guide Exercise Specialists Managing Adults with Diabetes",
+   "PMC12031090": "ChatGPT-4o-Generated Exercise Plans for Patients with Type 2 Diabetes Mellitus—Assessment of Their Safety and Other Quality Criteria by Coaching Experts",
+   "PMC8453655": "Iranian National Clinical Practice Guideline for Exercise in Patients with Diabetes"
+  },
+  "latency_s": 2.52,
+  "calls": 1,
+  "tokens_in": 713,
+  "tokens_out": 155,
+  "embed_tokens": 22,
+  "cost": 0.0002,
+  "retries": 0
+ },
+ "Linda-M1": {
+  "kind": "health",
+  "user": "u05",
+  "q": "If I skip breakfast and go for a morning walk, could my pills make my sugar drop?",
+  "system": "before",
+  "answer": "Skipping breakfast can disrupt your body's natural rhythm and lead to poor glycemic control, which may increase the risk of postprandial hyperglycemia and insulin deficiency [PMC10903815]. If you take glimepiride and metformin, these medications can lower your blood sugar levels. Therefore, if you skip breakfast and then go for a morning walk, the combination of not eating and physical activity could potentially lead to a drop in your blood sugar levels, especially if you are not consuming enough carbohydrates throughout the day. It's important to maintain regular meal times and consider having a small breakfast to help stabilize your blood sugar levels before any physical activity. Always consult with your healthcare provider for personalized advice.",
+  "route": "rag",
+  "passages": [
+   990,
+   987,
+   952,
+   979,
+   3796
+  ],
+  "passage_texts": [
+   "Individuals with diabetes face challenges in adopting healthy eating habits, particularly within the obesogenic environment caused by current lifestyle and unhealthy dietary patterns, leading to persistence of deleterious eating practices, impacting both health and metabolic control. Reducing meal frequency appears to be an optimal approach since, according to recent studies, the intake of 2 to 3 meals instead of 6 meals per day promotes weight loss and glycemic control in subjects with type 2 diabetes. Time Restricted Feeding is a dietary strategy that does not restrict caloric intake or food composition, it only addresses feeding periodicity by prioritizing intake during the active phase and restricting it to less than 10 hours per day. This approach has been demonstrated benefits in reducing fasting and postprandial glycemic variability as well as weight loss. Skipping breakfast, a common practice influenced by current lifestyle, disrupts the circadian cycle leading to postprandial hyperglycemia, insulin deficiency, increased glycosylated hemoglobin, and weight gain. On the other hand, pre-bedtime snacks have not been shown to benefit diabetic subjects in glycemic control.",
+   "The role of breakfast in the diets of both subjects with and without diabetes, has always been a substantial topic of discussion when considering the adoption of healthy eating habits. Breakfast consumption plays a critical role in achieving metabolic control in individuals with type 2 diabetes since its omission, a common behavior in the population, disrupts the expression of circadian cycle genes, leading to postprandial hyperglycemia, insulin deficiency, and poor GLP-1 response to subsequent food consumption [27]. This is explained by the second meal or Straub-Traugott phenomenon, which describes how the first meal optimizes beta cells responsiveness of to the second meal, induced by the first meal. In other words, there is a potentiation of both the first and second phases of insulin release upon prior exposure to glucose [31, 32]. Clearly, skipping breakfast has a detrimental effect on the glycemic control of individuals with type 2 diabetes.",
+   "The risk of bias was evaluated based on the Cochrane tool according to the type of study. Of 77 retrieval articles, 13 studies matched our inclusion criteria. The primary focus of each study was to evaluate glycemic control as the major outcome. Studies suggest that meal frequency, time-restricted feeding, breakfast skipping, bedtime snacking, and chrononutrition practices all play roles in type 2 diabetes management and risk.ConclusionsRestricting feeding to 2 to 3 meals per day and practicing time restricted feeding with less than 10 hours of daily food intake promotes weight loss and glycemic control in patients with type 2 diabetes. Aligning food consumption with the body’s natural rhythm is beneficial, whereas skipping breakfast disrupts this rhythm. Snacking after evening or waiting 3–4 hours after meal helps control glucose levels, but consuming pre-bedtime snacks do not provide the same benefits.PROSPERO registration numberCRD42023431785.",
+   "A debatable subject in nutritional research is the role of breakfast, both in terms of eating and skipping. Jakubowicz D et al., in a cross-over study with a washout period of 2–4 weeks, tested the effect of skipping breakfast on postprandial hormones after lunch, and dinner in subjects with type 2 diabetes who were divided into two groups. The first one receiving breakfast, lunch, and dinner (YesB), while the other group received lunch and dinner (NoB); they demonstrated a higher area under the curve (AUC) for postprandial concentrations of glucose (16.5%), insulin (45%), C-peptide (50%), intact glucagon-like peptide-1 (iGLP-1) (33%) in the YesB group compared to the NoB group (p< 0.0001) [20].",
+   "After fasting overnight (≥10 h), participants arrived at the laboratory at 07.30 a.m., and a standardized breakfast was provided at 08.00 a.m. The breakfast consisted of rusks, partially skimmed milk, and fruit jam, which provided 310 kcal (66% carbohydrate, 19% fat, 15% protein). During the visits, participants were allowed to drink water ad libitum, but no other food or drinks were consumed."
+  ],
+  "titles": {
+   "PMC10903815": "Meal frequency strategies for the management of type 2 diabetes subjects: A systematic review",
+   "PMC8145872": "The Effect of Different Postprandial Exercise Types on Glucose Response to Breakfast in Individuals with Type 2 Diabetes"
+  },
+  "latency_s": 2.59,
+  "calls": 1,
+  "tokens_in": 1059,
+  "tokens_out": 144,
+  "embed_tokens": 19,
+  "cost": 0.000246,
+  "retries": 0
+ },
+ "Kenji-M1": {
+  "kind": "health",
+  "user": "u06",
+  "q": "I've lost weight and muscle. What should I eat and what exercise should I do?",
+  "system": "before",
+  "answer": "To regain muscle mass and address your weight loss, focus on a protein-rich diet. Protein supplementation can enhance muscle health, especially in older adults, as it helps counteract the effects of sarcopenia (loss of muscle mass) [PMC8599603]. Aim for high-quality protein sources like lean meats, fish, eggs, dairy, legumes, and nuts. Additionally, consider incorporating omega-3 fatty acids, which may enhance the anabolic effects of protein [PMC8599603]. \n\nFor exercise, engage in resistance training, which is crucial for building muscle. Even light resistance exercises can be beneficial, especially if you have weak legs. Start with short sessions and gradually increase intensity as tolerated. Combining this with your short walks can help improve your overall strength and mobility [PMC7284931]. \n\nConsult with a healthcare provider or a dietitian to tailor a specific plan that considers your diabetes and kidney condition.",
+  "route": "rag",
+  "passages": [
+   4332,
+   4330,
+   2830,
+   4333,
+   4356
+  ],
+  "passage_texts": [
+   "Population aging is a global phenomenon. It is estimated that 1 in every 6 individuals will be over the age of 65 by the year 2050, an increase of 45% from 2019 [1]. Aging is associated with the loss of skeletal muscle mass and strength, termed sarcopenia. Sarcopenia is measurable within the 5th decade of life and is associated with loss of muscle mass at a rate of ~ 1% per year [2], loss of muscle strength (e.g. 1-repetition maximum) at ~ 3% per year [3], and loss of muscle power (e.g. force and speed of movement) at ~ 8% per year [4]. Importantly, these decrements in muscle function are associated with the loss of independence, a decline in the ability to perform activities of daily living [5], and are linked with several negative metabolic health outcomes [6]. Thus, strategies to augment or maintain skeletal muscle mass and its functional capacity are a primary consideration in preserving the quality of life of aging adults.",
+   "Skeletal muscle mass losses with age are associated with negative health consequences, including an increased risk of developing metabolic disease and the loss of independence. Athletes adopt numerous nutritional strategies to maximize the benefits of exercise training and enhance recovery in pursuit of improving skeletal muscle quality, mass, or function. Importantly, many of the principles applied to enhance skeletal muscle health in athletes may be applicable to support active aging and prevent sarcopenia in the healthy (non-clinical) aging population. Here, we discuss the anabolic properties of protein supplementation in addition to ingredients that may enhance the anabolic effects of protein (e.g. omega 3 s, creatine, inorganic nitrate) in older persons.",
+   "Originally conceptualized as the age-related loss of skeletal muscle mass, the concept of sarcopenia has evolved to stand for the decline of muscle mass and function among older adults [26]. In addition, the aging process compromises both muscle structure and function. The reduction in muscle mass causes an increase in the proportion of maximal power generating capacity of the remaining muscles performing the activities of daily living. This, let's say, overuse of the remaining muscles, leads to an earlier onset of fatigue which, in turn, hastens the shift from an independent to a dependent lifestyle [27]. Lean muscle mass suffers a considerable decline with age. On average, it makes up 50% of total body weight in young adults versus about 25% in 70 to 80 year-olds [28]. This decline, especially that of the lower limb, impacts mobility status significantly. Further, age-related muscle mass loss has been associated to a state of “anabolic resistance” where there is an imbalance of muscle protein synthesis and breakdown processes in response to stimuli, like exercise or nutrition [29]. In fact, reduced rates of cumulative muscle protein synthesis accompanied by blunted mass gains were observed in older adults in response to resistance exercise training when compared to young adults [30,31].",
+   "The enhancement of skeletal muscle mass and function are also primary objectives for many athletes. In this population, specific exercise and nutrition regimens are utilized to optimize skeletal muscle remodelling and often to stimulate muscle hypertrophy. Despite athletic intervention strategies being performance focused, many principles are directly applicable to skeletal muscle health in older adults. Both athletic and older populations can accumulate training hours to achieve competitive goals [7]. However, for the general healthy older population, physical activity provides benefits beyond athletic achievements, such as maintaining independence, reducing the risk of falls, and establishing/continuing social interaction [8]. Consequently, the nutrition intervention strategies discussed in this review should be applied in the context of supporting the completion of, and maximizing the benefits of, physical activity and, as such, to support more active aging.",
+   "Importantly, many factors impact the rate of sarcopenia and dynapenia in aging adults. Stimuli such as physical inactivity and presence of chronic conditions exert greater influence on the loss of muscle mass and strength than alterations in nutrition. Nevertheless, optimizing nutrition that may augment or attenuate the decline in skeletal muscle health with aging, particularly when combined with exercise, should be considered when tailoring nutritional strategies to older people."
+  ],
+  "titles": {
+   "PMC8599603": "Eat like an athlete: insights of sports nutrition science to support active aging in healthy older adults",
+   "PMC7284931": "Physical activity and exercise: Strategies to manage frailty"
+  },
+  "latency_s": 3.16,
+  "calls": 1,
+  "tokens_in": 1047,
+  "tokens_out": 192,
+  "embed_tokens": 18,
+  "cost": 0.000273,
+  "retries": 0
+ },
+ "James-M1": {
+  "kind": "health",
+  "user": "u08",
+  "q": "I want to try interval training, and I often skip breakfast. Is that risky on insulin?",
+  "system": "before",
+  "answer": "Interval training can be beneficial for fitness, but since you are on insulin glargine, there is a risk of hypoglycemia during or after exercise, especially if you skip breakfast. Skipping breakfast can disrupt your glycemic control and increase the risk of postprandial hyperglycemia, which is particularly concerning for individuals with type 2 diabetes [PMC10903815]. It's important to ensure you have adequate nutrition before exercising to help stabilize your blood sugar levels. Consider having a small meal or snack before your interval training to minimize the risk of hypoglycemia. Always consult with your healthcare provider before making changes to your exercise routine or diet, especially given your diabetes management.",
+  "route": "rag",
+  "passages": [
+   2526,
+   2710,
+   3791,
+   987,
+   990
+  ],
+  "passage_texts": [
+   "Although exercise may increase risk of hypoglycemia, only the individuals under insulin or insulin secretagogues (sulfonylureas and meglitinides) therapy seem to be at risk during, immediately after, or several hours after exercise. Exercise-related hypoglycemia is rare in patients medicated with other types of oral antidiabetic drugs such as metformin and gliptins [6,23,47]—medications taken by our participants. To minimize the risk of hypoglycemia, some studies suspended antidiabetic drugs before and during the days of the experiment [27,29]. These studies had individuals under therapies of different combinations of sulfonylureas, metformin, and gliptins, but no insulin therapy.",
+   "Emerging evidence also suggests that chrononutrition is influenced by an individual’s “chronotype”. Chronotype is a behaviour manifestation of an individual’s internal circadian clock system, whereby they can be classified to have a preference for the morning or evening9. Individuals with an “evening chronotype” or also termed “later chronotype” are biologically driven to consume foods later in the day31. There has been a relatively strong association between breakfast skipping and insulin resistance or type 2 diabetes shown in some studies. In a 16-year follow-up cohort study, using the Cox proportional hazards analysis, it was shown that after adjusting for known risk factors of T2D including BMI, US men who skipped breakfast had a 21% higher risk of developing T2D compared with men who consumed breakfast32. In another randomised crossover trial, 10 women underwent a 2-week intervention with a 2-week washout period of either skipping or consuming breakfast. The study demonstrated that omitting breakfast led to a significantly higher energy intake, fasting total and LDL cholesterol, and a significantly lower postprandial insulin sensitivity33.",
+   "Although this notion is considered in order to reduce the risk of exercise-induced hypoglycemia, especially in patients with type 1 diabetes [15,17], it is also relevant when the desired effect is the acute attenuation of blood glucose levels. Therefore, it is conceivable that the order of aerobic and resistance exercises may play a role in modulating glycemia in the postprandial state, which is characterized by relatively high glucose and insulin levels. However, we are not aware of studies that investigated the effect of the order of combined aerobic and resistance exercises on the postprandial glycemic response in patients with type 2 diabetes, hence the need for further investigation.",
+   "The role of breakfast in the diets of both subjects with and without diabetes, has always been a substantial topic of discussion when considering the adoption of healthy eating habits. Breakfast consumption plays a critical role in achieving metabolic control in individuals with type 2 diabetes since its omission, a common behavior in the population, disrupts the expression of circadian cycle genes, leading to postprandial hyperglycemia, insulin deficiency, and poor GLP-1 response to subsequent food consumption [27]. This is explained by the second meal or Straub-Traugott phenomenon, which describes how the first meal optimizes beta cells responsiveness of to the second meal, induced by the first meal. In other words, there is a potentiation of both the first and second phases of insulin release upon prior exposure to glucose [31, 32]. Clearly, skipping breakfast has a detrimental effect on the glycemic control of individuals with type 2 diabetes.",
+   "Individuals with diabetes face challenges in adopting healthy eating habits, particularly within the obesogenic environment caused by current lifestyle and unhealthy dietary patterns, leading to persistence of deleterious eating practices, impacting both health and metabolic control. Reducing meal frequency appears to be an optimal approach since, according to recent studies, the intake of 2 to 3 meals instead of 6 meals per day promotes weight loss and glycemic control in subjects with type 2 diabetes. Time Restricted Feeding is a dietary strategy that does not restrict caloric intake or food composition, it only addresses feeding periodicity by prioritizing intake during the active phase and restricting it to less than 10 hours per day. This approach has been demonstrated benefits in reducing fasting and postprandial glycemic variability as well as weight loss. Skipping breakfast, a common practice influenced by current lifestyle, disrupts the circadian cycle leading to postprandial hyperglycemia, insulin deficiency, increased glycosylated hemoglobin, and weight gain. On the other hand, pre-bedtime snacks have not been shown to benefit diabetic subjects in glycemic control."
+  ],
+  "titles": {
+   "PMC6862460": "High-Intensity Interval Training Versus Moderate-Intensity Continuous Training in Middle-Aged and Older Patients with Type 2 Diabetes: A Randomized Controlled Crossover Trial of the Acute Effects of Treadmill Walking on Glycemic Control",
+   "PMC7031264": "Chrononutrition in the management of diabetes",
+   "PMC8145872": "The Effect of Different Postprandial Exercise Types on Glucose Response to Breakfast in Individuals with Type 2 Diabetes",
+   "PMC10903815": "Meal frequency strategies for the management of type 2 diabetes subjects: A systematic review"
+  },
+  "latency_s": 2.95,
+  "calls": 1,
+  "tokens_in": 1107,
+  "tokens_out": 141,
+  "embed_tokens": 19,
+  "cost": 0.000251,
+  "retries": 0
+ },
+ "Sofia-M1": {
+  "kind": "health",
+  "user": "u07",
+  "q": "What can I do with food and exercise to bring my blood pressure down?",
+  "system": "before",
+  "answer": "To help lower your blood pressure, consider making dietary modifications and increasing your physical activity. Reducing your intake of salty pickled side dishes can be beneficial, as high sodium levels can elevate blood pressure. Focus on a balanced diet rich in fruits, vegetables, whole grains, and lean proteins, which can support overall heart health. \n\nIn terms of exercise, incorporating aerobic activities such as walking, which you already do for 40 minutes in the evening, is effective for reducing blood pressure. Studies show that aerobic exercise can significantly lower both systolic and diastolic blood pressure levels (SBP and DBP) [PMC11654863]. Additionally, consider exploring other forms of exercise, such as resistance training or mind-body exercises like Tai Chi or yoga, which have also been shown to help manage hypertension [PMC11654863]. \n\nCombining these dietary changes with regular exercise can lead to better blood pressure management.",
+  "route": "rag",
+  "passages": [
+   1306,
+   1266,
+   1336,
+   1339,
+   1270
+  ],
+  "passage_texts": [
+   "In aerobic exercise training, 11 systematic reviews evaluated the effectiveness of aerobic exercises, including two systematic reviews for moderate‐intensity continuous training (MICT) and high‐intensity intermittent training (HIIT) (Table 3a). Nine systematic reviews evaluated the effectiveness of aerobic exercise training other than dancing, MICT and HIIT, eight of them (88.9%) showed a significant reduction in both SBP ranging from −12.3 to −0.79 mmHg and DBP ranging from −8.2 to −0.63 mmHg. A systematic review that included 37 original studies with a total sample size of 1813 participants showed that aerobic exercise training can significantly reduce both SBP and DBP levels (SBP = −8.3 mmHg (95% CI = −10.1 to −6.46 mmHg) and DBP = −5.19 mmHg (95% CI = −6.24 to −4.14 mmHg). 45 Two studies compared MICT or HIIT with no exercise, and both of them showed similar findings that SBP and DBP would be reduced after 4–16 weeks of training. 44 , 63",
+   "AbstractHypertension remains the world's leading cause of premature death. Interventions such as exercise, diet modification, and pharmacological therapy remain the mainstay of hypertension treatment. Numerous systematic reviews and meta‐analyses demonstrated the effectiveness of western exercises, such as aerobic exercise and resistance exercise, in reducing blood pressure in hypertensive patients. There is recently emerging evidence of blood pressure reduction with Chinese exercises, such as Tai Chi, Baduanjin, and Qigong. The current overview of systematic reviews aims to evaluate the quality and descriptively summarize the evidence for the effectiveness of western and Chinese exercises for hypertension management.",
+   "Physical activities, such as aerobic, resistance and Chinese exercise training, have been shown to be effective for blood pressure reduction. This overview of systematic reviews summarized the effectiveness across different types of physical activity training, including Chinese exercises, and demonstrated that exercise training with Chinese styles of body consciousness, balance and breathing control are effective in helping our patients in better management of hypertension. Reduction in BP by exercise training can be explained by nitric oxide and prostacyclin production from vascular endothelium as a results of exercising, which results in vasodilation via relaxation of vascular smooth muscle cells and therefore lower BP. 67 Exercise also reduces muscle sympathetic nerve activity and improves sympathetic baroreflex function. 68 Chinese exercises, which stress on mind‐body consciousness and breathing control, show to shift the balance of autonomic nervous system from sympathetic to parasympathetic, thus leading to lower BP. 69 , 70 , 71 Moreover, risk of hypertension increases with body weight. Weight reduction by lifestyle modification, including increased physical activity, was shown to reduce both SBP and DBP.",
+   "Aerobic exercise and resistance training had already been demonstrated to be effective for lowering SBP and DBP in hypertensive treatment. 21 , 62 , 65 In this overview, there were more studies on aerobic exercise training that demonstrated BP levels reduction than studies on resistance training. The training details of resistance exercises were inconsistent, resulting in different conclusions across the systematic reviews. Therefore, a standardized resistance exercise protocol with considerations of the muscle resistance level and training duration is recommended. Yoga is an exercise that incorporates postures, breath control, and meditation. 78 Aquatic exercise is a low‐impact activity that takes the pressure off your bones, joints and muscles. Water also offers natural resistance, which can help strengthen muscles. 79 Both exercises were treated as a combined approach with standardized training formats that showed benefits in reducing BP levels.",
+   "There is a continual need to improve treatment options for hypertension consequent to the high costs of treatment and associated losses as well as the growing disparity in hypertension prevalence across countries. Hypertension treatment comprises pharmacological treatment and lifestyle modifications, with patient education influencing these treatments. 13 , 14 Within lifestyle modifications, exercise training has shown strong evidence in managing hypertension as a sole intervention or as a combined intervention. 15 , 16 Exercise training has become part of clinicians’ prescription and may even be the first‐line treatment for some hypertensive patients. 17 , 18 As personalized medicine continues to evolve and develop, a greater understanding of hypertension management options, exercise training, in this case, is needed. 19"
+  ],
+  "titles": {
+   "PMC11654863": "The Western and Chinese exercise training for blood pressure reduction among hypertensive patients: An overview of systematic reviews"
+  },
+  "latency_s": 2.45,
+  "calls": 1,
+  "tokens_in": 1084,
+  "tokens_out": 192,
+  "embed_tokens": 15,
+  "cost": 0.000278,
+  "retries": 0
  }
 }

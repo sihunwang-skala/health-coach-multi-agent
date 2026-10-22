@@ -15,7 +15,7 @@ def fake_servers():
     papers, users, logs = FastMCP("p"), FastMCP("u"), []
 
     @papers.tool
-    def search_papers(queries: list[str], k: int = 10) -> dict:
+    def search_papers(queries: list[str], k: int = 10, domain: str = "") -> dict:
         return {"results": {q: [PASSAGE] for q in queries}, "embed_tokens": 0}
 
     @users.tool
@@ -41,17 +41,18 @@ def fake_servers():
 
 
 def fake_llm(route="exercise", answer="Check your glucose first; lows can happen up to 12 h after exercise [PMC6546780]."):
-    return FakeLLM({
-        "supervisor": lambda m: {"route": route},
-        "query_stage1": lambda m: {"subject": "exercise on insulin", "paper_term": "exercise", "conditions": ["insulin"]},
-        "query_stepback": lambda m: {"queries": ["exercise guidelines for diabetes"]},
-        "query_conditions": lambda m: {"queries": ["exercise-induced hypoglycaemia with insulin"]},
-        "query_decompose": lambda m: {"queries": ["timing of hypoglycaemia after exercise"]},
-        "picker": lambda m: {"best": [1], "notes": [{"note": "Hypoglycaemia can occur for up to 12 h after exercise with insulin.", "source": "PMC6546780"}]},
-        "writer": lambda m: {"answer": answer},
-        "writer_retry": lambda m: {"answer": answer},
-        "records_reply": lambda m: {"answer": "Recorded."},
-    })
+    rules = {"supervisor": lambda m: {"route": route},
+             "writer": lambda m: {"answer": answer}, "writer_retry": lambda m: {"answer": answer},
+             "records_reply": lambda m: {"answer": "Recorded."}}
+    for d in ("exercise", "diet"):
+        rules.update({
+            f"{d}_query_stage1": lambda m: {"subject": "exercise on insulin", "paper_term": "exercise", "conditions": ["insulin"]},
+            f"{d}_query_stepback": lambda m: {"queries": ["guidelines for diabetes"]},
+            f"{d}_query_conditions": lambda m: {"queries": ["hypoglycaemia with insulin"]},
+            f"{d}_query_decompose": lambda m: {"queries": ["timing of hypoglycaemia"]},
+            f"{d}_picker": lambda m: {"best": [1], "notes": [{"note": "Hypoglycaemia can occur for up to 12 h after exercise with insulin.", "source": "PMC6546780"}]},
+        })
+    return FakeLLM(rules)
 
 
 def container(llm=None):

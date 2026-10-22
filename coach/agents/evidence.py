@@ -7,8 +7,8 @@ import re
 from langgraph.graph import END, START, StateGraph
 
 from coach.agents.common import MED_TERMS, deps, llm_batch, llm_json, stems, timed
-from coach.agents.prompts import CONDITIONS, DECOMPOSE, PICKER, STAGE1, STEPBACK
-from coach.state import CoachState, EvidenceIn
+from coach.agents.prompts import CONDITIONS, DECOMPOSE, PICKER, STAGE1, STEPBACK, TOPIC
+from coach.state import EvidenceState
 
 FIELD = re.compile(r"\b[a-z]+(_[a-z]+)*:\s")
 
@@ -43,26 +43,29 @@ async def _checked(config, step, prompt, earlier, question, stepback=False):
 @timed("make_queries")
 async def make_queries(state, config):
     q, prof = state["message"], "User profile (health fields): " + state["profile"] + "\n"
+    topic, dom = TOPIC[state["domain"]], state["domain"]
     terms = [t for pat, t in MED_TERMS if re.search(pat, state["profile"].lower())]
-    j = await llm_json(config, "query_stage1", [("user", STAGE1.format(profile=prof, question=q))])
+    if dom == "diet":
+        terms = [t.replace("exercise ", "").replace(" exercise", "").replace(" response to", " and") for t in terms]
+    j = await llm_json(config, f"{dom}_query_stage1", [("user", STAGE1.format(topic=topic, profile=prof, question=q))])
     subj, term = str(j.get("subject") or q).strip(), str(j.get("paper_term") or "").strip()
     conds = [str(c) for c in j.get("conditions", []) if str(c).strip()]
     s1 = subj + (f" ({term})" if term and term.lower() not in subj.lower() else "") + (" in " + " and ".join(conds) if conds else "")
     med = [f"{q} {' '.join(terms)} older adults"] if terms else []
     earlier = [q, s1] + med
-    sb = (await _checked(config, "query_stepback", STEPBACK.format(s1=subj + (f" ({term})" if term else "")), earlier, q, True))[:1]
+    sb = (await _checked(config, f"{dom}_query_stepback", STEPBACK.format(s1=subj + (f" ({term})" if term else "")), earlier, q, True))[:1]
     earlier += sb
-    cq = await _checked(config, "query_conditions", CONDITIONS.format(profile=prof, question=q, terms="; ".join(terms) or "none",
+    cq = await _checked(config, f"{dom}_query_conditions", CONDITIONS.format(topic=topic, profile=prof, question=q, terms="; ".join(terms) or "none",
                                                                         earlier="\n".join(earlier)), earlier, q)
     earlier += cq
-    dq = await _checked(config, "query_decompose", DECOMPOSE.format(profile=prof, question=q, earlier="\n".join(earlier)), earlier, q)
+    dq = await _checked(config, f"{dom}_query_decompose", DECOMPOSE.format(topic=topic, profile=prof, question=q, earlier="\n".join(earlier)), earlier, q)
     return {"queries": list(dict.fromkeys([q, s1] + med + sb + cq + dq))}
 
 
 @timed("retrieve_mcp")
 async def retrieve(state, config):
     d = deps(config)
-    r = await d.papers("search_papers", queries=state["queries"], k=d.settings.top_k)
+    r = await d.papers("search_papers", queries=state["queries"], k=d.settings.top_k, domain=state["domain"])
     config["configurable"]["usage"].embed_tokens += r.get("embed_tokens", 0)
     titles = {h["pmcid"]: h["title"] for hs in r["results"].values() for h in hs}
     return {"results": r["results"], "titles": titles}
@@ -75,8 +78,8 @@ async def pick_notes(state, config):
     for q in state["queries"]:
         hits = state["results"].get(q, [])
         passages = "\n\n".join(f"[{n + 1}] ({h['pmcid']}) {h['text']}" for n, h in enumerate(hits))
-        batch.append([("user", PICKER.format(profile=prof, question=state["message"], query=q, passages=passages))])
-    outs = await llm_batch(config, "picker", batch)
+        batch.append([("user", PICKER.format(topic=TOPIC[state["domain"]], profile=prof, question=state["message"], query=q, passages=passages))])
+    outs = await llm_batch(config, f"{state['domain']}_picker", batch)
     picks = []
     for q, j in zip(state["queries"], outs):
         hits = state["results"].get(q, [])
@@ -112,7 +115,7 @@ async def verify_notes(state, config):
 
 
 def build_evidence_agent():
-    g = StateGraph(CoachState, input_schema=EvidenceIn)
+    g = StateGraph(EvidenceState)
     for name, fn in [("make_queries", make_queries), ("retrieve", retrieve), ("pick_notes", pick_notes), ("verify_notes", verify_notes)]:
         g.add_node(name, fn)
     g.add_edge(START, "make_queries")
@@ -121,3 +124,20 @@ def build_evidence_agent():
     g.add_edge("pick_notes", "verify_notes")
     g.add_edge("verify_notes", END)
     return g.compile()
+
+
+_SUBGRAPH = build_evidence_agent()
+
+
+def evidence_node(domain: str):
+    """Parent-graph node for one research agent: runs the compiled subgraph with its own state and returns only its result
+    under evidence[domain], so the diet and exercise agents can run in parallel without overwriting each other."""
+    async def node(state, config):
+        out = await _SUBGRAPH.ainvoke({"message": state["message"], "profile": state["profile"], "domain": domain,
+                                       "timings": {}, "trace": []}, config)
+        keep = {k: out.get(k) for k in ("queries", "results", "picks", "notes", "dropped_notes")}
+        return {"evidence": {domain: keep}, "titles": out.get("titles", {}),
+                "timings": {f"{domain}.{k}": v for k, v in out.get("timings", {}).items()},
+                "trace": [f"{domain}_agent"] + [f"{domain}.{t}" for t in out.get("trace", [])]}
+    node.__name__ = f"{domain}_agent"
+    return node

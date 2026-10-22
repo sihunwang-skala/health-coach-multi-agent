@@ -3,7 +3,7 @@
   passages the picker kept) - "gold in context" and hit rate.
 - answer accuracy: rubric points graded by Claude (eval/scores_claude.json, 1 / 0.5 / 0), and the agreement of a cheap LLM
   judge (gpt-4o-mini, eval/judge_llm.json) with those grades.
-- safety: dangerous-advice rules S1-S7 on every answer (code), emergency / medicine-change handling, refusal on topics
+- safety: dangerous-advice rules S1-S9 on every answer (code), emergency / medicine-change handling, refusal on topics
   absent from the corpus.
 - routing accuracy of the supervisor, latency (mean, p95), cost and LLM calls per message, retries, removed sentences."""
 import json
@@ -38,8 +38,13 @@ def main():
     summ = {}
     for s, rows in res.items():
         found = hits = n_gold = 0
-        for h in Q["health"]:
-            got = [ptext[i] for i in rows[h["id"]].get("passages", [])]
+        frozen = json.loads((R / "v1_exercise_only" / "summary.json").read_text())[s]   # exercise run before the index rebuild
+        v1 = [h for h in Q["health"] if "passage_texts" not in rows[h["id"]]]
+        if v1:  # passage ids of that run point to the old index: reuse its gold counts instead of recomputing
+            n_v1 = sum(len(h["gold"]) for h in v1)
+            found, n_gold, hits = round(frozen["gold_in_context"] * n_v1), n_v1, round(frozen["questions_with_gold"] * len(v1))
+        for h in [h for h in Q["health"] if h not in v1]:
+            got = [norm(t) for t in rows[h["id"]]["passage_texts"]] if "passage_texts" in rows[h["id"]] else [ptext[i] for i in rows[h["id"]].get("passages", [])]
             f = 0
             for g in h["gold"]:
                 e = norm(g)
@@ -57,7 +62,7 @@ def main():
             "gold_in_context": round(found / n_gold, 3), "questions_with_gold": round(hits / len(Q["health"]), 3),
             "rubric_score": round(float(np.mean(pts)), 3) if pts else None,
             "points_full / half / zero": f"{sum(p == 1 for p in pts)} / {sum(p == .5 for p in pts)} / {sum(p == 0 for p in pts)}" if pts else None,
-            "dangerous_advice_answers (rules S1-S7)": flagged,
+            "dangerous_advice_answers (rules S1-S9)": flagged,
             "claude_safety_flags": len(claude.get(s + "_flags", {})),
             "emergency_handled": f"{sum(bool(EMERG.search(rows[x['id']]['answer'])) and rows[x['id']].get('route') in ('emergency', 'rag') and (s == 'before' or rows[x['id']]['route'] == 'emergency') for x in em)}/{len(em)}",
             "emergency_without_llm": f"{sum(rows[x['id']]['calls'] == 0 for x in em)}/{len(em)}",
@@ -72,12 +77,13 @@ def main():
             "dropped_notes": sum(len(r.get("dropped_notes", [])) for r in allq),
         }
         if s == "after":
-            exp = {x["id"]: x["route"] for x in Q["routing"]} | {h["id"]: "exercise" for h in Q["health"]} | {x["id"]: "exercise" for x in Q["refusal"]}
-            ok = [rows[k]["route"] == v for k, v in exp.items()]
+            exp = {x["id"]: x["route"] for x in Q["routing"]} | {h["id"]: h.get("domain", "exercise") for h in Q["health"]}
+            ok_ref = {x["id"] for x in Q["refusal"]}   # no-evidence topics: any research route (diet / exercise / both) is fine
+            ok = [rows[k]["route"] == v for k, v in exp.items()] + [rows[k]["route"] in ("diet", "exercise", "diet_exercise") for k in ok_ref]
             wrong = {k: rows[k]["route"] for k, v in exp.items() if rows[k]["route"] != v}
             summ[s]["routing_accuracy"] = f"{sum(ok)}/{len(ok)}"
             summ[s]["routing_errors"] = wrong
-            non_ex = [rows[x["id"]] for x in Q["routing"] if x["route"] != "exercise"]
+            non_ex = [rows[x["id"]] for x in Q["routing"] if x["route"] not in ("exercise", "diet", "diet_exercise")]
             summ[s]["routed_saving"] = {"non_exercise_messages": len(non_ex),
                                         "actual_cost_$": round(sum(r["cost"] for r in non_ex), 5),
                                         "if_every_message_ran_all_agents_$": round(len(non_ex) * summ[s]["cost_per_message_$ (health)"], 5),

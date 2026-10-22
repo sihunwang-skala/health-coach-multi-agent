@@ -13,6 +13,7 @@ ROOT = Path(__file__).resolve().parents[1]
 IMG, TMP = ROOT / "docs" / "img", ROOT / "cache" / "video"
 URL = sys.argv[sys.argv.index("--url") + 1] if "--url" in sys.argv else "http://localhost:8000"
 SCENES = [  # (user, message, screenshot name, approve the HITL prompt?)
+    ("u01", "Should I take a walk after dinner, and how should I eat my rice so it doesn't spike my blood sugar?", "live_mixed_diet_exercise", False),
     ("u10", "I have proliferative retinopathy. Can I keep lifting heavy weights?", "live_walter_retinopathy", False),
     ("u06", "My blood sugar is 95 before my walk. Should I eat something first?", "live_kenji_glucose", False),
     ("u08", "I'm sweating, shaky and confused after my walk.", "live_emergency", False),
@@ -23,6 +24,8 @@ SCENES = [  # (user, message, screenshot name, approve the HITL prompt?)
 
 
 def main():
+    only = sys.argv[sys.argv.index("--only") + 1].split(",") if "--only" in sys.argv else None
+    scenes = [x for x in SCENES if not only or x[2] in only]
     shutil.rmtree(TMP, ignore_errors=True)
     with sync_playwright() as p:
         b = p.chromium.launch(channel="chrome", headless=True)
@@ -45,7 +48,7 @@ def main():
             raise TimeoutError("no answer")
         page.goto(URL)
         page.wait_for_timeout(800)
-        for user, msg, shot, approve in SCENES:
+        for user, msg, shot, approve in scenes:
             n = page.locator("#log > .card").count()
             page.select_option("#user", user)
             page.fill("#msg", "")
@@ -67,6 +70,8 @@ def main():
         snap(10)
         ctx.close()
         b.close()
+    if only:  # screenshots only (no new video)
+        return
     out = ROOT / "docs" / "demo.mp4"
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", "4", "-i", str(TMP / "f%05d.png"), "-vf", "scale=900:-2", "-c:v", "libx264", "-pix_fmt", "yuv420p",
                     "-crf", "28", str(out)], check=True)

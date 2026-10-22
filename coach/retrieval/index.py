@@ -117,23 +117,32 @@ class HybridIndex:
                 score[x] = score.get(x, 0.0) + w / (k + r + 1)
         return sorted(score, key=lambda x: -score[x])
 
-    def search_vec(self, query: str, qvec: np.ndarray, k: int = 10, filter_population: bool = True) -> list[int]:
-        d = list(np.argsort(-(self.cv @ qvec))[:120])
-        b = list(np.argsort(-self.bm.get_scores(tokenize(query)))[:120])
+    def allowed(self, domain: str | None) -> set[str] | None:
+        """Paper collections per agent: diet = the diabetes diet shelf, exercise = the exercise papers (core + other-topic)."""
+        if not domain:
+            return None
+        want = {"diet": {"distractor_diabetes_diet_shelf"}, "exercise": {"core", "distractor_exercise_other_topic"}}[domain]
+        return {k for k, v in self.meta.items() if v["role"] in want}
+
+    def search_vec(self, query: str, qvec: np.ndarray, k: int = 10, filter_population: bool = True, domain: str | None = None) -> list[int]:
+        allow = self.allowed(domain)
+        n = 120 if allow is None else 400  # a collection filter needs a deeper candidate list
+        d = list(np.argsort(-(self.cv @ qvec))[:n])
+        b = list(np.argsort(-self.bm.get_scores(tokenize(query)))[:n])
         fused = self._rrf([d, b], [1 - self.alpha, self.alpha])
         out = []
         for j in fused:
             pi = int(self.cpar[j])
-            if pi in out or (filter_population and pi in self.excluded):
+            if pi in out or (filter_population and pi in self.excluded) or (allow is not None and self.parents[pi]["pmcid"] not in allow):
                 continue
             out.append(pi)
             if len(out) == k:
                 break
         return out
 
-    def search(self, queries: list[str], k: int = 10) -> tuple[dict[str, list[int]], int]:
+    def search(self, queries: list[str], k: int = 10, domain: str | None = None) -> tuple[dict[str, list[int]], int]:
         vecs, tokens = self.embedder.queries(queries)
-        return {q: self.search_vec(q, v, k) for q, v in zip(queries, vecs)}, tokens
+        return {q: self.search_vec(q, v, k, domain=domain) for q, v in zip(queries, vecs)}, tokens
 
     def dense_only(self, query: str, k: int = 5) -> tuple[list[int], int]:
         """Baseline retrieval: the question alone, dense top-k, no fusion, no filter (standard RAG)."""

@@ -51,7 +51,10 @@ def parse_pmc_xml(xml: str) -> dict:
             txt = "\n".join(_text(p) for p in body.findall(".//p"))
             if txt:
                 sections.append({"title": "Body", "text": txt})
-    for tw in art.findall(".//floats-group//table-wrap"):
+    done = {id(tw) for sec in (body.iter("sec") if body is not None else []) for tw in sec.findall("./table-wrap")}
+    for tw in art.iter("table-wrap"):  # tables nested in paragraphs or in the floats group
+        if id(tw) in done:
+            continue
         tx = _table(tw)
         if tx:
             sections.append({"title": "Table", "text": tx})

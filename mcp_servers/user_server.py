@@ -34,7 +34,8 @@ def _db() -> sqlite3.Connection:
 def profile_text(u: dict) -> str:
     """Health fields only - name and id are never included (masking)."""
     return (f"age: {u['age']}; gender: {u['gender']}; conditions: {', '.join(u['conditions'])}; "
-            f"medications: {', '.join(u['medications'])}; activity: {u['activity']}; mobility: {u['mobility']}; goal: {u['goal']}")
+            f"medications: {', '.join(u['medications'])}; diet: {u.get('diet', '')}; activity: {u['activity']}; mobility: {u['mobility']}; "
+            f"goal: {u['goal']}")
 
 
 @mcp.tool

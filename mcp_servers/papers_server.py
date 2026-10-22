@@ -30,9 +30,10 @@ def _hit(i: int) -> dict:
 
 
 @mcp.tool
-def search_papers(queries: list[str], k: int = 10) -> dict:
-    """Top-k paper passages per query (hybrid retrieval, other-population papers filtered out)."""
-    tops, tokens = index().search(queries, k)
+def search_papers(queries: list[str], k: int = 10, domain: str = "") -> dict:
+    """Top-k paper passages per query (hybrid retrieval, other-population papers filtered out). domain = "diet" or
+    "exercise" searches that agent's paper collection only; empty = all papers."""
+    tops, tokens = index().search(queries, k, domain or None)
     return {"results": {q: [_hit(i) for i in ids] for q, ids in tops.items()}, "embed_tokens": tokens}
 
 

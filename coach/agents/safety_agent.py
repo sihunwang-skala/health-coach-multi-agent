@@ -5,5 +5,6 @@ from coach.safety.rules import applicable_rules
 
 @timed("safety_agent")
 async def safety_agent(state, config):
-    rules = applicable_rules(state["profile"], state["message"])
+    domains = {"diet": ("diet",), "exercise": ("exercise",), "diet_exercise": ("diet", "exercise")}.get(state["route"], ("exercise",))
+    rules = applicable_rules(state["profile"], state["message"], domains)
     return {"safety_notes": [{"id": r.id, "advice": r.advice, "source": r.source} for r in rules]}

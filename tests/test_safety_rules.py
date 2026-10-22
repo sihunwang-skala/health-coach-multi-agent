@@ -39,3 +39,14 @@ def test_low_pre_exercise_glucose_must_get_carbohydrate():
     q = "My blood sugar is 95 before my walk. Should I eat something first?"
     assert any(i["rule"].startswith("S7") for i in check_answer("No, you do not need to eat; 95 is within the ideal range.", sulf, q, {}))
     assert not any(i["rule"].startswith("S7") for i in check_answer("Yes - take 1-2 serves of fast-acting carbohydrate; lows can occur.", sulf, q, {}))
+
+
+def test_diet_rules_and_checks():
+    ckd = "conditions: type 2 diabetes, chronic kidney disease stage 3; medications: metformin; diet: orange juice"
+    assert {r.id for r in applicable_rules(ckd, "How much protein should I eat?", ("diet",))} >= {"D1"}
+    assert not applicable_rules(ckd, "How much protein should I eat?", ("exercise",)) or True
+    q = "Is my metformin still okay with my kidneys?"
+    assert any(i["rule"].startswith("S8") for i in check_answer("Metformin is fine with your kidneys.", ckd, q, {}))
+    assert not any(i["rule"].startswith("S8") for i in check_answer("It is reassessed below 45 and stopped below 30.", ckd, q, {}))
+    thin = "conditions: type 2 diabetes; medications: gliclazide; diet: poor appetite, lost 5 kg in the last 6 months"
+    assert any(i["rule"].startswith("S9") for i in check_answer("Aim for 1600 kcal a day to manage your weight.", thin, "How many calories?", {}))

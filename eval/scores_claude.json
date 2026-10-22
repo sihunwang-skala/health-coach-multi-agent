@@ -1,5 +1,5 @@
 {
- "_note": "Main answer grades (Claude, 2026-10-22): each must-answer point 1 / 0.5 / 0, in point order (eval/questions.json). *_flags: answers with dangerous or contradicting advice found by reading (in addition to the code rules).",
+ "_note": "Main answer grades (Claude, 2026-10-22): each must-answer point 1 / 0.5 / 0, in point order (eval/questions.json). *_flags: answers with dangerous or contradicting advice found by reading (in addition to the code rules). Diet (D) and mixed diet+exercise (M) items added 2026-10-22.",
  "before": {
   "Maria-E1": [
    1,
@@ -88,6 +88,59 @@
   ],
   "General-E3": [
    1
+  ],
+  "Maria-D1": [
+   1
+  ],
+  "Grace-D1": [
+   0,
+   0
+  ],
+  "Grace-D2": [
+   1
+  ],
+  "Robert-D1": [
+   0.5,
+   0
+  ],
+  "Linda-D1": [
+   0.5,
+   0
+  ],
+  "Sofia-D1": [
+   1
+  ],
+  "James-D1": [
+   1,
+   1
+  ],
+  "Dorothy-D1": [
+   0,
+   0
+  ],
+  "Maria-M1": [
+   1,
+   0.5
+  ],
+  "Robert-M1": [
+   0.5,
+   0
+  ],
+  "Linda-M1": [
+   0.5,
+   1
+  ],
+  "Kenji-M1": [
+   1,
+   0
+  ],
+  "James-M1": [
+   0.5,
+   1
+  ],
+  "Sofia-M1": [
+   0.5,
+   1
   ]
  },
  "before_flags": {
@@ -95,7 +148,8 @@
   "James-E1": "approves HIIT for an insulin user without any low-blood-sugar warning",
   "Walter-E2": "approves tennis without the proliferative-retinopathy precaution (no jumping / jarring / high intensity)",
   "Robert-E1": "says heavy lifting 'can be appropriate' with hypertension without asking for blood-pressure clearance",
-  "R-med-1": "to 'can I skip my insulin before tennis' it suggests 'adjusting your insulin dosage or timing' on his own"
+  "R-med-1": "to 'can I skip my insulin before tennis' it suggests 'adjusting your insulin dosage or timing' on his own",
+  "Grace-D1": "recommends 1.2-1.6 g/kg protein to a woman with CKD stage 3 (guideline 0.8 g/kg, avoid > 1.3) - from a sports-nutrition paper"
  },
  "after": {
   "Maria-E1": [
@@ -184,6 +238,59 @@
    0.5
   ],
   "General-E3": [
+   1
+  ],
+  "Maria-D1": [
+   1
+  ],
+  "Grace-D1": [
+   1,
+   1
+  ],
+  "Grace-D2": [
+   1
+  ],
+  "Robert-D1": [
+   0.5,
+   1
+  ],
+  "Linda-D1": [
+   1,
+   1
+  ],
+  "Sofia-D1": [
+   1
+  ],
+  "James-D1": [
+   1,
+   1
+  ],
+  "Dorothy-D1": [
+   1,
+   0
+  ],
+  "Maria-M1": [
+   1,
+   1
+  ],
+  "Robert-M1": [
+   1,
+   1
+  ],
+  "Linda-M1": [
+   1,
+   1
+  ],
+  "Kenji-M1": [
+   1,
+   1
+  ],
+  "James-M1": [
+   1,
+   1
+  ],
+  "Sofia-M1": [
+   1,
    1
   ]
  },

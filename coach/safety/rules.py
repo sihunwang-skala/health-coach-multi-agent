@@ -5,7 +5,7 @@
    exercise -> fixed reply (stop, fast sugar if able to swallow, call 119 / guardian). No coaching, no LLM.
 2. EXERCISE_RULES: (profile condition or medicine) x (exercise) -> precaution with its source paper. Applied by code to
    every exercise answer as "safety notes" (the Safety Agent).
-3. check_answer(): what counts as dangerous advice (S1-S7). A flagged answer is rewritten once; if it is still unsafe the
+3. check_answer(): what counts as dangerous advice (S1-S9). A flagged answer is rewritten once; if it is still unsafe the
    flagged sentences are removed before the user sees them. Unsafe advice is never "approved" by the user - human
    approval is only used for data operations (deleting a record).
 """
@@ -35,6 +35,7 @@ class Rule:
     topic: str         # regex on the question (empty = always)
     advice: str
     source: str
+    domain: str = "exercise"   # the rule applies when this research agent is called
 
 
 EXERCISE_RULES = [
@@ -62,12 +63,31 @@ EXERCISE_RULES = [
     Rule("R8", r"cane|walker|fall|balance|frail|age: (8\d|9\d)", "",
          "For fall risk, choose balance and strength exercise (it lowers injurious falls) and use a support such as a chair "
          "or cane when balance is impaired.", "PMC10435089"),
+    # diet rules (from the diabetes diet PoC final model's safety rules)
+    Rule("D1", r"kidney|ckd|nephropathy", r"(?i)protein|meat|egg|dairy|diet|eat",
+         "With kidney disease, keep protein around 0.8 g/kg body weight a day; avoid high-protein diets (above 1.3 g/kg) and "
+         "do not cut protein lower on your own - lower targets are only set with a dietitian to avoid malnutrition.", "PMC4170131", "diet"),
+    Rule("D2", r"metformin", r"(?i)metformin|kidney|ckd|medicine|pill",
+         "Metformin with kidney disease: it is reassessed when eGFR falls below 45 and stopped below 30 - ask your doctor "
+         "about your latest eGFR.", "PMC4170131", "diet"),
+    Rule("D3", r"insulin|glargine|aspart|premixed|glimepiride|gliclazide|glipizide|sulfonylurea",
+         r"(?i)skip|breakfast|meal|late|fast|eat (less|little)|appetite|small amounts|odd times",
+         "With insulin or a sulfonylurea, a delayed, missed or smaller-than-planned meal can cause low blood sugar.", "PMC3639216", "diet"),
+    Rule("D4", r"insulin|glargine|aspart|premixed|glimepiride|gliclazide|glipizide|sulfonylurea|metformin",
+         r"(?i)alcohol|beer|wine|drink|soju",
+         "Alcohol can cause low blood sugar together with glucose-lowering medicine because it delays the body's recovery from a "
+         "low; guidelines allow alcohol only in moderation, with food.", "PMC3639216", "diet"),
+    Rule("D5", r"hypertension|amlodipine|lisinopril|losartan", r"(?i)salt|sodium|salty|pickle|eat out|restaurant|blood pressure",
+         "With high blood pressure keep sodium below 2,300 mg a day (about 5-6 g of salt).", "PMC8057793", "diet"),
+    Rule("D6", r"lost \d+ ?kg|poor appetite|low muscle|weight loss", r"(?i)eat|calori|food|diet|protein|meal|weight|muscle",
+         "With weight loss or a poor appetite, do not cut calories: the goal is eating enough (about 30 kcal per kg of body "
+         "weight a day) to prevent undernutrition and frailty.", "PMC7693664", "diet"),
 ]
 
 
-def applicable_rules(profile: str, question: str) -> list[Rule]:
+def applicable_rules(profile: str, question: str, domains: tuple[str, ...] = ("exercise",)) -> list[Rule]:
     p = profile.lower()
-    return [r for r in EXERCISE_RULES if re.search(r.when, p) and (not r.topic or re.search(r.topic, question))]
+    return [r for r in EXERCISE_RULES if r.domain in domains and re.search(r.when, p) and (not r.topic or re.search(r.topic, question))]
 
 
 def is_emergency(message: str) -> bool:
@@ -100,9 +120,17 @@ def check_answer(answer: str, profile: str, question: str, titles: dict[str, str
     for pmc in set(re.findall(r"PMC\d+", answer)):
         if OTHER_POP.search(titles.get(pmc, "")):
             issues.append({"rule": "S4 source about another population", "quote": f"{pmc}: {titles[pmc]}"})
-    if on_hypo_drug and re.search(r"(?i)exercis|walk|train|lift|tennis|activity|workout|gym", question + answer) \
+    if on_hypo_drug and re.search(r"(?i)exercis|walk|train|lift|tennis|activity|workout|gym|skip|breakfast|alcohol|beer|wine", question) \
             and not re.search(r"(?i)hypoglyc|low blood (sugar|glucose)|blood sugar (drop|low)|\blows?\b", answer):
-        issues.append({"rule": "S5 insulin / sulfonylurea user: exercise answer without a low-blood-sugar warning", "quote": ""})
+        issues.append({"rule": "S5 insulin / sulfonylurea user: exercise, skipped-meal or alcohol answer without a low-blood-sugar warning", "quote": ""})
+    if re.search(r"(?i)metformin", question) and re.search(r"kidney|ckd", p) and not (
+            re.search(r"\b30\b", answer) and re.search(r"(?i)(below|under|<|less than|falls? (below|under))\s*(an eGFR of\s*)?45", answer)):
+        issues.append({"rule": "S8 metformin with kidney disease without the eGFR thresholds (reassess < 45, stop < 30)", "quote": ""})
+    if re.search(r"lost \d+ ?kg|poor appetite|weight loss", p):
+        for x in _sentences(answer):
+            if re.search(r"(?i)(decreas|reduc|lower|cut|restrict)\w* (your )?(daily )?(calori|energy intake|portion)|weight (management|reduction)|lose weight|calorie deficit|\b1[0-6]\d\d ?kcal", x) \
+                    and not re.search(r"(?i)\bnot\b|n't|avoid|prevent|undernutrition|malnutrition|risk|associated|monitor", x):
+                issues.append({"rule": "S9 calorie cutting / weight loss for a user who is losing weight", "quote": x})
     m = re.search(r"(?i)\b(7[2-9]|8\d|9[0-7])\s*(mg/dl)?\b|\b(4\.\d|5\.[0-4])\s*mmol", question)
     if on_hypo_drug and m and re.search(r"(?i)(no|not|don't|do not) need to eat|no need to eat|safe range|ideal range|you can (start|go|proceed)", answer):
         issues.append({"rule": "S7 pre-exercise glucose 4.0-5.4 mmol/L (72-97 mg/dL) on insulin / sulfonylurea: answer says no carbohydrate is needed",

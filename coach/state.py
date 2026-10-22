@@ -27,14 +27,24 @@ class CoachState(TypedDict, total=False):
     removed: list[str]
     records: list[dict]
     pending_delete: dict
-    titles: dict[str, str]
+    titles: Annotated[dict[str, str], merge]
+    evidence: Annotated[dict[str, dict], merge]   # domain -> {queries, notes, picks, results, dropped_notes} (parallel agents)
     timings: Annotated[dict[str, float], merge]
     trace: Annotated[list[str], operator.add]
     started: float
     meta: dict[str, Any]
 
 
-class EvidenceIn(TypedDict, total=False):
-    """What the Evidence Agent subgraph receives from the supervisor graph (no trace, so it is not duplicated)."""
+class EvidenceState(TypedDict, total=False):
+    """Private state of one Evidence Agent subgraph (diet or exercise); the parent sees only what the wrapper returns."""
     message: str
     profile: str
+    domain: str
+    queries: list[str]
+    results: dict[str, list[dict]]
+    titles: dict[str, str]
+    picks: list[dict]
+    notes: list[dict]
+    dropped_notes: list[dict]
+    timings: Annotated[dict[str, float], merge]
+    trace: Annotated[list[str], operator.add]

@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Exercise Coach</title>
+<title>Diet & Exercise Coach</title>
 <style>
 :root{--bg:#f6f7f9;--card:#fff;--ink:#1d2430;--muted:#667085;--line:#e4e7ec;--accent:#2f6fed;--warn:#b42318;--ok:#067647}
 @media (prefers-color-scheme: dark){:root{--bg:#111418;--card:#1a1f26;--ink:#e6e9ef;--muted:#98a2b3;--line:#2b323c;--accent:#6c9cff;--warn:#f97066;--ok:#47cd89}}
@@ -14,16 +14,16 @@ input{flex:1;min-width:200px}button{background:var(--accent);color:#fff;border:0
 .msg{white-space:pre-wrap}.user{color:var(--muted)}.meta{font-size:12px;color:var(--muted)}.warn{color:var(--warn)}.ok{color:var(--ok)}
 .examples button{background:transparent;color:var(--accent);border:1px dashed var(--line);font-size:13px}
 </style></head><body><main>
-<header><h1>Exercise Coach — older adults with type 2 diabetes</h1>
+<header><h1>Diet &amp; Exercise Coach — older adults with type 2 diabetes</h1>
 <p>Multi-agent demo (synthetic users). Not medical advice — for medicines or symptoms ask your doctor, nurse or pharmacist. In an emergency call 119.</p></header>
-<div class="card row"><select id="user"></select><input id="msg" placeholder="Ask about exercise…"><button id="send">Send</button></div>
+<div class="card row"><select id="user"></select><input id="msg" placeholder="Ask about diet or exercise…"><button id="send">Send</button></div>
 <div class="card examples row" id="ex"></div>
 <div class="card"><div class="meta">Agent steps (live, SSE)</div><div id="steps"></div></div>
 <div id="log" style="display:grid;gap:10px"></div>
 </main>
 <script>
 const users={u01:"Maria (68, metformin)",u02:"Daniel (72, numb feet)",u03:"Grace (75, CKD 3)",u04:"Robert (66, hypertension)",u05:"Linda (79, glimepiride, falls)",u06:"Kenji (81, gliclazide, low muscle)",u07:"Sofia (70, glimepiride, BP)",u08:"James (77, insulin)",u09:"Dorothy (84, insulin, cane)",u10:"Walter (69, insulin, retinopathy)"};
-const ex=["Would a short walk after dinner help my blood sugar?","I have proliferative retinopathy. Can I keep lifting heavy weights?","Can I skip my insulin before tennis so I don't go low?","I'm sweating, shaky and confused after my walk.","I walked 30 minutes after dinner today.","Delete my last record, it was wrong.","Is hot yoga safe for me?"];
+const ex=["Should I take a walk after dinner, and how should I eat my rice so it doesn't spike my blood sugar?","Is one can of soda a day really that bad for me?","Would a short walk after dinner help my blood sugar?","I have proliferative retinopathy. Can I keep lifting heavy weights?","Can I skip my insulin before tennis so I don't go low?","I'm sweating, shaky and confused after my walk.","I walked 30 minutes after dinner today.","Delete my last record, it was wrong.","Is hot yoga safe for me?"];
 const sel=document.getElementById('user');for(const[k,v]of Object.entries(users)){const o=document.createElement('option');o.value=k;o.textContent=v;sel.appendChild(o)}
 const exd=document.getElementById('ex');ex.forEach(t=>{const b=document.createElement('button');b.textContent=t;b.onclick=()=>{document.getElementById('msg').value=t;send()};exd.appendChild(b)});
 function esc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}

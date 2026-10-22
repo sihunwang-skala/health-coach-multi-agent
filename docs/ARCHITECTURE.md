@@ -6,22 +6,25 @@ flowchart TD
   API --> G[guard: 응급 감지 - 코드]
   G -->|응급| EM[고정 응급 안내 119 - LLM 없음]
   G --> S[Supervisor: LLM 라우터]
-  S -->|exercise| EV[Evidence Agent subgraph]
-  S -->|exercise| SA[Safety Agent: 운동 안전 규칙표 - 코드]
+  S -->|diet / diet_exercise| DA[Diet Agent subgraph]
+  S -->|exercise / diet_exercise| EV[Exercise Agent subgraph]
+  S -->|diet / exercise / both| SA[Safety Agent: 식단·운동 규칙표 - 코드]
   S -->|med_change| MC[고정 안전 문구]
   S -->|log / my_data / chat| RC[Records Agent]
   S -->|delete_record| HD[confirm_delete: interrupt - 사용자 승인]
-  EV --> W[Writer: LLM]
+  DA --> W[Writer: LLM]
+  EV --> W
   SA --> W
-  W --> V[Validate: 위험 조언 S1-S7 - 코드]
+  W --> V[Validate: 위험 조언 S1-S9 - 코드]
   V -->|위험| RT[재작성 1회 / 60초 상한] --> W
-  V -->|그래도 위험| RM[해당 문장 삭제]
-  EV -. MCP .-> P[(coach-papers: 하이브리드 검색)]
+  V -->|그래도 위험| RM[해당 문장 삭제 + 규칙 문장 선두]
+  EV -. MCP domain=exercise .-> P[(coach-papers: 하이브리드 검색)]
+  DA -. MCP domain=diet .-> P
   RC -. MCP .-> UDB[(coach-users: 프로필 마스킹, 기록 SQLite)]
   HD -. MCP .-> UDB
 ```
 
-Evidence Agent subgraph (당뇨 PoC 최종 모델과 같은 파이프라인):
+Diet / Exercise Agent subgraph (당뇨 PoC 최종 모델과 같은 파이프라인, `domain`만 다름 — 혼합 질문은 두 subgraph가 병렬, 결과는 `evidence[domain]`에 따로 저장):
 `make_queries`(검색어 chain 4회: 핵심 표현·step-back·질환/약별·정보 단위 분해, 코드 검사 + 1회 재시도) → `retrieve_mcp`(MCP `search_papers`: dense + BM25 RRF, 다른 대상 논문 제외) → `pick_notes`(검색어마다 top 10 중 2개 고르고 메모, LCEL batch 병렬) → `verify_notes`(메모가 보여 준 passage에 없는 단어가 있으면 버림).
 
 ## 모듈
@@ -29,7 +32,7 @@ Evidence Agent subgraph (당뇨 PoC 최종 모델과 같은 파이프라인):
 |---|---|
 | `coach/graph.py` | supervisor 그래프 조립 (노드·조건부 edge·병렬 fan-out·HITL checkpointer) |
 | `coach/agents/supervisor.py` | guard(응급), supervisor(라우터), 고정 응답 |
-| `coach/agents/evidence.py` | Evidence Agent subgraph |
+| `coach/agents/evidence.py` | Diet / Exercise Agent subgraph (`evidence_node(domain)`) |
 | `coach/agents/safety_agent.py` | Safety Agent (규칙표, 코드) |
 | `coach/agents/writer.py` | Writer, Validate, 재시도·삭제 |
 | `coach/agents/records.py` | Records Agent, 삭제 승인(interrupt) |

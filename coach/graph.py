@@ -1,7 +1,8 @@
 """Supervisor graph (multi-agent):
 
   START -> guard (emergency check, code) ─┬─ emergency_reply -> END                     (no LLM, fixed 119 text)
-                                          └─ supervisor (LLM router) ─┬─ exercise: [Evidence Agent (subgraph) ‖ Safety Agent]
+                                          └─ supervisor (LLM router) ─┬─ diet / exercise / diet_exercise:
+                                                                      │     [Diet Agent ‖ Exercise Agent (subgraphs, as needed) ‖ Safety Agent]
                                                                       │             -> writer -> validate ─┬─ done -> END
                                                                       │                                    ├─ retry -> writer
                                                                       │                                    └─ remove_unsafe -> END
@@ -14,7 +15,7 @@ from __future__ import annotations
 from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 
-from coach.agents.evidence import build_evidence_agent
+from coach.agents.evidence import evidence_node
 from coach.agents.records import confirm_delete, records
 from coach.agents.safety_agent import safety_agent
 from coach.agents.supervisor import emergency_reply, guard, med_change_reply, supervisor
@@ -28,7 +29,8 @@ def build_graph(checkpointer=None):
     g.add_node("supervisor", supervisor)
     g.add_node("emergency_reply", emergency_reply)
     g.add_node("med_change_reply", med_change_reply)
-    g.add_node("evidence_agent", build_evidence_agent())
+    g.add_node("diet_agent", evidence_node("diet"))
+    g.add_node("exercise_agent", evidence_node("exercise"))
     g.add_node("safety_agent", safety_agent)
     g.add_node("writer", writer)
     g.add_node("validate", validate)
@@ -41,9 +43,12 @@ def build_graph(checkpointer=None):
     g.add_conditional_edges("guard", lambda s: "emergency" if s["route"] == "emergency" else "route",
                             {"emergency": "emergency_reply", "route": "supervisor"})
     g.add_conditional_edges("supervisor", lambda s: {
-        "exercise": ["evidence_agent", "safety_agent"], "med_change": ["med_change_reply"], "delete_record": ["confirm_delete"],
-    }.get(s["route"], ["records"]), ["evidence_agent", "safety_agent", "med_change_reply", "confirm_delete", "records"])
-    g.add_edge(["evidence_agent", "safety_agent"], "writer")
+        "exercise": ["exercise_agent", "safety_agent"], "diet": ["diet_agent", "safety_agent"],
+        "diet_exercise": ["diet_agent", "exercise_agent", "safety_agent"],          # both research agents in parallel
+        "med_change": ["med_change_reply"], "delete_record": ["confirm_delete"],
+    }.get(s["route"], ["records"]), ["diet_agent", "exercise_agent", "safety_agent", "med_change_reply", "confirm_delete", "records"])
+    for n in ("diet_agent", "exercise_agent", "safety_agent"):   # same superstep -> the writer runs once, after all of them
+        g.add_edge(n, "writer")
     g.add_edge("writer", "validate")
     g.add_conditional_edges("validate", after_validate, {"done": END, "retry": "retry", "remove": "remove_unsafe"})
     g.add_edge("retry", "writer")

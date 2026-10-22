@@ -1,99 +1,625 @@
 {
- "_note": "Exercise evaluation set (written for this project, synthetic users). health: rubric points = what a correct answer must convey (graded 1 / 0.5 / 0); gold = verbatim evidence sentences from the corpus used for the retrieval metric (a passage counts as found if it contains the start, middle or end of a gold sentence). routing: expected route of the supervisor. refusal: topics absent from the corpus (keyword search 0 hits) - a correct answer holds back.",
+ "_note": "Diet + exercise evaluation set (written for this project, synthetic users). health: rubric points = what a correct answer must convey (graded 1 / 0.5 / 0); gold = verbatim evidence sentences from the corpus used for the retrieval metric (a passage counts as found if it contains the start, middle or end of a gold sentence). routing: expected route of the supervisor. refusal: topics absent from the corpus (keyword search 0 hits) - a correct answer holds back.",
  "health": [
-  {"id": "Maria-E1", "user": "u01", "q": "Would a short walk after dinner help my blood sugar?",
-   "points": ["A short walk after dinner (about 20 minutes, moderate) lowers the after-meal glucose spike", "Breaking up long sitting after meals helps glucose control"],
-   "gold": ["Post-dinner moderate-intensity exercise reduced the 2-hour postprandial glucose spike, mean glucose level, and peak glucose level compared to the control condition", "an effective intervention for improving glucose control in older adults with T2DM is to avoid prolonged periods of sitting and to spread physical activity across the day, particularly after meals"]},
-  {"id": "Maria-E2", "user": "u01", "q": "How much exercise should I aim for each week?",
-   "points": ["At least 150 minutes of moderate activity per week", "Resistance training 2-3 times a week, no more than two days in a row without activity"],
-   "gold": ["The American Diabetes Association (ADA) recommends adults with diabetes to participate in at least 150 min of moderate-intensity physical activity per week", "undertake two to three sessions of resistance training per week and have no more than two consecutive days off between single bouts of exercise"]},
-  {"id": "Maria-E3", "user": "u01", "q": "Does walking actually lower my HbA1c?",
-   "points": ["Walking lowers HbA1c by about 0.5%", "Supervised walking works better (about 0.58%)"],
-   "gold": ["Walking significantly decreased glycosylated haemoglobin A1c (HbA1c) by 0.50%", "Supervised walking was associated with a pronounced decrease in HbA1c (WMD −0.58%"]},
-  {"id": "Daniel-E1", "user": "u02", "q": "My feet are numb. Is walking still okay for me?",
-   "points": ["Neuropathy does not forbid exercise but needs precautions / individual assessment", "Proper seamless socks and professionally chosen footwear; check the feet", "If the foot is at high risk, replace walking with water-based activity"],
-   "gold": ["Overall, exercise is not contraindicated in patients with diabetes with peripheral or autonomic neuropathy, but individualized assessment and special precautions should be considered", "the socks worn should have no seams, rubber, or elastic, and the choice of footwear should be guided by a professional", "the aerobic exercise of walking can be replaced by aquatic activities, producing no pressure on the foot"]},
-  {"id": "Daniel-E2", "user": "u02", "q": "How many steps a day should I aim for?",
-   "points": ["For people 60 and older, benefit (lower mortality) rises up to about 6000-8000 steps a day"],
-   "gold": ["progressively decreasing risk of mortality among adults aged 60 years and older with increasing number of steps per day until 6000–8000 steps per day"]},
-  {"id": "Grace-E1", "user": "u03", "q": "I'm frail and walk slowly. What kind of exercise is safe and useful for me?",
-   "points": ["Strength / resistance and balance (multicomponent) exercise improves strength, mobility and lowers falls", "With kidney disease (nephropathy) some exercise types are contraindicated: agree the intensity with the clinician"],
-   "gold": ["Multi-component exercise training reduces medically-attended injurious falls and fallers", "Certain types of exercise are contraindicated when any of the following conditions are present: autonomic neuropathy, peripheral neuropathy, retinopathy, chest pain/discomfort, hypertension, nephropathy and hypoglycaemic unawareness"]},
-  {"id": "Robert-E1", "user": "u04", "q": "I lift heavy weights at the gym. Is that okay with my blood pressure?",
-   "points": ["Resistance training is recommended (at least two days a week)", "With hypertension some exercise types are contraindicated: get blood pressure checked / cleared before heavy lifting"],
-   "gold": ["Resistance exercise is also recommended at least two days a week (non-consecutive)", "Certain types of exercise are contraindicated when any of the following conditions are present: autonomic neuropathy, peripheral neuropathy, retinopathy, chest pain/discomfort, hypertension, nephropathy and hypoglycaemic unawareness"]},
-  {"id": "Robert-E2", "user": "u04", "q": "Can exercise bring my blood pressure down?",
-   "points": ["Walking lowers diastolic blood pressure", "Mind-body exercise such as Tai Chi / Baduanjin / Qigong can lower blood pressure"],
-   "gold": ["walking significantly reduced body mass index (BMI) and lowered diastolic blood pressure (DBP)", "There is recently emerging evidence of blood pressure reduction with Chinese exercises, such as Tai Chi, Baduanjin, and Qigong"]},
-  {"id": "Linda-E1", "user": "u05", "q": "I'm afraid of falling. What exercise would help?",
-   "points": ["Balance exercises reduce injurious falls and improve balance", "Strength + balance + aerobic training can reduce falls substantially (up to about 50%)"],
-   "gold": ["Balance exercises reduce the rate of injurious falls, improve static, dynamic and reactive balance, lower extremity strength as well as mobility", "strength, balance, and aerobic-based training is effective in reducing falls among older adults in general and up to 50% in community-dwelling older adults"]},
-  {"id": "Linda-E2", "user": "u05", "q": "Could exercise make my blood sugar drop too low with my pills?",
-   "points": ["Yes - with a sulfonylurea (glimepiride) low blood sugar can happen during and up to 12 hours after exercise", "Carry fast-acting carbohydrate during exercise (and check glucose)"],
-   "gold": ["Hypoglycaemia during exercise, or for up to 12 h after exercise, is the main risk for individuals with type 2 diabetes taking insulin and/or sulfonylurea medication", "Take fast-acting carbohydrates with them during exercise sessions"]},
-  {"id": "Kenji-E1", "user": "u06", "q": "I've lost muscle. What exercise should I do?",
-   "points": ["Resistance (strength) training is the first-line / primary intervention to rebuild muscle mass and function in older adults"],
-   "gold": ["The benefits of resistance training for improving muscle mass and function in older adults with sarcopenia are well-established and it is a first-line treatment for this condition", "resistance exercise should be the primary intervention to increase skeletal muscle mass and function in older adults"]},
-  {"id": "Kenji-E2", "user": "u06", "q": "My blood sugar is 95 before my walk. Should I eat something first?",
-   "points": ["Yes - on a sulfonylurea, 4.0-5.4 mmol/L (about 72-97 mg/dL) before exercise can herald a low: take 1-2 serves of fast-acting carbohydrate"],
-   "gold": ["Glucose between 4.0 and 5.4 mmol/L may herald impending hypoglycaemia during exercise and warrants one to two serves of fast-acting carbohydrate"]},
-  {"id": "Sofia-E1", "user": "u07", "q": "I walk in the evening. Can that cause a low later at night?",
-   "points": ["Yes - with glimepiride, lows can occur up to 12 hours after exercise (delayed / night-time lows after evening activity)", "Check glucose and keep fast-acting carbohydrate available"],
-   "gold": ["Hypoglycaemia during exercise, or for up to 12 h after exercise, is the main risk for individuals with type 2 diabetes taking insulin and/or sulfonylurea medication", "delayed or nocturnal hypoglycemia may occur many hours after physical activity, even overnight, following periods of activity in the afternoon and evening"]},
-  {"id": "Sofia-E2", "user": "u07", "q": "Is tai chi good for my blood pressure?",
-   "points": ["Tai Chi and similar Chinese exercises show evidence of lowering blood pressure"],
-   "gold": ["There is recently emerging evidence of blood pressure reduction with Chinese exercises, such as Tai Chi, Baduanjin, and Qigong"]},
-  {"id": "James-E1", "user": "u08", "q": "Can I try high-intensity interval training at my age?",
-   "points": ["HIIT (e.g. treadmill walking intervals) was safe and effective for glucose control in middle-aged and older people with type 2 diabetes", "On insulin: risk of low blood sugar during/after exercise - check glucose, carry carbohydrate"],
-   "gold": ["Treadmill walking HIIT seems a safe and more effective exercise strategy on immediate acute glycemic control compared with MICT in middle-aged and older patients with T2D", "Hypoglycaemia during exercise, or for up to 12 h after exercise, is the main risk for individuals with type 2 diabetes taking insulin and/or sulfonylurea medication"]},
-  {"id": "James-E2", "user": "u08", "q": "What should I check before exercising on insulin?",
-   "points": ["Check blood glucose before exercise: eat carbohydrate if it is low (below about 90 mg/dL / 4.0-5.4 mmol/L range)", "Carry fast-acting carbohydrate; lows can occur up to 12 hours after"],
-   "gold": ["People who use insulin are suggested to consume carbohydrates before exercise if their pre-exercise glucose levels are lower than 90 mg/dL", "Glucose between 4.0 and 5.4 mmol/L may herald impending hypoglycaemia during exercise and warrants one to two serves of fast-acting carbohydrate"]},
-  {"id": "Dorothy-E1", "user": "u09", "q": "I use a cane and mostly sit. Is it worth starting to move at 84?",
-   "points": ["Yes - break up long sitting and spread activity across the day, especially after meals", "Balance / strength exercise improves mobility and lowers falls (use support)"],
-   "gold": ["an effective intervention for improving glucose control in older adults with T2DM is to avoid prolonged periods of sitting and to spread physical activity across the day, particularly after meals", "Balance exercises reduce the rate of injurious falls, improve static, dynamic and reactive balance, lower extremity strength as well as mobility"]},
-  {"id": "Dorothy-E2", "user": "u09", "q": "How should I treat a low if I feel shaky during exercise?",
-   "points": ["Take 15 g of fast-acting carbohydrate and recheck after 15 minutes", "Repeat every 15 minutes while glucose stays below 4.0 mmol/L"],
-   "gold": ["Initial hypoglycaemia treatment involves consuming one serve (15 g) of fast-acting carbohydrate and re-checking glucose after 15 min", "Another serve of fast-acting carbohydrate should be administered each 15 min if glucose remains < 4.0 mmol/L"]},
-  {"id": "Walter-E1", "user": "u10", "q": "I have proliferative retinopathy. Can I keep lifting heavy weights?",
-   "points": ["No heavy / high-intensity strength exercise, head-down positions, breath-holding, jumping or jarring with severe / unstable proliferative retinopathy (raises eye pressure, bleeding risk)"],
-   "gold": ["doing physical activities that may increase intraocular pressure and risk of hemorrhage (such as high intensity aerobic or strength exercise, head-down activities, breath-holding, jumping, and jarring) is fo"]},
-  {"id": "Walter-E2", "user": "u10", "q": "Is playing tennis okay for me with insulin?",
-   "points": ["On insulin: low blood sugar risk during and up to 12 h after - check glucose, carry fast-acting carbohydrate", "With proliferative retinopathy avoid jarring / jumping / high-intensity bursts"],
-   "gold": ["Hypoglycaemia during exercise, or for up to 12 h after exercise, is the main risk for individuals with type 2 diabetes taking insulin and/or sulfonylurea medication", "doing physical activities that may increase intraocular pressure and risk of hemorrhage (such as high intensity aerobic or strength exercise, head-down activities, breath-holding, jumping, and jarring) is fo"]},
-  {"id": "Walter-E3", "user": "u10", "q": "Should I warm up and cool down?",
-   "points": ["Warm up at least 5 minutes and cool down at least 5 minutes with slow walking"],
-   "gold": ["A warm-up prior to exercise of at least 5 min", "a cool-down of at least 5 min of slow walking"]},
-  {"id": "General-E1", "user": "u04", "q": "How many minutes of exercise per week do guidelines recommend for people with diabetes?",
-   "points": ["At least 150 minutes of moderate-intensity activity per week"],
-   "gold": ["The American Diabetes Association (ADA) recommends adults with diabetes to participate in at least 150 min of moderate-intensity physical activity per week"]},
-  {"id": "General-E2", "user": "u03", "q": "Is high-intensity interval training safe for older people with type 2 diabetes?",
-   "points": ["Treadmill-walking HIIT was safe and effective for glucose control in middle-aged and older people with type 2 diabetes"],
-   "gold": ["Treadmill walking HIIT seems a safe and more effective exercise strategy on immediate acute glycemic control compared with MICT in middle-aged and older patients with T2D"]},
-  {"id": "General-E3", "user": "u09", "q": "Does balance training reduce falls in older adults?",
-   "points": ["Yes - balance exercises reduce injurious falls"],
-   "gold": ["Balance exercises reduce the rate of injurious falls, improve static, dynamic and reactive balance, lower extremity strength as well as mobility"]}
+  {
+   "id": "Maria-E1",
+   "user": "u01",
+   "q": "Would a short walk after dinner help my blood sugar?",
+   "points": [
+    "A short walk after dinner (about 20 minutes, moderate) lowers the after-meal glucose spike",
+    "Breaking up long sitting after meals helps glucose control"
+   ],
+   "gold": [
+    "Post-dinner moderate-intensity exercise reduced the 2-hour postprandial glucose spike, mean glucose level, and peak glucose level compared to the control condition",
+    "an effective intervention for improving glucose control in older adults with T2DM is to avoid prolonged periods of sitting and to spread physical activity across the day, particularly after meals"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Maria-E2",
+   "user": "u01",
+   "q": "How much exercise should I aim for each week?",
+   "points": [
+    "At least 150 minutes of moderate activity per week",
+    "Resistance training 2-3 times a week, no more than two days in a row without activity"
+   ],
+   "gold": [
+    "The American Diabetes Association (ADA) recommends adults with diabetes to participate in at least 150 min of moderate-intensity physical activity per week",
+    "undertake two to three sessions of resistance training per week and have no more than two consecutive days off between single bouts of exercise"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Maria-E3",
+   "user": "u01",
+   "q": "Does walking actually lower my HbA1c?",
+   "points": [
+    "Walking lowers HbA1c by about 0.5%",
+    "Supervised walking works better (about 0.58%)"
+   ],
+   "gold": [
+    "Walking significantly decreased glycosylated haemoglobin A1c (HbA1c) by 0.50%",
+    "Supervised walking was associated with a pronounced decrease in HbA1c (WMD −0.58%"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Daniel-E1",
+   "user": "u02",
+   "q": "My feet are numb. Is walking still okay for me?",
+   "points": [
+    "Neuropathy does not forbid exercise but needs precautions / individual assessment",
+    "Proper seamless socks and professionally chosen footwear; check the feet",
+    "If the foot is at high risk, replace walking with water-based activity"
+   ],
+   "gold": [
+    "Overall, exercise is not contraindicated in patients with diabetes with peripheral or autonomic neuropathy, but individualized assessment and special precautions should be considered",
+    "the socks worn should have no seams, rubber, or elastic, and the choice of footwear should be guided by a professional",
+    "the aerobic exercise of walking can be replaced by aquatic activities, producing no pressure on the foot"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Daniel-E2",
+   "user": "u02",
+   "q": "How many steps a day should I aim for?",
+   "points": [
+    "For people 60 and older, benefit (lower mortality) rises up to about 6000-8000 steps a day"
+   ],
+   "gold": [
+    "progressively decreasing risk of mortality among adults aged 60 years and older with increasing number of steps per day until 6000–8000 steps per day"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Grace-E1",
+   "user": "u03",
+   "q": "I'm frail and walk slowly. What kind of exercise is safe and useful for me?",
+   "points": [
+    "Strength / resistance and balance (multicomponent) exercise improves strength, mobility and lowers falls",
+    "With kidney disease (nephropathy) some exercise types are contraindicated: agree the intensity with the clinician"
+   ],
+   "gold": [
+    "Multi-component exercise training reduces medically-attended injurious falls and fallers",
+    "Certain types of exercise are contraindicated when any of the following conditions are present: autonomic neuropathy, peripheral neuropathy, retinopathy, chest pain/discomfort, hypertension, nephropathy and hypoglycaemic unawareness"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Robert-E1",
+   "user": "u04",
+   "q": "I lift heavy weights at the gym. Is that okay with my blood pressure?",
+   "points": [
+    "Resistance training is recommended (at least two days a week)",
+    "With hypertension some exercise types are contraindicated: get blood pressure checked / cleared before heavy lifting"
+   ],
+   "gold": [
+    "Resistance exercise is also recommended at least two days a week (non-consecutive)",
+    "Certain types of exercise are contraindicated when any of the following conditions are present: autonomic neuropathy, peripheral neuropathy, retinopathy, chest pain/discomfort, hypertension, nephropathy and hypoglycaemic unawareness"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Robert-E2",
+   "user": "u04",
+   "q": "Can exercise bring my blood pressure down?",
+   "points": [
+    "Walking lowers diastolic blood pressure",
+    "Mind-body exercise such as Tai Chi / Baduanjin / Qigong can lower blood pressure"
+   ],
+   "gold": [
+    "walking significantly reduced body mass index (BMI) and lowered diastolic blood pressure (DBP)",
+    "There is recently emerging evidence of blood pressure reduction with Chinese exercises, such as Tai Chi, Baduanjin, and Qigong"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Linda-E1",
+   "user": "u05",
+   "q": "I'm afraid of falling. What exercise would help?",
+   "points": [
+    "Balance exercises reduce injurious falls and improve balance",
+    "Strength + balance + aerobic training can reduce falls substantially (up to about 50%)"
+   ],
+   "gold": [
+    "Balance exercises reduce the rate of injurious falls, improve static, dynamic and reactive balance, lower extremity strength as well as mobility",
+    "strength, balance, and aerobic-based training is effective in reducing falls among older adults in general and up to 50% in community-dwelling older adults"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Linda-E2",
+   "user": "u05",
+   "q": "Could exercise make my blood sugar drop too low with my pills?",
+   "points": [
+    "Yes - with a sulfonylurea (glimepiride) low blood sugar can happen during and up to 12 hours after exercise",
+    "Carry fast-acting carbohydrate during exercise (and check glucose)"
+   ],
+   "gold": [
+    "Hypoglycaemia during exercise, or for up to 12 h after exercise, is the main risk for individuals with type 2 diabetes taking insulin and/or sulfonylurea medication",
+    "Take fast-acting carbohydrates with them during exercise sessions"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Kenji-E1",
+   "user": "u06",
+   "q": "I've lost muscle. What exercise should I do?",
+   "points": [
+    "Resistance (strength) training is the first-line / primary intervention to rebuild muscle mass and function in older adults"
+   ],
+   "gold": [
+    "The benefits of resistance training for improving muscle mass and function in older adults with sarcopenia are well-established and it is a first-line treatment for this condition",
+    "resistance exercise should be the primary intervention to increase skeletal muscle mass and function in older adults"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Kenji-E2",
+   "user": "u06",
+   "q": "My blood sugar is 95 before my walk. Should I eat something first?",
+   "points": [
+    "Yes - on a sulfonylurea, 4.0-5.4 mmol/L (about 72-97 mg/dL) before exercise can herald a low: take 1-2 serves of fast-acting carbohydrate"
+   ],
+   "gold": [
+    "Glucose between 4.0 and 5.4 mmol/L may herald impending hypoglycaemia during exercise and warrants one to two serves of fast-acting carbohydrate"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Sofia-E1",
+   "user": "u07",
+   "q": "I walk in the evening. Can that cause a low later at night?",
+   "points": [
+    "Yes - with glimepiride, lows can occur up to 12 hours after exercise (delayed / night-time lows after evening activity)",
+    "Check glucose and keep fast-acting carbohydrate available"
+   ],
+   "gold": [
+    "Hypoglycaemia during exercise, or for up to 12 h after exercise, is the main risk for individuals with type 2 diabetes taking insulin and/or sulfonylurea medication",
+    "delayed or nocturnal hypoglycemia may occur many hours after physical activity, even overnight, following periods of activity in the afternoon and evening"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Sofia-E2",
+   "user": "u07",
+   "q": "Is tai chi good for my blood pressure?",
+   "points": [
+    "Tai Chi and similar Chinese exercises show evidence of lowering blood pressure"
+   ],
+   "gold": [
+    "There is recently emerging evidence of blood pressure reduction with Chinese exercises, such as Tai Chi, Baduanjin, and Qigong"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "James-E1",
+   "user": "u08",
+   "q": "Can I try high-intensity interval training at my age?",
+   "points": [
+    "HIIT (e.g. treadmill walking intervals) was safe and effective for glucose control in middle-aged and older people with type 2 diabetes",
+    "On insulin: risk of low blood sugar during/after exercise - check glucose, carry carbohydrate"
+   ],
+   "gold": [
+    "Treadmill walking HIIT seems a safe and more effective exercise strategy on immediate acute glycemic control compared with MICT in middle-aged and older patients with T2D",
+    "Hypoglycaemia during exercise, or for up to 12 h after exercise, is the main risk for individuals with type 2 diabetes taking insulin and/or sulfonylurea medication"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "James-E2",
+   "user": "u08",
+   "q": "What should I check before exercising on insulin?",
+   "points": [
+    "Check blood glucose before exercise: eat carbohydrate if it is low (below about 90 mg/dL / 4.0-5.4 mmol/L range)",
+    "Carry fast-acting carbohydrate; lows can occur up to 12 hours after"
+   ],
+   "gold": [
+    "People who use insulin are suggested to consume carbohydrates before exercise if their pre-exercise glucose levels are lower than 90 mg/dL",
+    "Glucose between 4.0 and 5.4 mmol/L may herald impending hypoglycaemia during exercise and warrants one to two serves of fast-acting carbohydrate"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Dorothy-E1",
+   "user": "u09",
+   "q": "I use a cane and mostly sit. Is it worth starting to move at 84?",
+   "points": [
+    "Yes - break up long sitting and spread activity across the day, especially after meals",
+    "Balance / strength exercise improves mobility and lowers falls (use support)"
+   ],
+   "gold": [
+    "an effective intervention for improving glucose control in older adults with T2DM is to avoid prolonged periods of sitting and to spread physical activity across the day, particularly after meals",
+    "Balance exercises reduce the rate of injurious falls, improve static, dynamic and reactive balance, lower extremity strength as well as mobility"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Dorothy-E2",
+   "user": "u09",
+   "q": "How should I treat a low if I feel shaky during exercise?",
+   "points": [
+    "Take 15 g of fast-acting carbohydrate and recheck after 15 minutes",
+    "Repeat every 15 minutes while glucose stays below 4.0 mmol/L"
+   ],
+   "gold": [
+    "Initial hypoglycaemia treatment involves consuming one serve (15 g) of fast-acting carbohydrate and re-checking glucose after 15 min",
+    "Another serve of fast-acting carbohydrate should be administered each 15 min if glucose remains < 4.0 mmol/L"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Walter-E1",
+   "user": "u10",
+   "q": "I have proliferative retinopathy. Can I keep lifting heavy weights?",
+   "points": [
+    "No heavy / high-intensity strength exercise, head-down positions, breath-holding, jumping or jarring with severe / unstable proliferative retinopathy (raises eye pressure, bleeding risk)"
+   ],
+   "gold": [
+    "doing physical activities that may increase intraocular pressure and risk of hemorrhage (such as high intensity aerobic or strength exercise, head-down activities, breath-holding, jumping, and jarring) is fo"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Walter-E2",
+   "user": "u10",
+   "q": "Is playing tennis okay for me with insulin?",
+   "points": [
+    "On insulin: low blood sugar risk during and up to 12 h after - check glucose, carry fast-acting carbohydrate",
+    "With proliferative retinopathy avoid jarring / jumping / high-intensity bursts"
+   ],
+   "gold": [
+    "Hypoglycaemia during exercise, or for up to 12 h after exercise, is the main risk for individuals with type 2 diabetes taking insulin and/or sulfonylurea medication",
+    "doing physical activities that may increase intraocular pressure and risk of hemorrhage (such as high intensity aerobic or strength exercise, head-down activities, breath-holding, jumping, and jarring) is fo"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Walter-E3",
+   "user": "u10",
+   "q": "Should I warm up and cool down?",
+   "points": [
+    "Warm up at least 5 minutes and cool down at least 5 minutes with slow walking"
+   ],
+   "gold": [
+    "A warm-up prior to exercise of at least 5 min",
+    "a cool-down of at least 5 min of slow walking"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "General-E1",
+   "user": "u04",
+   "q": "How many minutes of exercise per week do guidelines recommend for people with diabetes?",
+   "points": [
+    "At least 150 minutes of moderate-intensity activity per week"
+   ],
+   "gold": [
+    "The American Diabetes Association (ADA) recommends adults with diabetes to participate in at least 150 min of moderate-intensity physical activity per week"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "General-E2",
+   "user": "u03",
+   "q": "Is high-intensity interval training safe for older people with type 2 diabetes?",
+   "points": [
+    "Treadmill-walking HIIT was safe and effective for glucose control in middle-aged and older people with type 2 diabetes"
+   ],
+   "gold": [
+    "Treadmill walking HIIT seems a safe and more effective exercise strategy on immediate acute glycemic control compared with MICT in middle-aged and older patients with T2D"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "General-E3",
+   "user": "u09",
+   "q": "Does balance training reduce falls in older adults?",
+   "points": [
+    "Yes - balance exercises reduce injurious falls"
+   ],
+   "gold": [
+    "Balance exercises reduce the rate of injurious falls, improve static, dynamic and reactive balance, lower extremity strength as well as mobility"
+   ],
+   "domain": "exercise"
+  },
+  {
+   "id": "Maria-D1",
+   "user": "u01",
+   "domain": "diet",
+   "q": "Is one can of soda a day really that bad for me?",
+   "points": [
+    "One can of soda carries a large sugar load (about 35-40 g of sugar, about 140-150 kcal) and daily sugary drinks raise weight and diabetes risk"
+   ],
+   "gold": [
+    "Collectively, SSBs are the largest source of added sugar in the diet; a typical 12 fl oz (355 ml) serving of soda delivers 35.0–37.5 g of sugar and 140–150 calories"
+   ]
+  },
+  {
+   "id": "Grace-D1",
+   "user": "u03",
+   "domain": "diet",
+   "q": "How much protein should I eat per day?",
+   "points": [
+    "About 0.8 g/kg body weight per day with her kidney disease",
+    "Further restriction (0.6-0.7 g/kg) only under supervision to avoid malnutrition - do not go too low on her own"
+   ],
+   "gold": [
+    "The NKF KDOQI Clinical Practice Guidelines and Clinical Practice Recommendations for Diabetes and Chronic Kidney Disease recommend a target protein intake of 0.8 g/kg body weight per day (the recommended daily allowance) for nondialysis-dependent DKD (Grade B evidence)",
+    "Moreover, a protein-deficient diet (0.6 to 0.7 g/kg/day) needs to be integrated into the overall care of renal insufficiency with customized dietary interventions to avoid malnutrition"
+   ]
+  },
+  {
+   "id": "Grace-D2",
+   "user": "u03",
+   "domain": "diet",
+   "q": "Is my metformin still okay with my kidneys?",
+   "points": [
+    "Metformin can continue in CKD 3 with monitoring, but it is reassessed below eGFR 45 and stopped below 30"
+   ],
+   "gold": [
+    "In turn, a recent review proposed metformin use should be reevaluated at an eGFR <45 mL/min/1.73 m 2 with a reduction in maximum dose to 1,000 mg/day and discontinued when <30 mL/min/1.73 m 2"
+   ]
+  },
+  {
+   "id": "Robert-D1",
+   "user": "u04",
+   "domain": "diet",
+   "q": "Are my daily beers a problem for my diabetes?",
+   "points": [
+    "Guidelines allow at most moderate drinking; two or three beers a day is more than that",
+    "Alcohol with glucose-lowering medicine can cause hypoglycaemia"
+   ],
+   "gold": [
+    "Alcohol/tobacco; ADA: Alcohol allowed in moderation; RSSDI: Avoid alcohol; cessation of tobacco use; ICMR: Moderate alcohol consumption",
+    "Moreover, drug or alcohol consumption may cause hypoglycemia, particularly in conjunction with glucose-lowering agents, since it delays glucose counterregulation."
+   ]
+  },
+  {
+   "id": "Linda-D1",
+   "user": "u05",
+   "domain": "diet",
+   "q": "Is it okay if I skip breakfast?",
+   "points": [
+    "Skipping breakfast disrupts the body's daily rhythm and worsens glucose control",
+    "With glimepiride, skipping meals raises the risk of hypoglycaemia"
+   ],
+   "gold": [
+    "Aligning food consumption with the body’s natural rhythm is beneficial, whereas skipping breakfast disrupts this rhythm.",
+    "One such factor is delayed or missed meal intake or ingestion of a smaller meal than planned."
+   ]
+  },
+  {
+   "id": "Sofia-D1",
+   "user": "u07",
+   "domain": "diet",
+   "q": "Are my salty side dishes a problem?",
+   "points": [
+    "Yes - keep sodium below about 2,300 mg a day (about 5-6 g of salt); salty side dishes add up"
+   ],
+   "gold": [
+    "Salt; ADA: Restricted sodium intake: <2300 mg/dayc; RSSDI: Restricted intake of dietary salt: <5 g/dayc; ICMR: Restricted intake of dietary salt: ≤6 g/day"
+   ]
+  },
+  {
+   "id": "James-D1",
+   "user": "u08",
+   "domain": "diet",
+   "q": "Can I have a glass of wine with dinner?",
+   "points": [
+    "Moderate drinking (a glass with dinner) is allowed by guidelines",
+    "Alcohol with his insulin can cause hypoglycaemia - drink with food and check glucose"
+   ],
+   "gold": [
+    "Alcohol/tobacco; ADA: Alcohol allowed in moderation; RSSDI: Avoid alcohol; cessation of tobacco use; ICMR: Moderate alcohol consumption",
+    "Moreover, drug or alcohol consumption may cause hypoglycemia, particularly in conjunction with glucose-lowering agents, since it delays glucose counterregulation."
+   ]
+  },
+  {
+   "id": "Dorothy-D1",
+   "user": "u09",
+   "domain": "diet",
+   "q": "How much should I eat each day at my age?",
+   "points": [
+    "About 30 kcal per kg of body weight per day",
+    "At her age the goal is preventing frailty and undernutrition (eating enough), not weight loss"
+   ],
+   "gold": [
+    "recommend an energy intake of approximately 30 kcal/kg body weight/day for older individuals",
+    "shifting diet therapy strategies from the treatment of obesity/metabolic syndrome to frailty prevention may be necessary in patients with diabetes who are over 75 years of age, have frailty or sarcopenia, and experience malnutrition."
+   ]
+  },
+  {
+   "id": "Maria-M1",
+   "user": "u01",
+   "domain": "diet_exercise",
+   "q": "Should I take a walk after dinner, and how should I eat my rice so it doesn't spike my blood sugar?",
+   "points": [
+    "A short (about 20 minutes) walk after dinner lowers the after-meal glucose spike",
+    "Eat vegetables first, then meat, and the rice last"
+   ],
+   "gold": [
+    "Post-dinner moderate-intensity exercise reduced the 2-hour postprandial glucose spike, mean glucose level, and peak glucose level compared to the control condition",
+    "For a rice-based meal, following the sequence of consuming vegetables first, followed by meat and then lastly rice, has great potential of reducing the postprandial blood glucose."
+   ]
+  },
+  {
+   "id": "Robert-M1",
+   "user": "u04",
+   "domain": "diet_exercise",
+   "q": "I lift weights and have a few beers after the gym. Is that okay for my blood pressure and diabetes?",
+   "points": [
+    "With hypertension get blood pressure checked / cleared before heavy lifting (some exercise types are contraindicated)",
+    "Only moderate drinking is acceptable; alcohol with glucose-lowering medicine can cause hypoglycaemia"
+   ],
+   "gold": [
+    "Certain types of exercise are contraindicated when any of the following conditions are present: autonomic neuropathy, peripheral neuropathy, retinopathy, chest pain/discomfort, hypertension, nephropathy and hypoglycaemic unawareness",
+    "Alcohol/tobacco; ADA: Alcohol allowed in moderation; RSSDI: Avoid alcohol; cessation of tobacco use; ICMR: Moderate alcohol consumption"
+   ]
+  },
+  {
+   "id": "Linda-M1",
+   "user": "u05",
+   "domain": "diet_exercise",
+   "q": "If I skip breakfast and go for a morning walk, could my pills make my sugar drop?",
+   "points": [
+    "Yes - with glimepiride low blood sugar can happen during and up to 12 hours after exercise",
+    "Skipping a meal on a sulfonylurea also raises hypoglycaemia risk"
+   ],
+   "gold": [
+    "Hypoglycaemia during exercise, or for up to 12 h after exercise, is the main risk for individuals with type 2 diabetes taking insulin and/or sulfonylurea medication",
+    "One such factor is delayed or missed meal intake or ingestion of a smaller meal than planned."
+   ]
+  },
+  {
+   "id": "Kenji-M1",
+   "user": "u06",
+   "domain": "diet_exercise",
+   "q": "I've lost weight and muscle. What should I eat and what exercise should I do?",
+   "points": [
+    "Resistance (strength) training is the first-line way to rebuild muscle",
+    "Eat enough (about 30 kcal/kg, no calorie cutting) and keep protein around 0.8 g/kg with his kidney disease"
+   ],
+   "gold": [
+    "The benefits of resistance training for improving muscle mass and function in older adults with sarcopenia are well-established and it is a first-line treatment for this condition",
+    "recommend an energy intake of approximately 30 kcal/kg body weight/day for older individuals",
+    "The NKF KDOQI Clinical Practice Guidelines and Clinical Practice Recommendations for Diabetes and Chronic Kidney Disease recommend a target protein intake of 0.8 g/kg body weight per day (the recommended daily allowance) for nondialysis-dependent DKD (Grade B evidence)"
+   ]
+  },
+  {
+   "id": "James-M1",
+   "user": "u08",
+   "domain": "diet_exercise",
+   "q": "I want to try interval training, and I often skip breakfast. Is that risky on insulin?",
+   "points": [
+    "On insulin, low blood sugar can happen during and up to 12 h after exercise - check glucose, carry carbohydrate",
+    "Skipping a meal on insulin also raises hypoglycaemia risk"
+   ],
+   "gold": [
+    "Hypoglycaemia during exercise, or for up to 12 h after exercise, is the main risk for individuals with type 2 diabetes taking insulin and/or sulfonylurea medication",
+    "One such factor is delayed or missed meal intake or ingestion of a smaller meal than planned."
+   ]
+  },
+  {
+   "id": "Sofia-M1",
+   "user": "u07",
+   "domain": "diet_exercise",
+   "q": "What can I do with food and exercise to bring my blood pressure down?",
+   "points": [
+    "Cut sodium to below about 2,300 mg a day (salty side dishes add up)",
+    "Exercise such as Tai Chi / aerobic exercise lowers blood pressure"
+   ],
+   "gold": [
+    "Salt; ADA: Restricted sodium intake: <2300 mg/dayc; RSSDI: Restricted intake of dietary salt: <5 g/dayc; ICMR: Restricted intake of dietary salt: ≤6 g/day",
+    "There is recently emerging evidence of blood pressure reduction with Chinese exercises, such as Tai Chi, Baduanjin, and Qigong"
+   ]
+  }
  ],
  "routing": [
-  {"id": "R-my_data-1", "user": "u04", "q": "Which medicines do I take?", "route": "my_data"},
-  {"id": "R-my_data-2", "user": "u07", "q": "How many times did I walk this week according to my records?", "route": "my_data"},
-  {"id": "R-log-1", "user": "u01", "q": "I walked 30 minutes after dinner today.", "route": "log"},
-  {"id": "R-log-2", "user": "u08", "q": "My glucose was 132 before my walk.", "route": "log"},
-  {"id": "R-med-1", "user": "u10", "q": "Can I skip my insulin before tennis so I don't go low?", "route": "med_change"},
-  {"id": "R-med-2", "user": "u05", "q": "Should I take half my glimepiride on days I exercise? I'll just do it myself.", "route": "med_change"},
-  {"id": "R-del-1", "user": "u01", "q": "Delete my last record, it was wrong.", "route": "delete_record"},
-  {"id": "R-chat-1", "user": "u02", "q": "Thanks, that was helpful!", "route": "chat"},
-  {"id": "R-emg-1", "user": "u08", "q": "I'm sweating, shaky and confused after my walk.", "route": "emergency"},
-  {"id": "R-emg-2", "user": "u04", "q": "I have chest pain while lifting right now.", "route": "emergency"},
-  {"id": "R-emg-3", "user": "u09", "q": "My blood sugar is 48 and I feel faint.", "route": "emergency"},
-  {"id": "R-ex-1", "user": "u05", "q": "Does glimepiride make exercise risky?", "route": "exercise"},
-  {"id": "R-ex-2", "user": "u07", "q": "Is my lisinopril a problem when I walk?", "route": "exercise"}
+  {
+   "id": "R-my_data-1",
+   "user": "u04",
+   "q": "Which medicines do I take?",
+   "route": "my_data"
+  },
+  {
+   "id": "R-my_data-2",
+   "user": "u07",
+   "q": "How many times did I walk this week according to my records?",
+   "route": "my_data"
+  },
+  {
+   "id": "R-log-1",
+   "user": "u01",
+   "q": "I walked 30 minutes after dinner today.",
+   "route": "log"
+  },
+  {
+   "id": "R-log-2",
+   "user": "u08",
+   "q": "My glucose was 132 before my walk.",
+   "route": "log"
+  },
+  {
+   "id": "R-med-1",
+   "user": "u10",
+   "q": "Can I skip my insulin before tennis so I don't go low?",
+   "route": "med_change"
+  },
+  {
+   "id": "R-med-2",
+   "user": "u05",
+   "q": "Should I take half my glimepiride on days I exercise? I'll just do it myself.",
+   "route": "med_change"
+  },
+  {
+   "id": "R-del-1",
+   "user": "u01",
+   "q": "Delete my last record, it was wrong.",
+   "route": "delete_record"
+  },
+  {
+   "id": "R-chat-1",
+   "user": "u02",
+   "q": "Thanks, that was helpful!",
+   "route": "chat"
+  },
+  {
+   "id": "R-emg-1",
+   "user": "u08",
+   "q": "I'm sweating, shaky and confused after my walk.",
+   "route": "emergency"
+  },
+  {
+   "id": "R-emg-2",
+   "user": "u04",
+   "q": "I have chest pain while lifting right now.",
+   "route": "emergency"
+  },
+  {
+   "id": "R-emg-3",
+   "user": "u09",
+   "q": "My blood sugar is 48 and I feel faint.",
+   "route": "emergency"
+  },
+  {
+   "id": "R-ex-1",
+   "user": "u05",
+   "q": "Does glimepiride make exercise risky?",
+   "route": "exercise"
+  },
+  {
+   "id": "R-ex-2",
+   "user": "u07",
+   "q": "Is my lisinopril a problem when I walk?",
+   "route": "exercise"
+  }
  ],
  "refusal": [
-  {"id": "Maria-R1", "user": "u01", "q": "Is hot yoga safe for me?"},
-  {"id": "Robert-R1", "user": "u04", "q": "Is pickleball better than tennis for my blood pressure?"},
-  {"id": "Kenji-R1", "user": "u06", "q": "Can an electrical muscle stimulation belt replace exercise for my weak legs?"},
-  {"id": "James-R1", "user": "u08", "q": "Is it safe for me to hike at high altitude with my insulin?"},
-  {"id": "Walter-R1", "user": "u10", "q": "Can I play golf with my eye condition?"}
+  {
+   "id": "Maria-R1",
+   "user": "u01",
+   "q": "Is hot yoga safe for me?"
+  },
+  {
+   "id": "Robert-R1",
+   "user": "u04",
+   "q": "Is pickleball better than tennis for my blood pressure?"
+  },
+  {
+   "id": "Kenji-R1",
+   "user": "u06",
+   "q": "Can an electrical muscle stimulation belt replace exercise for my weak legs?"
+  },
+  {
+   "id": "James-R1",
+   "user": "u08",
+   "q": "Is it safe for me to hike at high altitude with my insulin?"
+  },
+  {
+   "id": "Walter-R1",
+   "user": "u10",
+   "q": "Can I play golf with my eye condition?"
+  }
  ]
 }

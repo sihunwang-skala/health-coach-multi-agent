@@ -29,6 +29,10 @@ STATE: dict = {}
 async def lifespan(app: FastAPI):
     STATE["deps"] = default_container()   # built once: settings, LLM, MCP servers (dependency injection)
     STATE["graph"] = build_graph()
+    import asyncio
+
+    from mcp_servers.papers_server import index
+    await asyncio.to_thread(index)        # load the paper index at startup, not on the first question
     yield
 
 
@@ -87,13 +91,16 @@ async def chat_stream(user_id: str, message: str, deps: Container = Depends(get_
         async for upd in STATE["graph"].astream({"user_id": user_id, "message": message, "trace": [], "timings": {}}, cfg,
                                                 stream_mode="updates", subgraphs=True):
             ns, data = upd
+            prefix = (ns[0].split(":")[0].replace("_agent", "") + ".") if ns else ""   # diet. / exercise. inside the subgraphs
             for node, out in (data or {}).items():
                 if node == "__interrupt__":
                     final["interrupt"] = out[0].value if out else None
                     continue
                 out = out or {}
-                final.update({k: v for k, v in out.items() if k in ("answer", "route", "notes", "safety_notes", "retries")})
-                yield f"data: {json.dumps({'step': node, 'seconds': (out.get('timings') or {}).get(node), 'route': out.get('route')})}\n\n"
+                final.update({k: v for k, v in out.items() if k in ("answer", "route", "safety_notes", "retries")})
+                for dom, ev in (out.get("evidence") or {}).items():
+                    final.setdefault("notes", []).extend((ev or {}).get("notes") or [])
+                yield f"data: {json.dumps({'step': prefix + node, 'seconds': (out.get('timings') or {}).get(node), 'route': out.get('route')})}\n\n"
         s = deps.settings
         yield "data: " + json.dumps({"done": True, "answer": final.get("answer", ""), "route": final.get("route"),
                                      "interrupt": final.get("interrupt"), "thread_id": tid,
