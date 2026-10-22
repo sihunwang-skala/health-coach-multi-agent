@@ -282,32 +282,57 @@ flowchart LR
 ![latency breakdown](img/result_latency_breakdown.png)
 
 ### 3-6. 실행 화면 (실제 실행을 자동으로 녹화, `scripts/record_demo.py`)
-**데모 영상:** [demo.mp4](demo.mp4) — 식단+운동 질문 → 망막병증 근력운동 → 운동 전 혈당 95 → 응급 → 상담 연결 → 약 변경 → 기록 저장 → 기록 삭제 승인 → 내 정보 → 관리자 화면
+**데모 영상:** [demo.mp4](demo.mp4)<br>
+식단+운동 질문 → 망막병증 근력운동 → 운동 전 혈당 95 → 응급 → 상담 연결 → 약 변경 → 기록 저장 → 기록 삭제 승인 → 내 정보 → 관리자 화면
 
-**사용자 화면 — 식단+운동 질문 (식단 Agent와 운동 Agent 동시 실행, 출처 논문, 책임 범위 안내)**
+#### 사용자 화면
+**① 건강 질문 — 식단+운동 질문**
 ![mixed](img/live_mixed_diet_exercise.png)
+- **상단**: 데모용 사용자 선택, 관리자 화면 이동 버튼, "코칭 서비스이며 의사가 아님 · 약을 바꾸지 말 것 · 응급 시 119" 안내 (항상 표시)
+- **대화 영역**: 메신저 형태. 내 질문은 오른쪽, 코치 답변은 왼쪽 카드
+- **답변 카드 아래**: 사용한 논문 링크(PMC), "안전 검사 적용" 표시, "General information, not medical advice."
+- **처리 중**: 입력창 위에 "Coach is searching exercise research…"처럼 Agent 진행 단계가 실시간으로 바뀜 (SSE)
+- **하단**: 책임 범위 고지 (AI가 쓴 일반 정보이며 틀릴 수 있음, 의료 결정은 사용자와 의료진이 함께 내림, 이름은 AI에 보내지 않음)
 
-**본인 질문 — Kenji(91세, gliclazide) "운동 전 혈당 95, 먼저 먹어야 해?" → 72–97 mg/dL이면 탄수화물 1~2회분 먼저**
+**② 본인 질문 — Kenji(91세, gliclazide) "운동 전 혈당이 95인데 먼저 먹어야 해?"**
 ![Kenji](img/live_kenji_glucose.png)
+- 프로필(저혈당 위험 약, 신장병, 체중 감소)을 반영해 "72–97 mg/dL이면 빠르게 흡수되는 탄수화물 1~2회분 먼저", "운동 후 12시간까지 저혈당 주의"를 답함
+- 기술적으로 확인되는 것: Safety Agent 규칙(R2·R3)과 근거 메모가 Writer에 함께 들어가 개인 맞춤 안전 답변이 나옴
 
-**응급 → 119 전화 버튼 (LLM 0회) · 상담 연결 → 상담 전화 버튼**
+**③ 응급 상황과 상담 연결**
 ![Emergency](img/live_emergency.png)
 ![Handoff](img/live_handoff.png)
+- **응급**("식은땀·떨림·혼란"): LLM을 거치지 않고 코드가 즉시 안내(0.01초). 답변 아래 빨간 **"Call 119 now"** 버튼(휴대폰에서 누르면 바로 전화)
+- **상담 연결**("간호사와 이야기하고 싶어요"): 정해진 답변과 파란 **"Call care team"** 버튼(데모 번호). 동시에 관리자 화면에 알림이 생김
 
-**HITL ① 사용자 승인 — 기록 삭제 전 확인 후 삭제**
+**④ HITL ① 사용자 승인 — 기록 삭제**
 ![Delete approval](img/live_delete_approval.png)
 ![Deleted](img/live_delete_done.png)
+- "마지막 기록 지워 줘" → 그래프가 `interrupt()`로 멈추고 "이 기록을 삭제할까요?"와 **Approve / Cancel** 버튼을 보여 줌
+- Approve를 눌러야 그래프가 재개되어 삭제 (Cancel이면 아무것도 지우지 않음)
 
-**내 정보와 기록 — 펼칠 때만 보임 (약 이름 옆에 무슨 약인지 표시)**
+**⑤ 내 정보와 기록 — 펼칠 때만 보임**
 ![My info](img/live_my_info.png)
+- 화면 아래 **"My recent questions"**, **"Show my information and records"** 두 접이식 메뉴. 평소에는 닫혀 있어 채팅에 집중
+- 펼치면 이름·나이·질환, 약 이름 옆에 무슨 약인지(예: "oral diabetes medicine, can cause low blood sugar"), 활동·식습관·목표, 최근 기록 20개
 
-**관리자 화면 — HITL ② 운영자: 응급·상담 요청 알림, 날짜별 사용량, 사용자별 메시지·알림, 비용**
+#### 관리자 화면 (`/admin`)
+**⑥ 전체 모니터링 — HITL ② 운영자**
 ![Admin](img/live_admin_overview.png)
+- **상단 지표 카드 6개**: 최근 14일 메시지 수, 활성 사용자 수, **처리 안 된 알림 수(빨간색)**, 건강 답변 평균 응답 시간, 안전 재작성·삭제 횟수, LLM 비용
+- **Messages per day**: 날짜별 메시지 수를 종류별 색으로 쌓은 막대그래프 (식단·운동 조언 / 기록·내 정보 / 잡담·서비스 / 알림)
+- **What people asked**: 경로별 메시지 수 (알림 종류는 빨간색)
+- **Alerts**: 응급·상담 요청·약 변경·다른 사람 정보 요청 목록. 종류별 색 배지, 사람 이름(누르면 그 사람 상세로 이동), 메시지, 상태("open" / "handled"), **"Mark handled"** 버튼. 운영자가 연락·확인 후 처리 완료로 바꿈. 30초마다 자동 새로고침
+- **All users**: 전체 사용자 표 (나이, 질환, 메시지 수, 알림 수와 미처리 알림, 마지막 메시지 시각). 행을 누르면 한 사람 상세가 열림
+- **Messages per person · cost per day**: 사람별 메시지·알림 막대그래프, 날짜별 LLM 비용 선그래프
 
-**관리자 화면 — 한 사람 열기: 프로필, 혈당 그래프(기록에서), 기록, 대화와 적용된 안전 규칙**
+**⑦ 한 사람 상세 — Kenji Sato**
 ![Admin person](img/live_admin_person.png)
+- **왼쪽**: 프로필(질환, 약과 약 설명, 활동, 이동 능력, 식습관, 목표), 기록에서 뽑은 **혈당 추이 그래프**, 기록 목록
+- **오른쪽**: 대화 목록. 날짜, 경로(예: Diet + exercise), 적용된 안전 규칙(예: R2, R3, R8, D1, D6), 질문. "answer"를 펼치면 답변 전문과 응답 시간·비용
+- 운영자는 알림에서 사람을 눌러 이 화면으로 와서, 그 사람의 상태와 최근 대화를 확인한 뒤 연락할 수 있음
 
-(실행: `uvicorn app.server:app` 후 사용자 화면 http://localhost:8000, 관리자 화면 http://localhost:8000/admin. 관리자 화면의 기록은 평가 답변을 날짜별로 다시 넣은 데모 데이터와 실제 대화 기록이 섞여 있습니다.)
+(실행: `uvicorn app.server:app` 후 사용자 화면 http://localhost:8000, 관리자 화면 http://localhost:8000/admin. 관리자 화면의 기록은 평가 답변을 날짜별로 다시 넣은 데모 데이터와 실제 대화 기록이 섞여 있습니다. 화면 글자는 영어이며, 한국어 표시는 마지막 단계에서 추가합니다.)
 
 ---
 
