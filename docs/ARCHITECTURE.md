@@ -2,7 +2,8 @@
 
 ```mermaid
 flowchart TD
-  U[사용자 웹 채팅] -->|POST /chat, GET /chat/stream SSE, POST /approve| API[FastAPI app/server.py]
+  U[사용자 화면 / 관리자 화면] -->|GET /chat/stream SSE, POST /approve, /api/me, /api/admin| API[FastAPI app/server.py]
+  API --> LOG[(자체 모니터링 로그: 경로, 알림, 시간, 비용)]
   API --> G[guard: 응급 감지 - 코드]
   G -->|응급| EM[고정 응급 안내 119 - LLM 없음]
   G --> S[Supervisor: LLM 경로 선택 + 본인/일반 질문 구분]

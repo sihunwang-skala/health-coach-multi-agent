@@ -1,1 +1,1 @@
-"""Exercise coaching multi-agent for older adults with type 2 diabetes."""
+"""Diet and exercise coaching multi-agent for older adults with type 2 diabetes."""
