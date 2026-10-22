@@ -24,6 +24,9 @@ from coach.state import CoachState
 
 
 def build_graph(checkpointer=None):
+    # [발표 코드 1-1 | LangGraph·Multi-Agent 전체 흐름]
+    # 여러 Agent를 연결해 서비스 전체 처리 순서를 정합니다.
+    # 질문이 들어온 뒤 답변이 나갈 때까지의 흐름입니다.
     g = StateGraph(CoachState)
     g.add_node("guard", guard)
     g.add_node("supervisor", supervisor)
@@ -40,6 +43,9 @@ def build_graph(checkpointer=None):
     g.add_node("records", records)
     g.add_node("confirm_delete", confirm_delete)
 
+    # [발표 코드 1-2 | LangGraph의 분기와 병렬 실행]
+    # 먼저 응급 상황인지 확인하고, Supervisor가 질문 종류를 나눕니다.
+    # 식단과 운동을 함께 물으면 필요한 Agent를 동시에 실행합니다.
     g.add_edge(START, "guard")
     g.add_conditional_edges("guard", lambda s: "emergency" if s["route"] == "emergency" else "route",
                             {"emergency": "emergency_reply", "route": "supervisor"})
@@ -51,6 +57,9 @@ def build_graph(checkpointer=None):
         "handoff": ["fixed_reply"], "other_user": ["fixed_reply"], "privacy_info": ["fixed_reply"],
     }.get(s["route"], ["records"]), ["diet_agent", "exercise_agent", "safety_agent", "med_change_reply", "confirm_delete", "records",
                                      "emergency_reply", "fixed_reply"])
+    # [발표 코드 1-3 | LangGraph의 답변 검증과 승인 대기]
+    # 각 Agent가 찾은 내용을 Writer가 하나의 답변으로 합칩니다.
+    # 답변을 확인하고, 삭제 승인이 끝나면 MemorySaver가 중단한 작업을 이어갑니다.
     for n in ("diet_agent", "exercise_agent", "safety_agent"):   # same superstep -> the writer runs once, after all of them
         g.add_edge(n, "writer")
     g.add_edge("writer", "validate")
@@ -58,6 +67,9 @@ def build_graph(checkpointer=None):
     g.add_edge("retry", "writer")
     for n in ("remove_unsafe", "emergency_reply", "med_change_reply", "records", "confirm_delete", "fixed_reply"):
         g.add_edge(n, END)
+    # MemorySaver는 graph의 현재 상태를 저장하는 checkpointer입니다.
+    # 기록 삭제 요청에서 confirm_delete가 승인을 기다리며 멈추면,
+    # 승인 후 같은 요청을 처음부터 다시 처리하지 않고 중단한 지점부터 재개할 수 있게 합니다.
     return g.compile(checkpointer=checkpointer or MemorySaver())
 
 

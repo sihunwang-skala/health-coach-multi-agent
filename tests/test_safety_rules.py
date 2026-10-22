@@ -66,3 +66,18 @@ def test_negated_or_descriptive_sentences_are_not_dangerous_advice():
     # real dangerous advice is still caught
     assert check_answer("Just skip your insulin before tennis.", kenji, "Can I play tennis?", {})
     assert check_answer("You can cut your calories to 1200 kcal a day.", kenji, "What should I eat?", {})
+
+
+def test_korean_emergency_wording_is_caught_in_code():
+    for m in ["가슴이 조이고 숨이 차요", "운동하다가 쓰러질 것 같아요", "식은땀이 나고 손이 떨려요",
+              "어지럽고 눈앞이 흐려요", "혈당이 48이에요", "정신이 혼미해요"]:
+        assert is_emergency(m), m
+    for m in ["저녁 먹고 걸어도 돼요?", "혈당이 132예요", "가슴 근육 운동 해도 돼요?"]:
+        assert not is_emergency(m), m
+
+
+def test_every_fixed_reply_has_a_korean_version():
+    from coach.safety.rules import EMERGENCY_REPLY, HANDOFF_REPLY, KO_REPLIES, MED_CHANGE_REPLY, OTHER_USER_REPLY, PRIVACY_INFO_REPLY
+    for r in (EMERGENCY_REPLY, MED_CHANGE_REPLY, HANDOFF_REPLY, OTHER_USER_REPLY, PRIVACY_INFO_REPLY):
+        ko, summary = KO_REPLIES[r]
+        assert ko and summary

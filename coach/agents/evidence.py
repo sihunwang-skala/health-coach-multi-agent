@@ -42,6 +42,9 @@ async def _checked(config, step, prompt, earlier, question, stepback=False):
 
 @timed("make_queries")
 async def make_queries(state, config):
+    # [발표 코드 2-1 | Agentic RAG 1단계: 검색 질문 만들기]
+    # 질문을 여러 개의 검색어로 바꿉니다.
+    # 질환과 약에 맞는 논문을 더 잘 찾기 위한 단계입니다.
     q, prof = state["message"], ("User profile (health fields): " + state["profile"] + "\n") if state["profile"] else ""
     topic, dom = TOPIC[state["domain"]], state["domain"]
     terms = [t for pat, t in MED_TERMS if re.search(pat, state["profile"].lower())]
@@ -64,6 +67,9 @@ async def make_queries(state, config):
 
 @timed("retrieve_mcp")
 async def retrieve(state, config):
+    # [발표 코드 2-2 | Agentic RAG 2단계: MCP로 논문 검색하기]
+    # 논문을 찾는 일은 papers MCP에 맡깁니다.
+    # Agent가 논문 파일을 직접 다루지 않게 나눠 둔 것입니다.
     d = deps(config)
     r = await d.papers("search_papers", queries=state["queries"], k=d.settings.top_k,
                        domain="" if state["domain"] == "all" else state["domain"])
@@ -74,6 +80,9 @@ async def retrieve(state, config):
 
 @timed("pick_notes")
 async def pick_notes(state, config):
+    # [발표 코드 2-3 | Agentic RAG 3단계: 필요한 근거 고르기]
+    # 찾은 논문 문단 중 답변에 필요한 내용만 고릅니다.
+    # 너무 많은 내용을 답변에 넣지 않기 위한 단계입니다.
     prof = ("User profile (health fields): " + state["profile"] + "\n") if state["profile"] else ""
     batch = []
     for q in state["queries"]:
@@ -94,6 +103,9 @@ async def pick_notes(state, config):
 async def verify_notes(state, config):
     """Output check before the next step (diabetes PoC L105/L121/L129): drop duplicate notes, and drop a note that is not
     in the passages the picker saw - 2+ words absent from its source passages, or 1 absent word copied from the query."""
+    # [발표 코드 2-4 | Agentic RAG 4단계: 근거가 원문에 있는지 확인하기]
+    # 고른 메모가 실제 논문에 있는 내용인지 다시 확인합니다.
+    # 논문에 없는 내용은 답변에 사용하지 않습니다.
     seen, notes, dropped = set(), [], []
     for p in state["picks"]:
         if p["best"] and set(p["best"]) <= seen:
@@ -116,6 +128,9 @@ async def verify_notes(state, config):
 
 
 def build_evidence_agent():
+    # [발표 코드 2-5 | Agentic RAG 전체 과정을 subgraph로 묶기]
+    # 논문을 찾고 확인하는 과정을 하나의 작은 graph로 묶었습니다.
+    # 식단과 운동 Agent가 같은 과정을 사용합니다.
     g = StateGraph(EvidenceState)
     for name, fn in [("make_queries", make_queries), ("retrieve", retrieve), ("pick_notes", pick_notes), ("verify_notes", verify_notes)]:
         g.add_node(name, fn)
@@ -133,6 +148,9 @@ _SUBGRAPH = build_evidence_agent()
 def evidence_node(domain: str):
     """Parent-graph node for one research agent: runs the compiled subgraph with its own state and returns only its result
     under evidence[domain], so the diet and exercise agents can run in parallel without overwriting each other."""
+    # [발표 코드 2-6 | 같은 RAG 흐름을 식단·운동에 재사용하기]
+    # 같은 과정을 식단과 운동에 각각 적용합니다.
+    # 결과를 따로 저장하기 때문에 동시에 처리할 수 있습니다.
     async def node(state, config):
         # a general question is searched without the user's conditions and medicines (diabetes PoC router: about_user)
         prof = state["profile"] if state.get("about_user", True) else ""

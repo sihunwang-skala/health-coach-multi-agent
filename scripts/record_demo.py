@@ -13,6 +13,7 @@ from playwright.sync_api import sync_playwright
 ROOT = Path(__file__).resolve().parents[1]
 IMG, TMP = ROOT / "docs" / "img", ROOT / "cache" / "video"
 URL = sys.argv[sys.argv.index("--url") + 1] if "--url" in sys.argv else "http://localhost:8000"
+SUFFIX = sys.argv[sys.argv.index("--suffix") + 1] if "--suffix" in sys.argv else ""   # e.g. _ko: keep the earlier shots
 SCENES = [  # (user, message, screenshot name, approve the HITL prompt?)
     ("u01", "Should I take a walk after dinner, and how should I eat my rice so it doesn't spike my blood sugar?", "live_mixed_diet_exercise", False),
     ("u10", "I have proliferative retinopathy. Can I keep lifting heavy weights?", "live_walter_retinopathy", False),
@@ -62,13 +63,13 @@ def main():
             wait_cards(n, 90)
             snap(8)
             if approve:
-                page.screenshot(path=str(IMG / f"{shot}.png"))
+                page.screenshot(path=str(IMG / f"{shot}{SUFFIX}.png"))
                 snap(4)
                 page.locator("#log > .card:not(.me)").last.locator("button", has_text="Approve").click()
                 wait_cards(n + 1, 30)
                 snap(8)
                 shot = shot.replace("approval", "done")
-            page.screenshot(path=str(IMG / f"{shot}.png"))
+            page.screenshot(path=str(IMG / f"{shot}{SUFFIX}.png"))
             print("recorded", shot, flush=True)
         if not only or "live_my_info" in only:   # the user's own information, shown only when opened
             page.select_option("#user", "u06")
@@ -76,23 +77,23 @@ def main():
             page.evaluate("document.getElementById('meBox').open = true; document.getElementById('meBox').scrollIntoView()")
             page.wait_for_timeout(500)
             snap(6)
-            page.screenshot(path=str(IMG / "live_my_info.png"))
+            page.screenshot(path=str(IMG / f"live_my_info{SUFFIX}.png"))
         if not only or "live_admin" in only:     # care-team screen: alerts, charts, one person
             page.goto(URL + "/admin")
             page.wait_for_timeout(2500)
             snap(8)
-            page.screenshot(path=str(IMG / "live_admin_overview.png"), full_page=True)
+            page.screenshot(path=str(IMG / f"live_admin_overview{SUFFIX}.png"), full_page=True)
             page.evaluate("person('u06')")
             page.wait_for_timeout(1500)
             snap(8)
-            page.locator("#person").screenshot(path=str(IMG / "live_admin_person.png"))
+            page.locator("#person").screenshot(path=str(IMG / f"live_admin_person{SUFFIX}.png"))
             print("recorded admin", flush=True)
         snap(10)
         ctx.close()
         b.close()
     if only:  # screenshots only (no new video)
         return
-    out = ROOT / "docs" / "demo.mp4"
+    out = ROOT / "docs" / f"demo{SUFFIX}.mp4"
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-framerate", "4", "-i", str(TMP / "f%05d.png"), "-vf", "scale=900:-2", "-c:v", "libx264", "-pix_fmt", "yuv420p",
                     "-crf", "28", str(out)], check=True)
     print("video", out, f"{out.stat().st_size / 1e6:.1f} MB")

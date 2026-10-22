@@ -49,7 +49,7 @@ uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -r requi
 .venv/bin/python scripts/fetch_papers.py      # papers → data/papers (git-ignored); --local DIR reuses XML on disk
 .venv/bin/python scripts/build_index.py       # embeddings cached in cache/ (≈ $0.024 once)
 .venv/bin/uvicorn app.server:app --port 8000  # web UI http://localhost:8000 (index is preloaded at startup)
-.venv/bin/python -m pytest -q                 # 18 tests, free
+.venv/bin/python -m pytest -q                 # 20 tests, free
 .venv/bin/python eval/run_eval.py [--only after|before] [--ids A,B]   # PAID; skips ids already in eval/results/*.json
 .venv/bin/python eval/score.py && .venv/bin/python eval/charts.py     # free
 .venv/bin/python scripts/record_demo.py [--only live_xxx]             # PAID (~$0.015 per run; --only = screenshots only)
@@ -72,9 +72,9 @@ Health Agentic RAG (`after.json`).
   `eval/scores_claude.json`, then `score.py`, `make_tables.py`, `charts.py`, update README / REPORT.
 
 ## 5. Open items (next)
-1. Last step (owner's order): Korean translation + one-line summary under each answer (try inside the Writer call first),
-   then re-record the user and admin screens (`scripts/record_demo.py`) and replace the old screenshots in REPORT §3-6.
-2. Korean emergency patterns in the code check (must be done eventually).
+1. Korean translation + one-line summary and Korean emergency patterns are implemented. Re-run the full evaluation only
+   when the owner approves the added API cost; the published 100-question metrics predate translation.
+2. Re-record the remaining user/admin screenshots and demo video (`scripts/record_demo.py --suffix _ko`) and update REPORT §3-6.
 3. Known limitations: REPORT §4.
 
 ## 6. Owner's working rules (follow them)

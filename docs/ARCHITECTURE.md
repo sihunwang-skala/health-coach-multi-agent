@@ -50,4 +50,4 @@ Diet / Exercise Agent subgraph (당뇨 PoC 최종 모델과 같은 파이프라�
 | `coach/tracelog.py` | 자체 모니터링 로그 (이름 없이 사용자 ID, 경로, 알림, 시간, 비용; 90일 보관) |
 | `scripts/seed_demo_monitoring.py` | 관리자 화면 데모 데이터 (평가 답변 재생 + 가상 기록) |
 | `eval/` | 평가셋, Before/After 실행, 채점, 그래프 |
-| `tests/` | 단위 테스트 18개 (test double: FakeLLM + in-memory mock MCP 서버, 네트워크·API 키 없이 실행) |
+| `tests/` | 단위 테스트 20개 (test double: FakeLLM + in-memory mock MCP 서버, 네트워크·API 키 없이 실행) |

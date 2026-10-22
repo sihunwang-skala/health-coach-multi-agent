@@ -18,7 +18,13 @@ EMERGENCY = re.compile(
     r"(?i)chest (pain|tightness|pressure)|can'?t breathe|short(ness)? of breath.{0,20}(rest|sudden|severe)|faint(ed|ing)?|passed out|"
     r"pass(ing)? out|unconscious|seizure|convuls|confus(ed|ion)|slurred|can'?t (stand|speak|wake)|"
     r"(sweat\w*|shak\w*|tremb\w*).{0,40}(dizz\w*|confus\w*|blurred|faint\w*)|blood sugar.{0,15}\b([1-4]\d|5[0-3])\b(?! ?mmol)|"
-    r"\b(2\.\d|[01]\.\d) ?mmol|가슴 통증|의식|쓰러|경련|식은땀")
+    r"\b(2\.\d|[01]\.\d) ?mmol|"
+    # Korean: chest pain / tightness, cannot breathe, fainting, loss of consciousness, seizure, cold sweat with tremor or
+    # dizziness, confusion, dizziness with blurred vision, very low glucose
+    r"가슴.{0,6}(아프|아파|통증|조이|조여|답답|짓눌|뻐근)|숨.{0,4}(못 ?쉬|안 ?쉬어|막히|차서|가빠|가쁘)|호흡.{0,4}(곤란|어려)|"
+    r"쓰러|기절|실신|의식.{0,6}(없|잃|흐려|희미)|경련|발작|식은땀|"
+    r"(떨리|떨려|손떨림).{0,20}(어지럽|어지러|정신|혼란|멍)|(어지럽|어지러).{0,20}(흐려|흐릿|침침|안 보|잘 안 보)|"
+    r"정신이 (없|혼미|흐려)|말이 (안 나|어눌)|혈당.{0,10}(?<!\d)([1-4]\d|5[0-3])(?![\d.])(?! ?mmol)")
 EMERGENCY_REPLY = ("This may be an emergency. Stop exercising now and sit or lie down. If you can swallow and this could be a low "
                    "blood sugar, take 15 g of fast-acting sugar (juice, glucose tablets) and recheck in 15 minutes. If you have "
                    "chest pain, trouble breathing, confusion or you feel faint, call 119 (or your local emergency number) and "
@@ -35,6 +41,26 @@ OTHER_USER_REPLY = ("I can only show your own health information. Other people's
 PRIVACY_INFO_REPLY = ("Your profile and records are stored in this app's own database. When you ask a health question, your name is "
                       "removed and only the health details needed for the answer are sent to the AI model; the research-paper "
                       "search never receives your personal information. Records are deleted only after you confirm.")
+
+
+# Korean translation and one-line summary of every fixed reply (reviewed text, no LLM)
+KO_REPLIES = {
+    EMERGENCY_REPLY: ("응급 상황일 수 있습니다. 지금 운동을 멈추고 앉거나 누우세요. 삼킬 수 있고 저혈당일 수 있다면 빠르게 흡수되는 당 15 g"
+                      "(주스, 포도당 정제)을 먹고 15분 뒤 혈당을 다시 재세요. 가슴 통증, 숨이 참, 정신이 혼미함, 쓰러질 것 같은 느낌이 있으면 "
+                      "바로 119(또는 지역 응급 번호)와 보호자에게 연락하세요. 이 앱은 응급 상황에 도움을 줄 수 없습니다.",
+                      "지금 운동을 멈추고, 증상이 심하면 바로 119에 전화하세요."),
+    MED_CHANGE_REPLY: ("운동에 맞추려고 당뇨약을 혼자 거르거나, 끊거나, 두 배로 먹거나, 바꾸지 마세요. 용량이 바뀌면 혈당이 위험하게 "
+                       "떨어지거나 오를 수 있습니다. 약과 운동 시간을 어떻게 맞출지 의사·간호사·약사에게 물어보세요.",
+                       "약은 혼자 바꾸지 말고 의료진과 상의하세요."),
+    HANDOFF_REPLY: ("담당 의료진과 연결해 드리겠습니다. 아래 '상담 전화' 버튼을 누르거나, 다니는 병원의 간호사·약사에게 직접 문의하세요. "
+                    "급하거나 지금 몸이 좋지 않으면 119에 전화하세요.",
+                    "아래 버튼으로 의료진과 연결할 수 있습니다."),
+    OTHER_USER_REPLY: ("본인의 건강 정보만 보여 드릴 수 있습니다. 다른 사람의 기록은 개인정보라서 찾아보거나 알려 드릴 수 없습니다.",
+                       "다른 사람의 정보는 알려 드릴 수 없습니다."),
+    PRIVACY_INFO_REPLY: ("프로필과 기록은 이 앱의 자체 데이터베이스에 저장됩니다. 건강 질문을 하면 이름은 빼고 답에 필요한 건강 정보만 "
+                         "AI 모델로 보내며, 논문 검색에는 개인정보를 전혀 보내지 않습니다. 기록은 본인이 확인해야만 삭제됩니다.",
+                         "이름은 AI에 보내지 않고, 정보는 앱 안에 저장됩니다."),
+}
 
 
 @dataclass(frozen=True)

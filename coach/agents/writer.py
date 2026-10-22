@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 
 from coach.agents.common import deps, llm_json, timed
-from coach.agents.prompts import GENERAL_QUESTION, WRITER_SYSTEM, WRITER_USER
+from coach.agents.prompts import GENERAL_QUESTION, TRANSLATE, WRITER_SYSTEM, WRITER_USER
 from coach.safety.rules import check_answer
 
 
@@ -22,7 +22,8 @@ async def writer(state, config):
                  + "\n- ".join(f"{i['rule']}: {i['quote']}" for i in state["issues"]))
     j = await llm_json(config, "writer" if not state.get("issues") else "writer_retry",
                        [("system", WRITER_SYSTEM), ("user", user)])
-    return {"answer": str(j.get("answer", "")).strip()}
+    return {"answer": str(j.get("answer", "")).strip(), "answer_ko": str(j.get("answer_ko", "")).strip(),
+            "summary_ko": str(j.get("summary_ko", "")).strip()}
 
 
 @timed("validate")
@@ -55,4 +56,8 @@ async def remove_unsafe(state, config):
         rules = " ".join(f"{s_['advice']} [{s_['source']}]" for s_ in state.get("safety_notes", []))
         if rules:
             ans = rules + (" " + ans if ans else "")
-    return {"answer": ans, "removed": removed}
+    out = {"answer": ans, "removed": removed}
+    if ans != state["answer"]:   # the Korean text of the old answer no longer matches: translate the final answer once
+        j = await llm_json(config, "translate", [("user", TRANSLATE.format(answer=ans))])
+        out |= {"answer_ko": str(j.get("answer_ko", "")).strip(), "summary_ko": str(j.get("summary_ko", "")).strip()}
+    return out
