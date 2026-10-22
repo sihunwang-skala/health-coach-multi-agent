@@ -6,9 +6,11 @@
 
 **결과 보고서: [docs/REPORT.md](docs/REPORT.md)** · [발표 화면](docs/PRESENTATION_VIEW.md) · [5분 발표 스크립트](docs/PRESENTATION_SCRIPT.md) · 전체 평가 표: [eval/results/metrics_tables.md](eval/results/metrics_tables.md) · 평가 방법: [docs/EVALUATION.md](docs/EVALUATION.md)
 
-## 결과 — Baseline 대비 Before / After (같은 질문 100개, 4가지 시스템, GPT-6 Luna)
+## 결과 — 두 가지 평가로 확인한 Before / After (GPT-6 Luna)
 Baseline(Before) = Standard Paper-Search RAG · Ablation = Health Agentic RAG, Single-Agent + Health Agentic RAG · Proposed(After) = Multi-Agent + Health Agentic RAG
 ![four systems](docs/img/result_health_four_systems.png)
+
+첫 번째 표는 **건강 질문 60개만 4가지 시스템으로 비교**해 RAG와 Agent 구조의 효과를 확인한 결과입니다.
 
 | 지표 | Standard Paper-Search RAG | Health Agentic RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
 |---|---|---|---|---|
@@ -20,7 +22,9 @@ Baseline(Before) = Standard Paper-Search RAG · Ablation = Health Agentic RAG, S
 | 건강 질문 평균 응답 시간 | **4.1초** | 15.1초 | 15.5초 | 18.2초 |
 | 건강 질문 1개당 비용 | **$0.0002** | $0.0025 | $0.0025 | $0.0032 |
 
-| 지표 (모든 메시지를 받는 3가지 시스템) | Standard Paper-Search RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
+두 번째 표는 **건강 질문 60개와 서비스 메시지 40개, 총 100개를 실제 서비스처럼 비교**한 결과입니다. Health Agentic RAG 단독 시스템은 서비스 메시지를 처리하는 routing이 없어 제외했습니다. 건강 질문 지표는 첫 번째 표의 60개 결과이고, 나머지 지표는 100개 전체 기준입니다.
+
+| 지표 (메시지 100개 전체) | Standard Paper-Search RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
 |---|---|---|---|
 | 건강 질문 외 메시지 40개를 제대로 처리한 비율 ⁴ | 57.5% | 35.0% | **97.5%** |
 | 응급 상황 처리 | 80% | 60% | **100%** |

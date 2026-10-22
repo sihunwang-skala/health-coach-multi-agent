@@ -210,7 +210,9 @@ LLM에는 이름을 빼고 나이·질환·약·생활습관만 보냅니다.
 - **통제 조건**: 4가지 시스템 모두 같은 질문 100개, 같은 논문 코퍼스 86편, 같은 사용자 프로필(마스킹), 같은 LLM(GPT-6 Luna)으로 질문당 1회 실행
 - **재현성**: 모든 표의 계산 근거와 지표 정의는 [전체 평가 결과](../eval/results/metrics_tables.md)에 있고, 수치는 `eval/make_tables.py`가 결과 파일에서 직접 계산합니다.
 
-### 3-2. 종합 결과 — 건강 질문 60개 (4가지 시스템 공통 지표)
+### 3-2. 건강 질문 성능 비교 — 건강 질문 60개, 4가지 시스템
+
+이 표는 **논문 근거가 필요한 건강 질문 60개만** 비교합니다. RAG 구성 자체의 효과를 보기 위해 Standard RAG부터 최종 Multi-Agent까지 4가지 시스템을 함께 놓았습니다.
 ![four systems](img/result_health_four_systems.png)
 
 | 지표 | Standard Paper-Search RAG | Health Agentic RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
@@ -254,13 +256,15 @@ LLM에는 이름을 빼고 나이·질환·약·생활습관만 보냅니다.
 - **답변 점수는 비슷**(75.3% ↔ 73.2%): 답변 규칙이 다르기 때문입니다. 표준 RAG는 근거에 없으면 모델의 일반 지식으로 채우고, GPT-6 Luna는 아는 것이 많아 점수를 받습니다. Health Agentic RAG는 환각을 막으려고 근거에 없는 내용은 말하지 않아 "자료에 없다"고 답한 항목이 0점이 됩니다. 이것이 이번 설계의 trade-off입니다(4절).
 - 답변 점수로 본 RAG 효과는 당뇨 PoC에서 확인했습니다: 같은 식단 본인 질문 50개에서 표준 논문 RAG 0.590 → 최종 Agentic RAG 0.843, 근거 비율 28.9% → 65.1%(PoC 당시 모델 gpt-4o-mini).
 
-### 3-4. 비교 ② Multi-Agent 효과 — Single-Agent ↔ Multi-Agent (Proposed)
+### 3-4. 전체 서비스 비교 — 메시지 100개, 3가지 시스템
+
+이 표는 건강 질문 60개와 건강 질문 외 메시지 40개를 합친 **전체 서비스 평가**입니다. Health Agentic RAG 단독 시스템은 서비스 요청을 처리하는 routing이 없어 이 비교에서는 제외하고, 실제 서비스로 사용할 수 있는 3가지만 비교했습니다. 건강 질문 점수는 3-2 표의 60개 결과를 다시 표시한 값이고, 나머지 행은 전체 100개 기준입니다.
 ![question kinds](img/result_by_question_kind.png)
 ![other messages](img/result_other_messages.png)
 
 | 지표 (메시지 100개 전체) | Standard Paper-Search RAG | Single-Agent + Health Agentic RAG | Multi-Agent + Health Agentic RAG |
 |---|---|---|---|
-| 건강 질문 답변 점수 | 75.3% | 88.7% | **91.5%** |
+| 건강 질문 60개 답변 점수 | 75.3% | 88.7% | **91.5%** |
 | 안전 문제가 있는 답변 | 8.3% | **0%** | **0%** |
 | 건강 질문 외 메시지를 제대로 처리한 비율 | 57.5% | 35.0% | **97.5%** |
 | 응급 상황 처리 | 80% | 60% | **100%** |
