@@ -6,8 +6,9 @@ import time
 
 from coach.agents.common import deps, llm_json, timed
 from coach.agents.prompts import SUPERVISOR
-from coach.safety.rules import EMERGENCY_REPLY, HANDOFF_REPLY, MED_CHANGE_REPLY, OTHER_USER_REPLY, PRIVACY_INFO_REPLY, is_emergency
+from coach.safety.rules import applicable_rules, EMERGENCY_REPLY, HANDOFF_REPLY, MED_CHANGE_REPLY, OTHER_USER_REPLY, PRIVACY_INFO_REPLY, is_emergency
 
+DOMAINS = {"diet": ("diet",), "exercise": ("exercise",), "diet_exercise": ("diet", "exercise")}
 ROUTES = {"handoff", "other_user", "privacy_info", "emergency", "diet", "exercise", "diet_exercise", "med_change", "log", "my_data", "delete_record", "chat"}
 
 
@@ -25,8 +26,12 @@ DEEP_TERMS = re.compile(
     r"인슐린|약|저혈당|신장|콩팥|망막|신경병증|심장|협심증|뇌졸중|발 ?궤양|임신|술|음주|맥주|소주|와인")
 
 
-def health_path(route: str, about_user: bool, message: str) -> tuple[str, str]:
-    """Deterministic rule first; the structured router output (route, about_user) second. Length is not used."""
+def health_path(route: str, about_user: bool, message: str, profile: str = "") -> tuple[str, str]:
+    """Deterministic rule first; the structured router output (route, about_user) second. Length is not used.
+    The user's stored profile counts too: users do not type their conditions, so if any safety rule applies to this profile
+    and message (insulin, retinopathy, kidney disease ...) the question goes deep even when its wording is general."""
+    if profile and applicable_rules(profile, message, DOMAINS.get(route, ("exercise",))):
+        return "health_deep", "a safety rule applies to this user's profile"
     if route == "diet_exercise":
         return "health_deep", "two topics"
     if about_user:
@@ -42,7 +47,7 @@ async def supervisor(state, config):
     route = j.get("route") if j.get("route") in ROUTES else "chat"
     out = {"route": route, "about_user": j.get("about_user") is not False, "route_reason": str(j.get("reason", ""))}
     if route in ("diet", "exercise", "diet_exercise"):
-        path, why = health_path(route, out["about_user"], state["message"])
+        path, why = health_path(route, out["about_user"], state["message"], state["profile"])
         if not deps(config).settings.health_lite:
             path, why = "health_deep", "health_simple is switched off (COACH_HEALTH_LITE)"
         out.update(path=path, path_reason=why)

@@ -62,6 +62,12 @@ def test_health_path_rules_use_content_not_length():
     assert health_path("diet_exercise", False, "Walk and diet?")[0] == "health_deep"
 
 
+def test_profile_rules_send_a_generally_worded_question_to_deep():
+    insulin = "age: 77; conditions: type 2 diabetes; medications: insulin glargine, metformin; activity: walks"
+    assert health_path("exercise", False, "Is interval training good?", insulin)[0] == "health_deep"
+    assert health_path("exercise", False, "Is interval training good?", "")[0] == "health_simple"
+
+
 def _lite(on=True, notes=True):
     llm = fake_llm(route="exercise")
     if not notes:
@@ -72,7 +78,7 @@ def _lite(on=True, notes=True):
 def _ask(deps, about_user):
     llm = deps.llm
     llm.rules["supervisor"] = lambda m: {"route": "exercise", "about_user": about_user}
-    return run(run_after(build_graph(), deps, "u1", "What do guidelines say about walking?"))
+    return run(run_after(build_graph(), deps, "u3", "What do guidelines say about walking?"))
 
 
 def test_simple_path_uses_fewer_calls_than_deep():
@@ -85,6 +91,11 @@ def test_simple_path_uses_fewer_calls_than_deep():
 def test_simple_escalates_to_deep_without_verified_notes():
     r = _ask(_lite(True, notes=False), False)
     assert "escalate" in " ".join(r["trace"]) and "exercise.make_queries" in r["trace"]
+
+
+def test_insulin_user_asking_generally_still_goes_deep_end_to_end():
+    r = run(run_after(build_graph(), _lite(True), "u1", "What do guidelines say about walking?"))
+    assert r["trace"].count("exercise.make_queries") == 1 and "exercise.make_queries_lite" not in r["trace"]
 
 
 def test_own_question_never_takes_the_simple_path():
