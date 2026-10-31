@@ -1,0 +1,16 @@
+{
+  "_note": "Values copied from web/index.html (:root). Light and dark themes; --fs is the user-adjustable base font size.",
+  "color": {
+    "light": {"bg":"#f6f7f9","card":"#ffffff","ink":"#1d2430","muted":"#4b5565","line":"#d0d5dd","accent":"#1d4ed8","accent-ink":"#ffffff","me":"#e3ecff","warn":"#b42318","warn-bg":"#fef3f2","ok":"#067647","highlight-chunk":"#fff3bf","highlight-support":"#ffd43b"},
+    "dark":  {"bg":"#111418","card":"#1a1f26","ink":"#eef0f4","muted":"#b0b8c5","line":"#3a424e","accent":"#8ab0ff","accent-ink":"#0b1220","me":"#1f2a40","warn":"#ff8f85","warn-bg":"#2a1715","ok":"#47cd89","highlight-chunk":"#4a4318","highlight-support":"#8a7a10"}
+  },
+  "typography": {"family":"-apple-system, system-ui, 'Noto Sans KR', 'Apple SD Gothic Neo', sans-serif","base-size-px":18,"range-px":[16,26],"line-height":1.6,
+    "scale-rem":{"title":1.2,"body":1,"small":0.85,"meta":0.8,"caption":0.78}},
+  "spacing-px": {"xs":6,"sm":8,"md":12,"lg":16,"xl":24},
+  "radius-px": {"chip":99,"button":12,"card":14,"sheet":18,"cite":8},
+  "shadow": {"sheet":"0 -8px 30px rgba(0,0,0,.25)"},
+  "touch-target-min-px": 48,
+  "focus": {"outline":"3px solid var(--accent)","offset-px":2},
+  "breakpoints-px": {"mobile":360,"tablet":768,"desktop":1280,"sheet-switch":900},
+  "layout": {"main-max-width-px":780,"citation-panel-width-px":420}
+}
