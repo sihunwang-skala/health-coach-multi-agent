@@ -15,7 +15,7 @@ header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}header h1{font-
 .kpi b{display:block;font-size:22px}.kpi span{color:var(--muted);font-size:12px}.kpi.alert b{color:var(--warn)}
 .g2{display:grid;grid-template-columns:2fr 1fr;gap:12px}.g11{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:900px){.g2,.g11{grid-template-columns:1fr}}
 h2{font-size:14px;margin:0 0 8px}.meta{font-size:12px;color:var(--muted)}
-table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:6px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:500}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:6px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:500;white-space:nowrap}
 tr.pick{cursor:pointer}tr.pick:hover{background:var(--bg)}tr.sel{background:var(--bg)}
 .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}
 .tag.emergency{background:var(--warn);color:#fff;border-color:var(--warn)}.tag.handoff{color:var(--amber);border-color:var(--amber)}.tag.med_change,.tag.other_user{color:var(--accent);border-color:var(--accent)}
@@ -53,6 +53,7 @@ button,select{min-height:36px}
 const ALERT={emergency:"응급",handoff:"상담 요청",med_change:"약 변경",other_user:"다른 사람 정보"};
 const ROUTE={...ALERT,diet:"식단",exercise:"운동",diet_exercise:"식단+운동",log:"기록 저장",my_data:"내 정보",delete_record:"기록 삭제",chat:"잡담",privacy_info:"개인정보 안내"};
 const label=r=>ROUTE[r]||r;
+const GROUP={'Diet / exercise advice':'식단·운동 상담','Records & my data':'기록·내 정보','Chat & service':'잡담·서비스','Alerts':'알림'};
 const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
 const H={};try{const t=localStorage.getItem('coach_admin_token');if(t)H['X-Admin-Token']=t}catch(e){}
@@ -69,7 +70,7 @@ async function load(){
   ["건강 답변 평균 시간",(s.advice_latency_avg??'–')+" 초"],["안전 재작성 / 삭제 문장",s.safety_retries+" / "+s.removed_sentences],["LLM 비용 (14일)","$"+s.cost.toFixed(3)]];
  document.getElementById('kpis').innerHTML=k.map(([l,v,c])=>`<div class="card kpi ${c||''}"><b>${v}</b><span>${l}</span></div>`).join('');
  const cols=[css('--c1'),css('--c2'),css('--c3'),css('--c4')];
- chart('perDay',{type:'bar',data:{labels:s.days.map(d=>d.slice(5)),datasets:Object.entries(s.per_day).map(([g,v],i)=>({label:g,data:v,backgroundColor:cols[i]}))},
+ chart('perDay',{type:'bar',data:{labels:s.days.map(d=>d.slice(5)),datasets:Object.entries(s.per_day).map(([g,v],i)=>({label:GROUP[g]||g,data:v,backgroundColor:cols[i]}))},
   options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true,ticks:{precision:0}}},plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}}});
  const r=Object.entries(s.routes).sort((a,b)=>b[1]-a[1]);
  chart('routes',{type:'bar',data:{labels:r.map(x=>label(x[0])),datasets:[{data:r.map(x=>x[1]),backgroundColor:r.map(x=>ALERT[x[0]]?css('--c4'):css('--c1'))}]},
