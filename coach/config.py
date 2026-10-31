@@ -29,6 +29,9 @@ class Settings:
     price_in: float = float(os.environ.get("COACH_PRICE_IN", "0.10"))    # gpt-6-luna $ per 1M tokens (gpt-4o-mini: 0.15)
     price_out: float = float(os.environ.get("COACH_PRICE_OUT", "0.50"))  # (gpt-4o-mini: 0.60); reasoning tokens bill as output
     price_embed: float = 0.02
+    # health_simple / health_deep split inside health questions (docs/HYBRID_UI.md §4). Off by default: the evaluated
+    # 2026-10-22 service runs every health question on the deep path.
+    health_lite: bool = os.environ.get("COACH_HEALTH_LITE", "0") == "1"
     excluded_population: str = r"(?i)gestation|pregnan|child|paediatric|pediatric|adolesc|type 1 diabetes|cystic fibrosis"
     extra: dict = field(default_factory=dict)
 

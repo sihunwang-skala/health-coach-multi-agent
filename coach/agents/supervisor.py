@@ -1,6 +1,7 @@
 """Supervisor: emergency guard (code, before any LLM), then the LLM router that picks the agent."""
 from __future__ import annotations
 
+import re
 import time
 
 from coach.agents.common import deps, llm_json, timed
@@ -17,11 +18,35 @@ async def guard(state, config):
             "route": "emergency" if is_emergency(state["message"]) else ""}
 
 
+# health_deep whenever the message names a medicine, low blood sugar, a complication or alcohol (docs/HYBRID_UI.md §4)
+DEEP_TERMS = re.compile(
+    r"(?i)insulin|sulfonyl|glimepiride|gliclazide|glipizide|metformin|medicine|medication|pill|dose|hypo|low blood sugar|"
+    r"kidney|renal|retinopath|neuropath|heart|cardiac|stroke|foot ulcer|pregnan|alcohol|beer|wine|"
+    r"인슐린|약|저혈당|신장|콩팥|망막|신경병증|심장|협심증|뇌졸중|발 ?궤양|임신|술|음주|맥주|소주|와인")
+
+
+def health_path(route: str, about_user: bool, message: str) -> tuple[str, str]:
+    """Deterministic rule first; the structured router output (route, about_user) second. Length is not used."""
+    if route == "diet_exercise":
+        return "health_deep", "two topics"
+    if about_user:
+        return "health_deep", "own health question (conditions and medicines matter)"
+    if DEEP_TERMS.search(message):
+        return "health_deep", "medicine, low blood sugar, complication or alcohol in the question"
+    return "health_simple", "general single-topic question"
+
+
 @timed("supervisor")
 async def supervisor(state, config):
     j = await llm_json(config, "supervisor", [("user", SUPERVISOR.format(profile=state["profile"], message=state["message"]))])
     route = j.get("route") if j.get("route") in ROUTES else "chat"
-    return {"route": route, "about_user": j.get("about_user") is not False, "route_reason": str(j.get("reason", ""))}
+    out = {"route": route, "about_user": j.get("about_user") is not False, "route_reason": str(j.get("reason", ""))}
+    if route in ("diet", "exercise", "diet_exercise"):
+        path, why = health_path(route, out["about_user"], state["message"])
+        if not deps(config).settings.health_lite:
+            path, why = "health_deep", "health_simple is switched off (COACH_HEALTH_LITE)"
+        out.update(path=path, path_reason=why)
+    return out
 
 
 @timed("emergency_reply")

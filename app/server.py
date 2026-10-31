@@ -26,6 +26,8 @@ from coach.graph import build_graph  # noqa: E402
 from coach.llm import Usage  # noqa: E402
 from coach.runner import run_after  # noqa: E402
 from coach import tracelog  # noqa: E402
+from coach.citations import build as build_citations  # noqa: E402
+from coach.i18n import to_korean  # noqa: E402
 from mcp_servers.user_server import full_profiles  # noqa: E402
 
 MED_CLASS = {  # shown next to each medicine on both screens (display only; the LLM sees the plain profile)
@@ -59,12 +61,14 @@ def get_deps() -> Container:
 class ChatIn(BaseModel):
     user_id: str = "u01"
     message: str
+    lang: str = "en"
 
 
 class ApproveIn(BaseModel):
     user_id: str
     thread_id: str
     approve: bool
+    lang: str = "en"
 
 
 @app.get("/health")
@@ -157,6 +161,8 @@ def replay(item_id: str, system: str = "after"):
 async def chat(body: ChatIn, deps: Container = Depends(get_deps)):
     r = await run_after(STATE["graph"], deps, body.user_id, body.message)
     tracelog.log_event(body.user_id, body.message, r)
+    if body.lang == "ko":
+        r = {**r, "answer_en": r["answer"], **(await to_korean(deps, Usage(), r["answer"]))}
     return r
 
 
@@ -165,36 +171,61 @@ async def approve(body: ApproveIn, deps: Container = Depends(get_deps)):
     r = await run_after(STATE["graph"], deps, body.user_id, "", thread_id=body.thread_id,
                         resume="yes" if body.approve else "no")
     tracelog.log_event(body.user_id, "(approval) " + ("yes" if body.approve else "no"), r)
+    if body.lang == "ko":
+        r = {**r, "answer_en": r["answer"], **(await to_korean(deps, Usage(), r["answer"]))}
     return r
 
 
 @app.get("/chat/stream")
-async def chat_stream(user_id: str, message: str, deps: Container = Depends(get_deps)):
+async def chat_stream(user_id: str, message: str, lang: str = "en", deps: Container = Depends(get_deps)):
+    """SSE. Events: {"event":"route"} once the route is known; {"step":...} per finished node; {"done":true,...} with the whole
+    checked answer (NOT token streaming); {"event":"error"} if the run fails (the browser does not auto-retry: a retry would
+    run the whole paid pipeline again)."""
     async def events():
         u, tid, t = Usage(), str(uuid.uuid4()), time.time()
         cfg = {"configurable": {"deps": deps, "usage": u, "thread_id": tid}, "recursion_limit": 30}
-        final = {}
-        async for upd in STATE["graph"].astream({"user_id": user_id, "message": message, "trace": [], "timings": {}}, cfg,
-                                                stream_mode="updates", subgraphs=True):
-            ns, data = upd
-            prefix = (ns[0].split(":")[0].replace("_agent", "") + ".") if ns else ""   # diet. / exercise. inside the subgraphs
-            for node, out in (data or {}).items():
-                if node == "__interrupt__":
-                    final["interrupt"] = out[0].value if out else None
-                    continue
-                out = out or {}
-                final.update({k: v for k, v in out.items() if k in ("answer", "route", "safety_notes", "retries", "removed")})
-                for dom, ev in (out.get("evidence") or {}).items():
-                    final.setdefault("notes", []).extend((ev or {}).get("notes") or [])
-                    final.setdefault("domains", []).append(dom)
-                yield f"data: {json.dumps({'step': prefix + node, 'seconds': (out.get('timings') or {}).get(node), 'route': out.get('route')})}\n\n"
-        s = deps.settings
-        tracelog.log_event(user_id, message, {**final, "latency_s": round(time.time() - t, 2), "calls": u.calls,
-                                              "tokens_in": u.tokens_in, "tokens_out": u.tokens_out,
-                                              "cost": round(u.cost(s.price_in, s.price_out, s.price_embed), 5)})
-        yield "data: " + json.dumps({"done": True, "answer": final.get("answer", ""), "route": final.get("route"),
-                                     "interrupt": final.get("interrupt"), "thread_id": tid,
-                                     "sources": sorted({n.get("source") for n in final.get("notes", []) if n.get("source")}),
-                                     "safety_notes": final.get("safety_notes", []), "latency_s": round(time.time() - t, 2),
-                                     "calls": u.calls, "cost": round(u.cost(s.price_in, s.price_out, s.price_embed), 5)}) + "\n\n"
+        final, routed = {}, False
+        try:
+            async for upd in STATE["graph"].astream({"user_id": user_id, "message": message, "trace": [], "timings": {}}, cfg,
+                                                    stream_mode="updates", subgraphs=True):
+                ns, data = upd
+                prefix = (ns[0].split(":")[0].replace("_agent", "") + ".") if ns else ""   # diet. / exercise. inside the subgraphs
+                for node, out in (data or {}).items():
+                    if node == "__interrupt__":
+                        final["interrupt"] = out[0].value if out else None
+                        continue
+                    out = out or {}
+                    final.update({k: v for k, v in out.items() if k in ("answer", "route", "safety_notes", "retries", "removed", "path",
+                                                                       "path_reason", "escalated")})
+                    if out.get("route") and not routed and node in ("guard", "supervisor"):
+                        routed = True
+                        yield f"data: {json.dumps({'event': 'route', 'route': out['route'], 'path': out.get('path'), 'path_reason': out.get('path_reason')})}\n\n"
+                    for dom, ev in (out.get("evidence") or {}).items():
+                        final.setdefault("evidence", {})[dom] = ev
+                        final.setdefault("notes", []).extend((ev or {}).get("notes") or [])
+                        final.setdefault("domains", []).append(dom)
+                    yield f"data: {json.dumps({'step': prefix + node, 'seconds': (out.get('timings') or {}).get(node), 'route': out.get('route')})}\n\n"
+            s = deps.settings
+            answer_ready = round(time.time() - t, 2)   # the checked English answer exists; it is sent whole with `done`
+            cites = build_citations(final.get("answer", ""), final.get("evidence", {}), {})
+            shown = {"answer": final.get("answer", ""), "translated": False}
+            if lang == "ko":
+                try:
+                    shown = await to_korean(deps, u, final.get("answer", ""))
+                except Exception:   # translation failed: the safety-checked English answer is still shown
+                    pass
+            log = {k: v for k, v in final.items() if k != "evidence"}
+            tracelog.log_event(user_id, message, {**log, "latency_s": round(time.time() - t, 2), "calls": u.calls, "tokens_in": u.tokens_in,
+                                                  "tokens_out": u.tokens_out, "cost": round(u.cost(s.price_in, s.price_out, s.price_embed), 5)})
+            yield "data: " + json.dumps({"done": True, "answer": shown["answer"], "answer_en": final.get("answer", ""),
+                                         "lang": "ko" if shown["translated"] else "en", "route": final.get("route"),
+                                         "path": final.get("path"), "escalated": bool(final.get("escalated")),
+                                         "interrupt": final.get("interrupt"), "thread_id": tid,
+                                         "sources": sorted({n.get("source") for n in final.get("notes", []) if n.get("source")}),
+                                         "statements": cites["statements"], "citations": cites["citations"],
+                                         "safety_notes": final.get("safety_notes", []), "answer_ready_s": answer_ready,
+                                         "latency_s": round(time.time() - t, 2), "calls": u.calls,
+                                         "cost": round(u.cost(s.price_in, s.price_out, s.price_embed), 5)}) + "\n\n"
+        except Exception as e:   # noqa: BLE001 - reported to the page, which shows a retry button
+            yield "data: " + json.dumps({"event": "error", "error": type(e).__name__}) + "\n\n"
     return StreamingResponse(events(), media_type="text/event-stream")
