@@ -27,7 +27,7 @@ from coach.llm import Usage  # noqa: E402
 from coach.runner import run_after  # noqa: E402
 from coach import tracelog  # noqa: E402
 from coach.citations import build as build_citations  # noqa: E402
-from coach.i18n import to_korean  # noqa: E402
+from coach.i18n import fixed_ko, to_korean  # noqa: E402
 from mcp_servers.user_server import full_profiles  # noqa: E402
 
 MED_CLASS = {  # shown next to each medicine on both screens (display only; the LLM sees the plain profile)
@@ -84,6 +84,18 @@ def web():
 @app.get("/admin")
 def admin_web():
     return FileResponse(ROOT / "web" / "admin.html")
+
+
+PWA_FILES = {"manifest.webmanifest": "application/manifest+json", "sw.js": "text/javascript", "icon.svg": "image/svg+xml",
+             "icon-192.png": "image/png", "icon-512.png": "image/png"}
+
+
+@app.get("/{name}", include_in_schema=False)
+def pwa_file(name: str):
+    """PWA shell files (manifest, service worker, icons). Only this fixed list is served."""
+    if name not in PWA_FILES:
+        raise HTTPException(404)
+    return FileResponse(ROOT / "web" / name, media_type=PWA_FILES[name], headers={"Cache-Control": "no-cache"})
 
 
 def _profiles() -> dict:
@@ -154,7 +166,13 @@ def admin_alert_status(event_id: int, body: AlertIn):
 def replay(item_id: str, system: str = "after"):
     """A recorded evaluation run (eval/results), shown in the web page without calling the LLM again."""
     rows = json.loads((ROOT / "eval" / "results" / f"{system}.json").read_text())
-    return rows.get(item_id, {})
+    r = rows.get(item_id, {})
+    if r.get("passages") and r.get("notes"):   # rebuild the citation contract from the recorded passages (English answer, as recorded)
+        from mcp_servers.papers_server import _hit
+        hits = [_hit(pid) for pid in r["passages"]]
+        ev = {"recorded": {"notes": r["notes"], "picks": [{"query": "q", "best": r["passages"]}], "results": {"q": hits}}}
+        r = {**r, **build_citations(r.get("answer", ""), ev, {}), "replayed": True}
+    return r
 
 
 @app.post("/chat")
@@ -217,10 +235,13 @@ async def chat_stream(user_id: str, message: str, lang: str = "en", deps: Contai
             log = {k: v for k, v in final.items() if k != "evidence"}
             tracelog.log_event(user_id, message, {**log, "latency_s": round(time.time() - t, 2), "calls": u.calls, "tokens_in": u.tokens_in,
                                                   "tokens_out": u.tokens_out, "cost": round(u.cost(s.price_in, s.price_out, s.price_embed), 5)})
+            ask = final.get("interrupt")
+            if lang == "ko" and ask and fixed_ko(ask.get("question", "")):
+                ask = {**ask, "question": fixed_ko(ask["question"])}
             yield "data: " + json.dumps({"done": True, "answer": shown["answer"], "answer_en": final.get("answer", ""),
                                          "lang": "ko" if shown["translated"] else "en", "route": final.get("route"),
                                          "path": final.get("path"), "escalated": bool(final.get("escalated")),
-                                         "interrupt": final.get("interrupt"), "thread_id": tid,
+                                         "interrupt": ask, "thread_id": tid,
                                          "sources": sorted({n.get("source") for n in final.get("notes", []) if n.get("source")}),
                                          "statements": cites["statements"], "citations": cites["citations"],
                                          "safety_notes": final.get("safety_notes", []), "answer_ready_s": answer_ready,
