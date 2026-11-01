@@ -101,3 +101,13 @@ def test_insulin_user_asking_generally_still_goes_deep_end_to_end():
 def test_own_question_never_takes_the_simple_path():
     r = _ask(_lite(True), True)
     assert "exercise.make_queries" in r["trace"] and "exercise.make_queries_lite" not in r["trace"]
+
+
+def test_korean_questions_trigger_the_same_profile_rules_and_the_low_blood_sugar_check():
+    from coach.safety.rules import applicable_rules, check_answer
+    insulin = "age: 77; conditions: type 2 diabetes; medications: insulin glargine, metformin"
+    ckd = "age: 80; conditions: type 2 diabetes, chronic kidney disease stage 3; medications: metformin"
+    assert {r.id for r in applicable_rules(ckd, "고기랑 계란은 얼마나 먹어도 돼요?", ("diet",))} == {r.id for r in applicable_rules(ckd, "How much meat and eggs can I eat?", ("diet",))}
+    assert any(r.id == "D4" for r in applicable_rules(insulin, "저녁에 술 한잔해도 돼요?", ("diet",)))
+    ans = "A 20 minute walk after dinner may lower your post-meal glucose [PMC1]."
+    assert [i["rule"][:2] for i in check_answer(ans, insulin, "저녁 먹고 걸어도 돼요?", {})] == ["S5"]   # no low-blood-sugar warning

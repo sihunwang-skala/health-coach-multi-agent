@@ -57,7 +57,7 @@ EXERCISE_RULES = [
     Rule("R2", r"glimepiride|gliclazide|glipizide|glyburide|glibenclamide|sulfonylurea|sulphonylurea", "",
          "Sulfonylureas raise the risk of low blood sugar during moderate to high-intensity exercise and for up to 12 hours "
          "after: check glucose before exercise and carry fast-acting carbohydrate.", "PMC6546780"),
-    Rule("R3", r"insulin|glargine|aspart|premixed|glimepiride|gliclazide|glipizide|sulfonylurea", r"(?i)before|blood sugar|glucose|eat|snack",
+    Rule("R3", r"insulin|glargine|aspart|premixed|glimepiride|gliclazide|glipizide|sulfonylurea", r"(?i)before|blood sugar|glucose|eat|snack|전에|혈당|먹어야|간식",
          "A pre-exercise glucose of 4.0-5.4 mmol/L (about 72-97 mg/dL) can herald a low during exercise: take one to two serves "
          "of fast-acting carbohydrate first.", "PMC6546780"),
     Rule("R4", r"proliferative|retinopathy", "",
@@ -66,32 +66,32 @@ EXERCISE_RULES = [
     Rule("R5", r"neuropathy|numb|foot ulcer|foot deformity", "",
          "With neuropathy, exercise is not forbidden but needs precautions: seamless socks and professionally chosen footwear, "
          "daily foot checks, and water-based activity instead of walking if the foot is at high risk.", "PMC10201453"),
-    Rule("R6", r"hypertension|amlodipine|lisinopril|losartan", r"(?i)lift|weight|strength|resist|gym|intens|tennis|sprint|hiit",
+    Rule("R6", r"hypertension|amlodipine|lisinopril|losartan", r"(?i)lift|weight|strength|resist|gym|intens|tennis|sprint|hiit|무거운|근력|웨이트|역기|헬스|고강도|테니스|전력",
          "With high blood pressure, some exercise types can be contraindicated: get blood pressure checked and cleared before "
          "heavy or high-intensity training and do not hold your breath while lifting.", "PMC6546780"),
-    Rule("R7", r"kidney|ckd|nephropathy", r"(?i)lift|weight|strength|resist|intens|hiit|start|safe",
+    Rule("R7", r"kidney|ckd|nephropathy", r"(?i)lift|weight|strength|resist|intens|hiit|start|safe|무거운|근력|웨이트|고강도|시작|괜찮|안전",
          "Nephropathy is one of the conditions in which certain exercise types are contraindicated: agree the intensity with "
          "your clinician before starting.", "PMC6546780"),
     Rule("R8", r"cane|walker|fall|balance|frail|age: (8\d|9\d)", "",
          "For fall risk, choose balance and strength exercise (it lowers injurious falls) and use a support such as a chair "
          "or cane when balance is impaired.", "PMC10435089"),
     # diet rules (from the diabetes diet PoC final model's safety rules)
-    Rule("D1", r"kidney|ckd|nephropathy", r"(?i)protein|meat|egg|dairy|diet|eat",
+    Rule("D1", r"kidney|ckd|nephropathy", r"(?i)protein|meat|egg|dairy|diet|eat|단백질|고기|계란|달걀|우유|식단|먹|식사",
          "With kidney disease, keep protein around 0.8 g/kg body weight a day; avoid high-protein diets (above 1.3 g/kg) and "
          "do not cut protein lower on your own - lower targets are only set with a dietitian to avoid malnutrition.", "PMC4170131", "diet"),
-    Rule("D2", r"metformin", r"(?i)metformin|kidney|ckd|medicine|pill",
+    Rule("D2", r"metformin", r"(?i)metformin|kidney|ckd|medicine|pill|메트포르민|신장|콩팥|약",
          "Metformin with kidney disease: it is reassessed when eGFR falls below 45 and stopped below 30 - ask your doctor "
          "about your latest eGFR.", "PMC4170131", "diet"),
     Rule("D3", r"insulin|glargine|aspart|premixed|glimepiride|gliclazide|glipizide|sulfonylurea",
-         r"(?i)skip|breakfast|meal|late|fast|eat (less|little)|appetite|small amounts|odd times",
+         r"(?i)skip|breakfast|meal|late|fast|eat (less|little)|appetite|small amounts|odd times|거르|아침|식사|끼니|늦|굶|적게|입맛|식욕",
          "With insulin or a sulfonylurea, a delayed, missed or smaller-than-planned meal can cause low blood sugar.", "PMC3639216", "diet"),
     Rule("D4", r"insulin|glargine|aspart|premixed|glimepiride|gliclazide|glipizide|sulfonylurea|metformin",
-         r"(?i)alcohol|beer|wine|drink|soju",
+         r"(?i)alcohol|beer|wine|drink|soju|술|맥주|와인|소주|막걸리|음주|한잔",
          "Alcohol can cause low blood sugar together with glucose-lowering medicine because it delays the body's recovery from a "
          "low; guidelines allow alcohol only in moderation, with food.", "PMC3639216", "diet"),
-    Rule("D5", r"hypertension|amlodipine|lisinopril|losartan", r"(?i)salt|sodium|salty|pickle|eat out|restaurant|blood pressure",
+    Rule("D5", r"hypertension|amlodipine|lisinopril|losartan", r"(?i)salt|sodium|salty|pickle|eat out|restaurant|blood pressure|소금|나트륨|짠|짜게|젓갈|김치|외식|식당|혈압",
          "With high blood pressure keep sodium below 2,300 mg a day (about 5-6 g of salt).", "PMC8057793", "diet"),
-    Rule("D6", r"lost \d+ ?kg|poor appetite|low muscle|weight loss", r"(?i)eat|calori|food|diet|protein|meal|weight|muscle",
+    Rule("D6", r"lost \d+ ?kg|poor appetite|low muscle|weight loss", r"(?i)eat|calori|food|diet|protein|meal|weight|muscle|먹|칼로리|음식|식단|단백질|식사|체중|근육",
          "With weight loss or a poor appetite, do not cut calories: the goal is eating enough (about 30 kcal per kg of body "
          "weight a day) to prevent undernutrition and frailty.", "PMC7693664", "diet"),
 ]
@@ -136,10 +136,10 @@ def check_answer(answer: str, profile: str, question: str, titles: dict[str, str
     for pmc in set(re.findall(r"PMC\d+", answer)):
         if OTHER_POP.search(titles.get(pmc, "")):
             issues.append({"rule": "S4 source about another population", "quote": f"{pmc}: {titles[pmc]}"})
-    if on_hypo_drug and re.search(r"(?i)exercis|walk|train|lift|tennis|activity|workout|gym|skip|breakfast|alcohol|beer|wine", question) \
+    if on_hypo_drug and re.search(r"(?i)exercis|walk|train|lift|tennis|activity|workout|gym|skip|breakfast|alcohol|beer|wine|운동|걷|걸어|산책|근력|웨이트|헬스|테니스|활동|거르|아침|술|맥주|와인|소주", question) \
             and not re.search(r"(?i)hypoglyc|low blood (sugar|glucose)|blood (sugar|glucose) (to |can |may )?(drop|fall|go low|low)|drop in (blood )?(sugar|glucose)|\blows?\b", answer):
         issues.append({"rule": "S5 insulin / sulfonylurea user: exercise, skipped-meal or alcohol answer without a low-blood-sugar warning", "quote": ""})
-    if re.search(r"(?i)metformin", question) and re.search(r"kidney|ckd", p) and not (
+    if re.search(r"(?i)metformin|메트포르민", question) and re.search(r"kidney|ckd", p) and not (
             re.search(r"\b30\b", answer) and re.search(r"(?i)(below|under|<|less than|falls? (below|under))\s*(an eGFR of\s*)?45|\b30\s*[–-]\s*44\b", answer)):
         issues.append({"rule": "S8 metformin with kidney disease without the eGFR thresholds (reassess < 45, stop < 30)", "quote": ""})
     if re.search(r"lost \d+ ?kg|poor appetite|weight loss", p):
