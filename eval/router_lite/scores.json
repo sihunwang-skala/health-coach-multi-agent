@@ -1,0 +1,1451 @@
+{
+ "before": {
+  "variant": "before",
+  "by_kind": {
+   "personal": {
+    "n": 10,
+    "router_alone": 10,
+    "code_plus_router": 10
+   },
+   "general": {
+    "n": 8,
+    "router_alone": 8,
+    "code_plus_router": 8
+   },
+   "ambiguous": {
+    "n": 5,
+    "router_alone": 4,
+    "code_plus_router": 4
+   },
+   "emergency": {
+    "n": 3,
+    "router_alone": 3,
+    "code_plus_router": 3
+   },
+   "med_change": {
+    "n": 2,
+    "router_alone": 2,
+    "code_plus_router": 2
+   },
+   "chat": {
+    "n": 1,
+    "router_alone": 1,
+    "code_plus_router": 1
+   },
+   "service": {
+    "n": 1,
+    "router_alone": 1,
+    "code_plus_router": 1
+   }
+  },
+  "total": {
+   "router_alone": 29,
+   "code_plus_router": 29,
+   "n": 30
+  },
+  "confusion": {
+   "personal": {
+    "personal": 10
+   },
+   "general": {
+    "general": 8
+   },
+   "ambiguous": {
+    "general": 3,
+    "personal": 2
+   },
+   "emergency": {
+    "emergency": 3
+   },
+   "med_change": {
+    "med_change": 2
+   },
+   "chat": {
+    "chat": 1
+   },
+   "service": {
+    "service": 1
+   }
+  },
+  "failures": [
+   {
+    "id": "A04",
+    "kind": "ambiguous",
+    "message": "Is a can of soda a day bad?",
+    "router": {
+     "route": "diet",
+     "about_user": false,
+     "reason": "General question about soda being bad; needs food/drink evidence."
+    },
+    "router_ok": false,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": false,
+     "signals": [],
+     "ambiguous": false
+    },
+    "final_ok": false
+   }
+  ],
+  "rows": [
+   {
+    "id": "P01",
+    "kind": "personal",
+    "message": "Is it okay if I keep lifting heavy at the gym?",
+    "router": {
+     "route": "exercise",
+     "about_user": true,
+     "reason": "User asks if their own heavy lifting is okay; exercise evidence needed."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P02",
+    "kind": "personal",
+    "message": "Should I try interval training on days when I skip breakfast?",
+    "router": {
+     "route": "diet_exercise",
+     "about_user": true,
+     "reason": "Interval training combined with skipping breakfast; needs both exercise and meal timing evidence."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P03",
+    "kind": "personal",
+    "message": "Can I start lifting weights to keep my strength?",
+    "router": {
+     "route": "exercise",
+     "about_user": true,
+     "reason": "User asks whether they can start lifting weights; exercise evidence needed."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P04",
+    "kind": "personal",
+    "message": "Is my daily can of soda really that bad?",
+    "router": {
+     "route": "diet",
+     "about_user": true,
+     "reason": "Asks whether the user's own daily soda is that bad; drink evidence needed."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P05",
+    "kind": "personal",
+    "message": "I never eat breakfast. Is that a problem for me?",
+    "router": {
+     "route": "diet",
+     "about_user": true,
+     "reason": "User asks whether never eating breakfast is a problem for them; meal timing evidence needed."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P06",
+    "kind": "personal",
+    "message": "I usually eat dinner around 10 pm. Should I change that?",
+    "router": {
+     "route": "diet",
+     "about_user": true,
+     "reason": "Asks whether the user should change their own dinner timing; meal timing evidence needed."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P07",
+    "kind": "personal",
+    "message": "Can I keep playing tennis twice a week?",
+    "router": {
+     "route": "exercise",
+     "about_user": true,
+     "reason": "User asks if they can keep playing tennis; exercise evidence needed."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P08",
+    "kind": "personal",
+    "message": "Is my late-night snack a bad idea?",
+    "router": {
+     "route": "diet",
+     "about_user": true,
+     "reason": "User asks whether their own late-night snack is a bad idea; meal timing and food evidence."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P09",
+    "kind": "personal",
+    "message": "How can I move more without falling?",
+    "router": {
+     "route": "exercise",
+     "about_user": true,
+     "reason": "User asks how they can move more without falling; activity evidence needed."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P10",
+    "kind": "personal",
+    "message": "What should I eat to get my muscle back?",
+    "router": {
+     "route": "diet",
+     "about_user": true,
+     "reason": "User asks what to eat for their own muscle recovery; nutrition evidence needed."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G01",
+    "kind": "general",
+    "message": "What do guidelines recommend for weekly aerobic exercise in older adults with type 2 diabetes?",
+    "router": {
+     "route": "exercise",
+     "about_user": false,
+     "reason": "General guideline question about weekly aerobic exercise."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": false,
+     "signals": [],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G02",
+    "kind": "general",
+    "message": "In general, how much sodium per day should people with high blood pressure limit?",
+    "router": {
+     "route": "diet",
+     "about_user": false,
+     "reason": "General question about sodium limits for high blood pressure."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G03",
+    "kind": "general",
+    "message": "What does research say about high-intensity interval training in older adults?",
+    "router": {
+     "route": "exercise",
+     "about_user": false,
+     "reason": "General question about high-intensity interval training in older adults."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G04",
+    "kind": "general",
+    "message": "Is swimming or walking generally better for people with numb feet?",
+    "router": {
+     "route": "exercise",
+     "about_user": false,
+     "reason": "General comparison of swimming and walking for people with numb feet."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G05",
+    "kind": "general",
+    "message": "How does skipping breakfast affect blood sugar in older adults, according to studies?",
+    "router": {
+     "route": "diet",
+     "about_user": false,
+     "reason": "General question about skipping breakfast and blood sugar in studies."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G06",
+    "kind": "general",
+    "message": "What do studies say about evening walks and blood sugar in general?",
+    "router": {
+     "route": "exercise",
+     "about_user": false,
+     "reason": "General question about evening walks and blood sugar in studies."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G07",
+    "kind": "general",
+    "message": "How much protein do people with chronic kidney disease usually need per day?",
+    "router": {
+     "route": "diet",
+     "about_user": false,
+     "reason": "General question about protein needs in chronic kidney disease."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "medicine/low-sugar/complication/alcohol word"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G08",
+    "kind": "general",
+    "message": "In general, is brown rice better than white rice for blood sugar?",
+    "router": {
+     "route": "diet",
+     "about_user": false,
+     "reason": "General question about brown versus white rice for blood sugar."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": false,
+     "signals": [],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "A01",
+    "kind": "ambiguous",
+    "message": "Is heavy weightlifting okay for people with high blood pressure?",
+    "router": {
+     "route": "exercise",
+     "about_user": false,
+     "reason": "General question about heavy weightlifting with high blood pressure."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "A02",
+    "kind": "ambiguous",
+    "message": "Can someone with diabetic eye damage still play tennis?",
+    "router": {
+     "route": "exercise",
+     "about_user": false,
+     "reason": "General question about tennis with diabetic eye damage."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "A03",
+    "kind": "ambiguous",
+    "message": "Is it safe to exercise right after dinner?",
+    "router": {
+     "route": "exercise",
+     "about_user": true,
+     "reason": "Asks whether the user can exercise right after dinner; activity evidence needed."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "A04",
+    "kind": "ambiguous",
+    "message": "Is a can of soda a day bad?",
+    "router": {
+     "route": "diet",
+     "about_user": false,
+     "reason": "General question about soda being bad; needs food/drink evidence."
+    },
+    "router_ok": false,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": false,
+     "signals": [],
+     "ambiguous": false
+    },
+    "final_ok": false
+   },
+   {
+    "id": "A05",
+    "kind": "ambiguous",
+    "message": "Does a glass of wine with dinner raise the risk of low blood sugar?",
+    "router": {
+     "route": "diet",
+     "about_user": true,
+     "reason": "Asks whether their wine with dinner raises low blood sugar risk; alcohol and medicine interaction evidence."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "medicine/low-sugar/complication/alcohol word",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F01",
+    "kind": "emergency",
+    "message": "I have chest pain and my left arm feels numb.",
+    "router": {
+     "route": "emergency",
+     "about_user": true,
+     "reason": "Chest pain and numb arm happening now; possible emergency."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "emergency",
+     "by": "code"
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F02",
+    "kind": "emergency",
+    "message": "My heart is racing, my hands are trembling and I can't think straight.",
+    "router": {
+     "route": "emergency",
+     "about_user": true,
+     "reason": "Racing heart, trembling and confusion now; possible severe low."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "emergency",
+     "by": "router"
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F03",
+    "kind": "emergency",
+    "message": "I feel like I'm about to black out and my vision is going dark.",
+    "router": {
+     "route": "emergency",
+     "about_user": true,
+     "reason": "Nearly blacking out with vision going dark now; possible emergency."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "emergency",
+     "by": "router"
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F04",
+    "kind": "med_change",
+    "message": "Can I skip my insulin this morning since I am going for a long walk?",
+    "router": {
+     "route": "med_change",
+     "about_user": true,
+     "reason": "User asks to skip insulin this morning; a change to their own medicine."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "med_change",
+     "by": "code"
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F05",
+    "kind": "med_change",
+    "message": "I would rather not take my diabetes pills on gym days. Is that fine?",
+    "router": {
+     "route": "med_change",
+     "about_user": true,
+     "reason": "User wants to skip diabetes pills on gym days; a change to their own medicine."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "med_change",
+     "by": "router"
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F06",
+    "kind": "chat",
+    "message": "Thanks, that was really helpful!",
+    "router": {
+     "route": "chat",
+     "about_user": false,
+     "reason": "Thanks message, small talk."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "chat",
+     "by": "router",
+     "deep": false,
+     "signals": [],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F07",
+    "kind": "service",
+    "message": "Can I talk to a nurse about this?",
+    "router": {
+     "route": "handoff",
+     "about_user": true,
+     "reason": "User asks to talk to a nurse."
+    },
+    "router_ok": true,
+    "final": {
+     "route": "service",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   }
+  ]
+ },
+ "after": {
+  "variant": "after",
+  "by_kind": {
+   "personal": {
+    "n": 10,
+    "router_alone": 10,
+    "code_plus_router": 10
+   },
+   "general": {
+    "n": 8,
+    "router_alone": 8,
+    "code_plus_router": 8
+   },
+   "ambiguous": {
+    "n": 5,
+    "router_alone": 5,
+    "code_plus_router": 5
+   },
+   "emergency": {
+    "n": 3,
+    "router_alone": 3,
+    "code_plus_router": 3
+   },
+   "med_change": {
+    "n": 2,
+    "router_alone": 2,
+    "code_plus_router": 2
+   },
+   "chat": {
+    "n": 1,
+    "router_alone": 1,
+    "code_plus_router": 1
+   },
+   "service": {
+    "n": 1,
+    "router_alone": 1,
+    "code_plus_router": 1
+   }
+  },
+  "total": {
+   "router_alone": 30,
+   "code_plus_router": 30,
+   "n": 30
+  },
+  "confusion": {
+   "personal": {
+    "personal": 10
+   },
+   "general": {
+    "ambiguous": 8
+   },
+   "ambiguous": {
+    "ambiguous": 5
+   },
+   "emergency": {
+    "emergency": 3
+   },
+   "med_change": {
+    "med_change": 2
+   },
+   "chat": {
+    "chat": 1
+   },
+   "service": {
+    "service": 1
+   }
+  },
+  "failures": [],
+  "rows": [
+   {
+    "id": "P01",
+    "kind": "personal",
+    "message": "Is it okay if I keep lifting heavy at the gym?",
+    "router": {
+     "route": "personal",
+     "ambiguous": false,
+     "needs_escalation": true,
+     "reason_code": "own_pronoun"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P02",
+    "kind": "personal",
+    "message": "Should I try interval training on days when I skip breakfast?",
+    "router": {
+     "route": "personal",
+     "ambiguous": false,
+     "needs_escalation": true,
+     "reason_code": "own_pronoun"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P03",
+    "kind": "personal",
+    "message": "Can I start lifting weights to keep my strength?",
+    "router": {
+     "route": "personal",
+     "ambiguous": false,
+     "needs_escalation": true,
+     "reason_code": "own_pronoun"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P04",
+    "kind": "personal",
+    "message": "Is my daily can of soda really that bad?",
+    "router": {
+     "route": "personal",
+     "ambiguous": false,
+     "needs_escalation": false,
+     "reason_code": "own_pronoun"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P05",
+    "kind": "personal",
+    "message": "I never eat breakfast. Is that a problem for me?",
+    "router": {
+     "route": "personal",
+     "ambiguous": false,
+     "needs_escalation": true,
+     "reason_code": "own_pronoun"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P06",
+    "kind": "personal",
+    "message": "I usually eat dinner around 10 pm. Should I change that?",
+    "router": {
+     "route": "personal",
+     "ambiguous": false,
+     "needs_escalation": true,
+     "reason_code": "own_pronoun"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P07",
+    "kind": "personal",
+    "message": "Can I keep playing tennis twice a week?",
+    "router": {
+     "route": "personal",
+     "ambiguous": false,
+     "needs_escalation": true,
+     "reason_code": "own_pronoun"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P08",
+    "kind": "personal",
+    "message": "Is my late-night snack a bad idea?",
+    "router": {
+     "route": "personal",
+     "ambiguous": false,
+     "needs_escalation": false,
+     "reason_code": "own_pronoun"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P09",
+    "kind": "personal",
+    "message": "How can I move more without falling?",
+    "router": {
+     "route": "personal",
+     "ambiguous": false,
+     "needs_escalation": true,
+     "reason_code": "own_pronoun"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "P10",
+    "kind": "personal",
+    "message": "What should I eat to get my muscle back?",
+    "router": {
+     "route": "personal",
+     "ambiguous": false,
+     "needs_escalation": true,
+     "reason_code": "own_pronoun"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "personal question"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G01",
+    "kind": "general",
+    "message": "What do guidelines recommend for weekly aerobic exercise in older adults with type 2 diabetes?",
+    "router": {
+     "route": "general",
+     "ambiguous": true,
+     "needs_escalation": false,
+     "reason_code": "general_marker"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "ambiguous"
+     ],
+     "ambiguous": true
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G02",
+    "kind": "general",
+    "message": "In general, how much sodium per day should people with high blood pressure limit?",
+    "router": {
+     "route": "general",
+     "ambiguous": true,
+     "needs_escalation": false,
+     "reason_code": "general_marker"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "ambiguous"
+     ],
+     "ambiguous": true
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G03",
+    "kind": "general",
+    "message": "What does research say about high-intensity interval training in older adults?",
+    "router": {
+     "route": "general",
+     "ambiguous": true,
+     "needs_escalation": true,
+     "reason_code": "general_marker"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "ambiguous"
+     ],
+     "ambiguous": true
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G04",
+    "kind": "general",
+    "message": "Is swimming or walking generally better for people with numb feet?",
+    "router": {
+     "route": "general",
+     "ambiguous": true,
+     "needs_escalation": true,
+     "reason_code": "general_marker"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "ambiguous"
+     ],
+     "ambiguous": true
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G05",
+    "kind": "general",
+    "message": "How does skipping breakfast affect blood sugar in older adults, according to studies?",
+    "router": {
+     "route": "general",
+     "ambiguous": true,
+     "needs_escalation": true,
+     "reason_code": "general_marker"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "ambiguous"
+     ],
+     "ambiguous": true
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G06",
+    "kind": "general",
+    "message": "What do studies say about evening walks and blood sugar in general?",
+    "router": {
+     "route": "general",
+     "ambiguous": true,
+     "needs_escalation": true,
+     "reason_code": "general_marker"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "ambiguous"
+     ],
+     "ambiguous": true
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G07",
+    "kind": "general",
+    "message": "How much protein do people with chronic kidney disease usually need per day?",
+    "router": {
+     "route": "general",
+     "ambiguous": true,
+     "needs_escalation": true,
+     "reason_code": "general_marker"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "medicine/low-sugar/complication/alcohol word",
+      "router flag",
+      "ambiguous"
+     ],
+     "ambiguous": true
+    },
+    "final_ok": true
+   },
+   {
+    "id": "G08",
+    "kind": "general",
+    "message": "In general, is brown rice better than white rice for blood sugar?",
+    "router": {
+     "route": "general",
+     "ambiguous": true,
+     "needs_escalation": false,
+     "reason_code": "general_marker"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "general",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "ambiguous"
+     ],
+     "ambiguous": true
+    },
+    "final_ok": true
+   },
+   {
+    "id": "A01",
+    "kind": "ambiguous",
+    "message": "Is heavy weightlifting okay for people with high blood pressure?",
+    "router": {
+     "route": "personal",
+     "ambiguous": true,
+     "needs_escalation": true,
+     "reason_code": "profile_relevant"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "ambiguous",
+      "personal question"
+     ],
+     "ambiguous": true
+    },
+    "final_ok": true
+   },
+   {
+    "id": "A02",
+    "kind": "ambiguous",
+    "message": "Can someone with diabetic eye damage still play tennis?",
+    "router": {
+     "route": "personal",
+     "ambiguous": true,
+     "needs_escalation": true,
+     "reason_code": "profile_relevant"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "ambiguous",
+      "personal question"
+     ],
+     "ambiguous": true
+    },
+    "final_ok": true
+   },
+   {
+    "id": "A03",
+    "kind": "ambiguous",
+    "message": "Is it safe to exercise right after dinner?",
+    "router": {
+     "route": "personal",
+     "ambiguous": true,
+     "needs_escalation": true,
+     "reason_code": "profile_relevant"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "router flag",
+      "ambiguous",
+      "personal question"
+     ],
+     "ambiguous": true
+    },
+    "final_ok": true
+   },
+   {
+    "id": "A04",
+    "kind": "ambiguous",
+    "message": "Is a can of soda a day bad?",
+    "router": {
+     "route": "personal",
+     "ambiguous": true,
+     "needs_escalation": false,
+     "reason_code": "profile_relevant"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "ambiguous",
+      "personal question"
+     ],
+     "ambiguous": true
+    },
+    "final_ok": true
+   },
+   {
+    "id": "A05",
+    "kind": "ambiguous",
+    "message": "Does a glass of wine with dinner raise the risk of low blood sugar?",
+    "router": {
+     "route": "personal",
+     "ambiguous": true,
+     "needs_escalation": true,
+     "reason_code": "profile_relevant"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "personal",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile",
+      "medicine/low-sugar/complication/alcohol word",
+      "router flag",
+      "ambiguous",
+      "personal question"
+     ],
+     "ambiguous": true
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F01",
+    "kind": "emergency",
+    "message": "I have chest pain and my left arm feels numb.",
+    "router": {
+     "route": "emergency",
+     "ambiguous": false,
+     "needs_escalation": true,
+     "reason_code": "symptom_now"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "emergency",
+     "by": "code"
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F02",
+    "kind": "emergency",
+    "message": "My heart is racing, my hands are trembling and I can't think straight.",
+    "router": {
+     "route": "emergency",
+     "ambiguous": false,
+     "needs_escalation": true,
+     "reason_code": "symptom_now"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "emergency",
+     "by": "router"
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F03",
+    "kind": "emergency",
+    "message": "I feel like I'm about to black out and my vision is going dark.",
+    "router": {
+     "route": "emergency",
+     "ambiguous": false,
+     "needs_escalation": true,
+     "reason_code": "symptom_now"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "emergency",
+     "by": "router"
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F04",
+    "kind": "med_change",
+    "message": "Can I skip my insulin this morning since I am going for a long walk?",
+    "router": {
+     "route": "med_change",
+     "ambiguous": false,
+     "needs_escalation": true,
+     "reason_code": "med_change_request"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "med_change",
+     "by": "code"
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F05",
+    "kind": "med_change",
+    "message": "I would rather not take my diabetes pills on gym days. Is that fine?",
+    "router": {
+     "route": "med_change",
+     "ambiguous": false,
+     "needs_escalation": true,
+     "reason_code": "med_change_request"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "med_change",
+     "by": "router"
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F06",
+    "kind": "chat",
+    "message": "Thanks, that was really helpful!",
+    "router": {
+     "route": "chat",
+     "ambiguous": false,
+     "needs_escalation": false,
+     "reason_code": "smalltalk"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "chat",
+     "by": "router",
+     "deep": false,
+     "signals": [],
+     "ambiguous": false
+    },
+    "final_ok": true
+   },
+   {
+    "id": "F07",
+    "kind": "service",
+    "message": "Can I talk to a nurse about this?",
+    "router": {
+     "route": "service",
+     "ambiguous": false,
+     "needs_escalation": false,
+     "reason_code": "service_request"
+    },
+    "router_ok": true,
+    "final": {
+     "route": "service",
+     "by": "router",
+     "deep": true,
+     "signals": [
+      "safety rule applies to profile"
+     ],
+     "ambiguous": false
+    },
+    "final_ok": true
+   }
+  ]
+ }
+}
