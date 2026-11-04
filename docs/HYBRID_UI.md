@@ -34,7 +34,7 @@
 ## 4. 건강 질문 경량/심층 경로
 - `COACH_HEALTH_LITE=1`일 때만 켜집니다. **기본은 꺼짐**이라 평가된 서비스와 동작이 같습니다.
 - 결정 순서: (1) 응급 코드 검사와 supervisor 경로는 그대로 먼저 적용 (2) 건강 route(diet/exercise/diet_exercise)에서 `health_path()`:
-  **저장된 프로필에 안전 규칙이 걸리면(인슐린, 망막병증, 신장질환 등) → deep**(사용자가 병을 직접 쓰지 않아도 적용) / 식단+운동 → deep / 본인 질문(`about_user`) → deep / 약/저혈당/합병증/음주 단어 포함 → deep / 그 외 → simple. **질문 길이는 쓰지 않습니다.**
+  **저장된 프로필에 안전 규칙이 걸리면(인슐린, 망막병증, 신장질환 등) → deep**(이용자가 병을 직접 쓰지 않아도 적용) / 식단+운동 → deep / 본인 질문(`about_user`) → deep / 약/저혈당/합병증/음주 단어 포함 → deep / 그 외 → simple. **질문 길이는 쓰지 않습니다.**
 - `health_simple`: 검색어 만들기를 LLM 1번(4번 대신)으로 줄이고, 나머지(검색, 근거 선택, 근거 확인, 작성, 위험 조언 검사)는 deep과 같습니다. 근거 없는 일반 답변은 허용하지 않습니다.
 - escalation: 검증된 근거 메모가 하나도 없으면 같은 질문을 deep 경로로 다시 실행하고 `escalated=true`로 표시합니다(trace에 `escalate`).
 - **검증 범위**: 단위 테스트로 "simple이 deep보다 LLM 호출이 적다", "근거 없으면 escalate", "본인 질문은 simple을 타지 않는다"를 확인했습니다. 실제 질문에서의 답변 품질/시간/비용은 **측정하지 못했습니다**. 하나뿐인 simple 질문의 검색어(4개 → 2개)가 줄어 근거 적중률이 떨어질 수 있어, 측정 전에는 기본값을 켜지 않습니다.
@@ -46,9 +46,9 @@
 | `{"step","seconds","route"}` | 노드 하나가 끝날 때마다 (기존과 같음) |
 | `{"done":true,"answer","answer_en","lang","route","path","escalated","interrupt","thread_id","sources","statements","citations","safety_notes","answer_ready_s","latency_s","calls","cost"}` | 끝. **답변 전체를 한 번에** 보냄 |
 | `{"event":"error","error":"<예외 이름>"}` | 실행 실패. 화면은 "다시 시도" 버튼을 보여 줌 |
-- 이것은 **token streaming이 아닙니다.** 본문 streaming은 만들지 않았습니다. 검증이 끝난 답변만 사용자에게 보여 주기 위한 선택입니다(작성 중인 답변은 위험 조언 검사 전이라 보여 주면 안 됨).
+- 이것은 **token streaming이 아닙니다.** 본문 streaming은 만들지 않았습니다. 검증이 끝난 답변만 이용자에게 보여 주기 위한 선택입니다(작성 중인 답변은 위험 조언 검사 전이라 보여 주면 안 됨).
 - `answer_ready_s` = 영어 답변이 검사까지 끝난 시각. 첫 "의미 있는 content" 시간은 진행 단계 chip이 아니라 이 값과 `latency_s`(번역 포함)의 차이로 구분해 기록합니다.
-- 자동 재연결 없음: EventSource가 재연결하면 같은 질문의 유료 파이프라인이 다시 돕니다. 화면은 오류 시 연결을 닫고 사용자가 누르는 "다시 시도"만 제공합니다.
+- 자동 재연결 없음: EventSource가 재연결하면 같은 질문의 유료 파이프라인이 다시 돕니다. 화면은 오류 시 연결을 닫고 이용자가 누르는 "다시 시도"만 제공합니다.
 
 ## 6. 한국어 처리와 알려진 한계
 - 응급 표현: 한국어 패턴을 코드에 추가(가슴 조임, 숨 막힘, 기절, 정신 혼미, 떨림+어지러움, 혈당 10~53). 단위 테스트 + 화면에서 확인(LLM 호출 0).
@@ -60,7 +60,7 @@
 ## 7. 테스트 (모두 무료, 네트워크/key 불필요)
 - `pytest`: 26개 통과 (기존 18 + `tests/test_hybrid.py` 8). README의 "20개"는 실제 18개였음.
 - PWA: Chrome(Playwright)에서 service worker active, 캐시 항목은 화면 파일 4개(`/`, 아이콘 2, manifest)뿐, API/chat/admin은 캐시되지 않음. 설치 가능성 검사의 유일한 오류는 `in-incognito`(headless 새 profile 때문), manifest 오류 없음. 실제 "설치" 버튼 동작은 확인하지 않았습니다.
-- 접근성: axe-core(wcag2a, wcag2aa) 자동 검사 위반 0건(사용자 3개 viewport + 관리자). 자동 검사는 일부만 잡으므로 스크린 리더로 직접 확인하지 않았습니다.
+- 접근성: axe-core(wcag2a, wcag2aa) 자동 검사 위반 0건(이용자 3개 viewport + 관리자). 자동 검사는 일부만 잡으므로 스크린 리더로 직접 확인하지 않았습니다.
 - 반응형: 360 / 768 / 1280px에서 가로 스크롤 없음. 근거 패널은 900px 이하에서 bottom sheet.
 - 삭제 승인 dialog: 화면 상태만 확인(샘플 질문을 넣어 열어 봄). 실제 삭제 흐름(supervisor → `interrupt()` → 승인)은 기존 단위 테스트가 확인하지만 LLM이 필요한 end-to-end는 실행하지 못했습니다.
 - SSE 오류 처리: 인증 실패가 `error` event로 전달되고 화면에 "다시 시도"가 뜨는 것을 실제로 확인했습니다.

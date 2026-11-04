@@ -33,7 +33,7 @@ Chat-only: user bubble, assistant text block, evidence chips and `cite` number b
 Rules: emergency is the only red surface; every control has a visible 3 px focus ring; no new colour or size outside the tokens.
 
 ## 4. Information architecture
-- `/login` (log in / sign up in 3 steps: account → health profile → consent; in demo mode also “가상 사용자로 체험하기” cards), `/` chat with sidebar (profile summary, records, settings, log out) /
+- `/login` (log in / sign up in 3 steps: account → health profile → consent; in demo mode also “가상 이용자로 체험하기” cards), `/` chat with sidebar (profile summary, records, settings, log out) /
   `/admin/login` → `/admin` (overview, alerts, people, access log). Two separate sign-ins and roles.
 - Always visible in chat: “응급 119” and an “의료진과 이야기하기” button. A banner repeats the 119 call on an emergency answer.
 - Evidence: numbered buttons inside the answer + chips under it → panel with the supporting sentence, the paper excerpt (supporting sentences highlighted) and the PMC link.
