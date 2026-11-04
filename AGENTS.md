@@ -3,7 +3,7 @@
 Read this first. It says what this repo is, where everything is, how to run and measure it, and the rules the owner works by.
 
 ## 1. What this is
-AI Service Mini Project (SKALA 4기 광주 3반 왕시훈), assignment option 2 (new agent): **diet + exercise coaching multi-agent for
+AI Service Mini Project, assignment option 2 (new agent): **diet + exercise coaching multi-agent for
 older adults with type 2 diabetes**, with a Before (standard RAG chatbot) / After (this multi-agent) comparison on the same
 inputs. Deliverables: working code, `README.md` (results table + how to run), `docs/REPORT.md` (the assignment report),
 screenshots + demo video, and the presentation (not made yet).
