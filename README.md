@@ -6,7 +6,7 @@
 
 *Personalized Agentic RAG Diet and Activity Coach for Type 2 Diabetes*
 
-2024년 UIUC Information Experience and Accessibility Lab의 고령자 대상 GenAI health coaching 연구 경험에서 출발해, 식단, 신체활동, 안전, 서비스 UI까지 확장한 개인 프로젝트입니다.
+2024년 UIUC Information Experience and Accessibility Lab의 고령자 대상 GenAI health coaching 연구 경험에서 출발해, 식단, 신체활동, 안전, 서비스 UI까지 추가 구현하고 Agentic RAG, MCP, LangGraph 같은 최신 기술을 적용한 프로젝트입니다.
 
 | 대상 | 핵심 기술 | 평가 범위 |
 |---|---|---|
@@ -223,7 +223,7 @@ cp .env.example .env                                  # OPENAI_API_KEY 입력 (L
 
 ## 연구 배경 및 참고
 
-이 프로젝트는 2024년 UIUC Information Experience and Accessibility Lab에서 참여한 고령자 대상 GenAI health coaching 연구 경험을 바탕으로, 제2형 당뇨병 식단 및 신체활동 코칭, Agentic RAG, deterministic safety rules를 독립적으로 확장한 프로젝트입니다.
+이 프로젝트는 2024년 UIUC Information Experience and Accessibility Lab에서 참여한 고령자 대상 GenAI health coaching 연구 경험을 바탕으로, 제2형 당뇨병 식단 및 신체활동 코칭으로 주제를 넓히고, Agentic RAG와 deterministic safety rules 등 최신 기술을 적용해 추가 구현한 프로젝트입니다.
 
 - [UIUC Information Experience and Accessibility Lab](https://infoaccesslab.web.illinois.edu/)
 - [IEA Lab 구성원 및 이전 참여자](https://infoaccesslab.web.illinois.edu/people/)
