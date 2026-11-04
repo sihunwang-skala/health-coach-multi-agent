@@ -2,7 +2,7 @@
 
 **제2형 당뇨병 개인 맞춤 식단 및 신체활동 Agentic RAG Coach**
 
-고령 사용자 접근성과 안전을 고려한 근거 기반 Multi-Agent 서비스
+고령 이용자 접근성과 안전을 고려한 근거 기반 Multi-Agent 서비스
 
 *Personalized Agentic RAG Diet and Activity Coach for Type 2 Diabetes*
 
@@ -10,9 +10,9 @@
 
 | 대상 | 핵심 기술 | 평가 범위 |
 |---|---|---|
-| 제2형 당뇨병이 있는 고령 사용자 | Personalized Agentic RAG, Multi-Agent, deterministic safety rules | 가상 프로필 10명, 메시지 100개 |
+| 제2형 당뇨병이 있는 고령 이용자 | Personalized Agentic RAG, Multi-Agent, deterministic safety rules | 가상 프로필 10명, 메시지 100개 |
 
-> 이 서비스는 의사가 아니라 코칭 서비스입니다. 진단이나 처방이 필요한 요청에는 Safety Guard를 적용해 AI가 임의로 판단하지 않도록 하고, 약 변경은 의료진에게, 응급 증상은 119로 안내합니다. 예시 사용자 10명은 모두 가상 인물입니다.
+> 이 서비스는 의사가 아니라 코칭 서비스입니다. 진단이나 처방이 필요한 요청에는 Safety Guard를 적용해 AI가 임의로 판단하지 않도록 하고, 약 변경은 의료진에게, 응급 증상은 119로 안내합니다. 예시 이용자 10명은 모두 가상 인물입니다.
 
 ### 프로젝트 문서
 
@@ -23,14 +23,14 @@
 
 ## 서비스 화면
 
-실제 서비스처럼 로그인이 있는 **이용자 앱**과, 별도 로그인이 필요한 **의료진 콘솔**로 구성했습니다. 아래는 가상 사용자 Robert Brown(58세, 제2형 당뇨병과 고혈압, 메트포르민과 암로디핀 복용) 등의 저장된 데모 기록 화면이며 실시간 답변이 아닙니다. 모든 화면 사진은 한국어와 영어 두 가지가 [화면 모음](docs/ui/SCREENSHOTS.md)에 있습니다.
+실제 서비스처럼 로그인이 있는 **이용자 앱**과, 별도 로그인이 필요한 **의료진 콘솔**로 구성했습니다. 아래는 가상 이용자 Robert Brown(58세, 제2형 당뇨병과 고혈압, 메트포르민과 암로디핀 복용) 등의 저장된 데모 기록 화면이며 실시간 답변이 아닙니다. 모든 화면 사진은 한국어와 영어 두 가지가 [화면 모음](docs/ui/SCREENSHOTS.md)에 있습니다.
 
 ### 이용자 앱
 
 #### 1. 로그인
 <p align="center"><img src="docs/ui/screenshots/readme/01_user_login_ko.png" alt="이용자 로그인 화면" width="760"></p>
 
-아이디와 비밀번호로 로그인하거나 가입합니다. 아래 카드의 가상 사용자 10명 중 한 명을 누르면 가입 없이 바로 체험할 수 있습니다(데모 모드, 실제 서비스에서는 `COACH_DEMO=0`으로 끕니다). 오른쪽 위에서 한국어와 영어를 바꿉니다.
+아이디와 비밀번호로 로그인하거나 가입합니다. 아래 카드의 가상 이용자 10명 중 한 명을 누르면 가입 없이 바로 체험할 수 있습니다(데모 모드, 실제 서비스에서는 `COACH_DEMO=0`으로 끕니다). 오른쪽 위에서 한국어와 영어를 바꿉니다.
 
 #### 2. 채팅 답변과 근거 칩
 <p align="center"><img src="docs/ui/screenshots/readme/02_chat_answer_ko.png" alt="채팅 답변과 근거 칩" width="960"></p>
@@ -44,7 +44,7 @@
 #### 3. 근거 패널: 인용 문장과 논문 원문
 <p align="center"><img src="docs/ui/screenshots/readme/03_evidence_panel_ko.png" alt="근거 패널" width="960"></p>
 
-번호를 누르면 오른쪽에 패널이 열립니다. 맨 위는 논문 제목, 문서 번호(PMC6190726), 논문 속 위치(Abstract)입니다. **파란 선이 있는 칸**은 이 논문을 인용한 답변 문장이고, 그 아래 **노란색으로 강조한 부분**은 AI가 근거로 삼은 논문 원문 문장입니다(식사 후 20분 트레드밀 걷기가 식후 2시간 혈당 상승을 줄였다는 내용). 답변이 논문에서 온 것인지 사용자가 직접 확인할 수 있습니다.
+번호를 누르면 오른쪽에 패널이 열립니다. 맨 위는 논문 제목, 문서 번호(PMC6190726), 논문 속 위치(Abstract)입니다. **파란 선이 있는 칸**은 이 논문을 인용한 답변 문장이고, 그 아래 **노란색으로 강조한 부분**은 AI가 근거로 삼은 논문 원문 문장입니다(식사 후 20분 트레드밀 걷기가 식후 2시간 혈당 상승을 줄였다는 내용). 답변이 논문에서 온 것인지 이용자가 직접 확인할 수 있습니다.
 
 #### 4. 응급 증상
 <p align="center"><img src="docs/ui/screenshots/readme/04_emergency_ko.png" alt="응급 안내 화면" width="960"></p>
@@ -66,7 +66,7 @@
 #### 7. 알림
 <p align="center"><img src="docs/ui/screenshots/readme/07_care_alerts_ko.png" alt="의료진 콘솔 알림" width="960"></p>
 
-응급, 상담 요청, 약 변경 문의, 타인 정보 요청이 한 목록에 모입니다. 일시, 유형, 이용자, 사용자가 보낸 원문, 처리 상태가 보이고 **처리 완료로 변경** 버튼으로 확인한 알림을 닫습니다. 이용자 이름을 누르면 상세 화면으로 이동합니다. 사용자 원문은 번역하지 않고 입력한 그대로 보여 줍니다.
+응급, 상담 요청, 약 변경 문의, 타인 정보 요청이 한 목록에 모입니다. 일시, 유형, 이용자, 이용자가 보낸 원문, 처리 상태가 보이고 **처리 완료로 변경** 버튼으로 확인한 알림을 닫습니다. 이용자 이름을 누르면 상세 화면으로 이동합니다. 이용자 원문은 번역하지 않고 입력한 그대로 보여 줍니다.
 
 #### 8. 이용자 목록
 <p align="center"><img src="docs/ui/screenshots/readme/08_care_users_ko.png" alt="의료진 콘솔 이용자 목록" width="960"></p>
@@ -132,10 +132,10 @@ Linda Park(83세)의 프로필(질환, 복용 약과 저혈당 주의 표시, �
 - **Diet Agent, Exercise Agent** (각각 subgraph, 식단+운동 질문은 동시 실행): Health Agentic RAG — 검색어 4단계 → MCP 논문 검색(의미 검색 + BM25) → 근거 선택/메모 → 메모 검증.
 - **Safety Agent** (코드): 운동 규칙 R1–R8, 식단 규칙 D1–D6.
 - **위험 조언 검사** (코드 S1–S9): 1회 재작성(60초 상한), 그래도 위험하면 문장 삭제 후 안전 문장 삽입.
-- **Records Agent**: 기록 저장/조회, 삭제는 사용자 승인 후 실행.
-- **HITL (사람이 판단하는 지점) 두 곳**: ① 사용자 — 기록 삭제 전 승인(LangGraph `interrupt()`), ② 운영자 — 응급/상담 요청 알림을 관리자 화면에서 확인하고 처리 완료로 표시.
+- **Records Agent**: 기록 저장/조회, 삭제는 이용자 승인 후 실행.
+- **HITL (사람이 판단하는 지점) 두 곳**: ① 이용자 — 기록 삭제 전 승인(LangGraph `interrupt()`), ② 운영자 — 응급/상담 요청 알림을 관리자 화면에서 확인하고 처리 완료로 표시.
 - **이용자 화면**: 로그인 후 채팅 중심, Agent 진행 단계 실시간 표시, 출처 논문, 119/상담 전화 버튼, 내 정보/기록은 펼칠 때만.
-- **의료진 콘솔**(별도 로그인): 전체 이용자, 응급/상담 요청 알림(처리 표시), 사용자별 대화/기록/혈당 그래프, 날짜별 사용량/비용 그래프.
+- **의료진 콘솔**(별도 로그인): 전체 이용자, 응급/상담 요청 알림(처리 표시), 이용자별 대화/기록/혈당 그래프, 날짜별 사용량/비용 그래프.
 - **개인정보**: 이름은 AI에 보내지 않음, LangSmith에는 입력/출력 숨김, 대화 내용은 자체 모니터링 로그(90일)에만.
 
 ### Agentic RAG 처리 흐름
@@ -151,19 +151,19 @@ Linda Park(83세)의 프로필(질환, 복용 약과 저혈당 주의 표시, �
 
 ## 화면에서 확장한 부분
 **확장한 기능**
-- 이용자 로그인과 회원가입, 가상 사용자 원클릭 체험(`COACH_DEMO=1`), 의료진 전용 로그인(브라우저를 닫으면 종료, 30분 미사용 시 자동 로그아웃).
+- 이용자 로그인과 회원가입, 가상 이용자 원클릭 체험(`COACH_DEMO=1`), 의료진 전용 로그인(브라우저를 닫으면 종료, 30분 미사용 시 자동 로그아웃).
 - 채팅 기록 보관, 답변 속 논문 번호를 눌러 보는 근거 패널(인용 문장과 논문 원문), 한국어/영어 전환, 글자 크기 12px부터 26px.
-- 기록 삭제 요청은 채팅 안에서 삭제할 기록을 정확히 보여 주고, 사용자가 확인해야 삭제합니다(한 번만 쓸 수 있고 10분 안에 만료, 본인 것만 승인).
+- 기록 삭제 요청은 채팅 안에서 삭제할 기록을 정확히 보여 주고, 이용자가 확인해야 삭제합니다(한 번만 쓸 수 있고 10분 안에 만료, 본인 것만 승인).
 - 의료진 콘솔: 개요, 알림, 이용자, 열람 기록. 기간은 2주 단위로 고르며 기본값은 메시지가 가장 많았던 기간입니다.
 
 **번역에 대한 안내**
-- 영어 답변은 LLM API가 만든 원본입니다. 한국어 문장은 사용자 편의를 위해 번역한 것입니다.
-- 화면에 보이는 가상 사용자의 데모 기록(질문과 답변)의 한국어는 Claude Sonnet 5.5가 번역했고, 번역 문장은 `data/demo_translations_ko.json`에 있습니다. 숫자와 논문 번호 표시가 원문과 같은지 검사했습니다.
+- 영어 답변은 LLM API가 만든 원본입니다. 한국어 문장은 이용자 편의를 위해 번역한 것입니다.
+- 화면에 보이는 가상 이용자의 데모 기록(질문과 답변)의 한국어는 Claude Sonnet 5.5가 번역했고, 번역 문장은 `data/demo_translations_ko.json`에 있습니다. 숫자와 논문 번호 표시가 원문과 같은지 검사했습니다.
 - 논문 제목, 논문 원문, 근거 메모는 영어 그대로 보여 줍니다. 그 외 화면 문구는 선택한 언어를 따릅니다.
 - 한국어 번역은 평가 점수에 쓰이지 않았습니다. 평가는 영어 원본 답변으로 했습니다.
 
 ## 기술 구성
-LangGraph (supervisor + compiled subgraph, 동시 실행, 조건부 edge, interrupt/checkpointer), LangChain LCEL (ChatOpenAI invoke/batch), LangSmith (입력/출력 숨김), MCP (fastmcp 서버 2개: 논문 검색 / 사용자 프로필/기록), RAG (하이브리드 검색, 대상 필터, 메모 검증), FastAPI + SSE, 의존성 주입 (`coach/deps.py`), 모듈화, automated tests (test double: FakeLLM + in-memory mock MCP 서버, 네트워크/API 키 없이 실행)
+LangGraph (supervisor + compiled subgraph, 동시 실행, 조건부 edge, interrupt/checkpointer), LangChain LCEL (ChatOpenAI invoke/batch), LangSmith (입력/출력 숨김), MCP (fastmcp 서버 2개: 논문 검색 / 이용자 프로필/기록), RAG (하이브리드 검색, 대상 필터, 메모 검증), FastAPI + SSE, 의존성 주입 (`coach/deps.py`), 모듈화, automated tests (test double: FakeLLM + in-memory mock MCP 서버, 네트워크/API 키 없이 실행)
 
 ## 실행
 ```bash
@@ -172,7 +172,7 @@ cp .env.example .env                                  # OPENAI_API_KEY 입력 (L
 .venv/bin/python scripts/fetch_papers.py              # 논문 86편 내려받기 (PMC 오픈액세스, 저장소에는 원문 없음)
 .venv/bin/python scripts/build_index.py               # chunking + embedding (약 $0.02, 1회)
 .venv/bin/python scripts/seed_demo_monitoring.py --users   # (선택) 관리자 화면 데모 데이터
-.venv/bin/uvicorn app.server:app --port 8000          # 사용자 http://localhost:8000/login (가상 사용자 원클릭 입장, 직접 가입도 가능), 의료진 /admin/login (데모 입장 버튼)
+.venv/bin/uvicorn app.server:app --port 8000          # 이용자 http://localhost:8000/login (가상 이용자 원클릭 입장, 직접 가입도 가능), 의료진 /admin/login (데모 입장 버튼)
 # 실제 사람의 데이터를 저장하는 배포에서는 COACH_DEMO=0 (docs/ACCOUNTS.md). 비밀번호 계정이 필요하면: scripts/manage_accounts.py seed-demo
 .venv/bin/python -m pytest -q                         # 단위 테스트 (API 키 불필요)
 ```
@@ -181,12 +181,12 @@ cp .env.example .env                                  # OPENAI_API_KEY 입력 (L
 ## 데이터
 - 논문: `data/paper_ids.json` — 86편. 운동 Agent 묶음은 핵심 운동 논문 21편 + 주제가 다른 운동 논문 15편, 식단 Agent 묶음은 당뇨 식단 논문 50편. 원문은 라이선스 때문에 저장소에 넣지 않고 스크립트로 내려받습니다.
 - 평가셋: `eval/questions.json` — 100개 (건강 질문 60 + 그 외 40). 구성은 [평가 방법](docs/EVALUATION.md#2-질문-100개).
-- 사용자: `data/users.json` — 제2형 당뇨병이 있는 가상 인물 10명(56세부터 94세, 65세 이상 8명, 성별 5:5). 실제 환자 데이터가 아닙니다. 자세한 설명과 한계는 [Dataset Card](docs/DATASET_CARD.md), 표는 [보고서 2-6](docs/REPORT.md#2-6-가상-사용자-10명과-평가-설계).
+- 이용자: `data/users.json` — 제2형 당뇨병이 있는 가상 인물 10명(56세부터 94세, 65세 이상 8명, 성별 5:5). 실제 환자 데이터가 아닙니다. 자세한 설명과 한계는 [Dataset Card](docs/DATASET_CARD.md), 표는 [보고서 2-6](docs/REPORT.md#2-6-가상-이용자-10명과-평가-설계).
 
 ## 평가의 성격과 근거 수준
 | 구분 | 내용 |
 |---|---|
-| Product target | 제2형 당뇨병이 있는 고령 사용자(주 대상 65세 이상) |
+| Product target | 제2형 당뇨병이 있는 고령 이용자(주 대상 65세 이상) |
 | Synthetic evaluation cohort | 제2형 당뇨병이 있는 가상 프로필 10명(56세부터 94세, 8명이 65세 이상), 메시지 100개 |
 | Clinical validation of this system | 없음. 실제 환자 대상 임상시험이나 효과 검증을 수행하지 않았습니다 |
 | System evaluation result | 위 결과 표. 가상 프로필 기반 시스템 평가이며 결과 파일에서 계산한 수치만 실었습니다 |

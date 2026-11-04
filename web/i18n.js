@@ -5,7 +5,7 @@ const K=(ko,en)=>LANG==='en'?en:ko;
 document.documentElement.lang=LANG;
 const EN={
  /* sign-in */
- '제2형 당뇨병 식단 및 신체활동 코치 로그인':'Type 2 Diabetes Diet & Activity Coach sign in','제2형 당뇨병 식단 및 신체활동 코치':'Type 2 Diabetes Diet & Activity Coach','논문 근거로 내 건강 상태에 맞는 식단과 운동을 알려 드려요. 고령 사용자도 쓰기 쉽고 안전하게 만들었어요.':'Paper-based diet and exercise guidance that fits your health, made to be easy and safe for older adults.','식단/운동 코치 로그인':'Diet & Exercise Coach sign in','식단/운동 코치':'Diet & Exercise Coach','내 건강 상태에 맞춰 식사와 운동을 함께 살펴봐 드려요.':'Meals and exercise, checked against your own health.',
+ '제2형 당뇨병 식단 및 신체활동 코치 로그인':'Type 2 Diabetes Diet & Activity Coach sign in','제2형 당뇨병 식단 및 신체활동 코치':'Type 2 Diabetes Diet & Activity Coach','논문 근거로 내 건강 상태에 맞는 식단과 운동을 알려 드려요. 고령 이용자도 쓰기 쉽고 안전하게 만들었어요.':'Paper-based diet and exercise guidance that fits your health, made to be easy and safe for older adults.','식단/운동 코치 로그인':'Diet & Exercise Coach sign in','식단/운동 코치':'Diet & Exercise Coach','내 건강 상태에 맞춰 식사와 운동을 함께 살펴봐 드려요.':'Meals and exercise, checked against your own health.',
  '로그인과 가입':'Sign in and sign up','로그인':'Sign in','가입하기':'Sign up','아이디':'Username','비밀번호':'Password','계정 만들기':'Create account','표시 이름':'Display name',
  '예: 길동':'e.g. Alex','AI에게는 이름을 보내지 않아요.':'Your name is never sent to the AI.','영문 소문자, 숫자, 밑줄(_) 4~20자':'4–20 characters: lowercase letters, numbers, underscore (_)',
  '8자 이상, 문자와 숫자를 함께 사용해 주세요.':'At least 8 characters, with letters and numbers.','답변을 내 상황에 맞게 드리는 데 사용해요. 나중에 언제든 바꿀 수 있어요.':'Used to tailor answers to you. You can change it later.',
@@ -15,8 +15,8 @@ const EN={
  '예: 식후 혈당 낮추기':'e.g. lower blood sugar after meals','평소 운동/활동':'Usual exercise and activity','예: 저녁마다 공원 걷기':'e.g. walking in the park every evening','평소 식습관':'Usual eating habits','예: 아침을 자주 거름':'e.g. often skip breakfast',
  '이 서비스는 의사를 대신하지 않아요.':'This service does not replace a doctor.','논문에서 찾은 일반적인 건강 정보와 생활 습관을 안내해 드려요. 약을 시작하거나 끊거나 바꾸실 때는 꼭 의료진과 먼저 상의해 주세요.':'It gives only general information from research papers and lifestyle suggestions. Always talk to your care team before starting, stopping or changing a medicine.',
  '응급 상황이면 바로 119에 전화하세요.':'In an emergency, call 119 right away.','내 건강 정보를 저장하고, 이름을 제외한 건강 정보를 AI 답변에 활용하는 데 동의합니다. (필수)':'I agree that my health information is stored and that my health information without my name is used for AI answers. (required)',
- '설정에서 언제든 계정과 기록을 삭제할 수 있어요.':'You can delete your account and records any time in Settings.','이전':'Back','다음':'Next','가상 사용자로 체험하기':'Try it as a demo user',
- '비밀번호 없이 바로 체험할 수 있어요. 모든 사용자는 가상의 인물이에요.':'No password needed. All people here are fictional.','의료진 화면으로 가기 →':'Care-team console →',"건강 정보는 이 서비스의 서버에만 저장돼요.":"Your health information is stored only on this service's server.",
+ '설정에서 언제든 계정과 기록을 삭제할 수 있어요.':'You can delete your account and records any time in Settings.','이전':'Back','다음':'Next','가상 이용자로 체험하기':'Try it as a demo user',
+ '비밀번호 없이 바로 체험할 수 있어요. 모든 이용자는 가상의 인물이에요.':'No password needed. All people here are fictional.','의료진 화면으로 가기 →':'Care-team console →',"건강 정보는 이 서비스의 서버에만 저장돼요.":"Your health information is stored only on this service's server.",
  /* care-team sign-in */
  '의료진 로그인':'Care-team sign in','의료진 전용':'Care team only','의료진 콘솔 로그인':'Care-team console sign in','이용자의 건강 정보를 다루는 화면입니다. 모든 열람 내역이 기록됩니다.':"This screen handles users' health information. Every access is logged.",
  '데모로 바로 보기':'View as a demo','가상 이용자 데이터만 볼 수 있는 체험용 입장이에요. 열람 내역은 동일하게 기록돼요.':'Demo access with fictional users only. Access is still logged.','데모 의료진으로 입장':'Enter as demo care team',

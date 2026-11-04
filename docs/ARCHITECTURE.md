@@ -2,7 +2,7 @@
 
 ```mermaid
 flowchart TD
-  U[사용자 화면 /<br/>관리자 화면] -->|채팅 SSE · 승인 · 관리자 API| API[FastAPI<br/>app/server.py]
+  U[이용자 화면 /<br/>관리자 화면] -->|채팅 SSE · 승인 · 관리자 API| API[FastAPI<br/>app/server.py]
   API --> LOG[(자체 모니터링 로그<br/>경로 · 알림 · 시간 · 비용)]
   API --> G[guard<br/>응급 감지 - 코드]
   G -->|응급| EM[고정 응급 안내 119<br/>LLM 없음]
@@ -13,7 +13,7 @@ flowchart TD
   S -->|med_change| MC[고정<br/>안전 문구]
   S -->|log / my_data / chat| RC[Records Agent]
   S -->|handoff / other_user /<br/>privacy_info| FX[정해진 답변<br/>+ 상담 전화 버튼]
-  S -->|delete_record| HD[confirm_delete<br/>interrupt - 사용자 승인]
+  S -->|delete_record| HD[confirm_delete<br/>interrupt - 이용자 승인]
   DA --> W[Writer LLM]
   EV --> W
   SA --> W
@@ -45,9 +45,9 @@ Diet / Exercise Agent subgraph (당뇨 PoC 최종 모델과 같은 파이프라�
 | `coach/llm.py` | LLM 인터페이스: OpenAI(LCEL invoke/batch) / FakeLLM(테스트) + token·비용 집계 |
 | `coach/runner.py` | Multi-Agent·Single-Agent(그래프)·표준 RAG 실행 + 지연·비용 |
 | `mcp_servers/papers_server.py`, `user_server.py` | MCP 서버 2개 (in-process 또는 stdio) |
-| `app/server.py` | FastAPI: 채팅(SSE), 승인, 사용자·관리자 API |
-| `web/index.html`, `web/admin.html` | 사용자 화면(채팅 중심, 내 정보는 펼칠 때만), 관리자 화면(전체 사용자, 알림, 사용자별 상세, 그래프) |
-| `coach/tracelog.py` | 자체 모니터링 로그 (이름 없이 사용자 ID, 경로, 알림, 시간, 비용; 90일 보관) |
+| `app/server.py` | FastAPI: 채팅(SSE), 승인, 이용자·관리자 API |
+| `web/index.html`, `web/admin.html` | 이용자 화면(채팅 중심, 내 정보는 펼칠 때만), 관리자 화면(전체 이용자, 알림, 이용자별 상세, 그래프) |
+| `coach/tracelog.py` | 자체 모니터링 로그 (이름 없이 이용자 ID, 경로, 알림, 시간, 비용; 90일 보관) |
 | `scripts/seed_demo_monitoring.py` | 관리자 화면 데모 데이터 (평가 답변 재생 + 가상 기록) |
 | `eval/` | 평가셋, Before/After 실행, 채점, 그래프 |
 | `tests/` | 단위 테스트 20개 (test double: FakeLLM + in-memory mock MCP 서버, 네트워크·API 키 없이 실행) |

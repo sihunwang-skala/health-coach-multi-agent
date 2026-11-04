@@ -1,6 +1,6 @@
 # 화면 모음
 
-가상 사용자의 저장된 데모 기록 화면입니다(실시간 답변 아님). 설명은 [README](../../README.md#서비스-화면)에 있고, `scripts/ui_screenshots_readme.py`로 다시 만들 수 있습니다.
+가상 이용자의 저장된 데모 기록 화면입니다(실시간 답변 아님). 설명은 [README](../../README.md#서비스-화면)에 있고, `scripts/ui_screenshots_readme.py`로 다시 만들 수 있습니다.
 
 ## 이용자 로그인
 
