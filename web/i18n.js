@@ -34,7 +34,7 @@ const EN={
  '기간':'Period','하루 메시지 수':'Messages per day','하루 메시지 수 막대 그래프':'Bar chart of messages per day','어떤 요청이 많았나':'What people asked','요청 종류별 건수 막대 그래프':'Bar chart of requests by type',
  '이용자별 메시지·알림':'Messages and alerts per user','이용자별 메시지와 알림 막대 그래프':'Bar chart of messages and alerts per user','하루 AI 비용':'AI cost per day','하루 AI 비용 선 그래프':'Line chart of AI cost per day',
  '알림 — 응급, 상담 요청, 약 변경, 다른 사람 정보 요청':'Alerts: emergencies, call requests, medicine changes, requests for another person\'s data','보기':'Show','처리 전':'Open','전체':'All',
- '이용자 (행을 누르면 자세히 봅니다)':'Users (select a row for details)','한 명 보기':'One user','위 표에서 이용자를 고르세요.':'Select a user in the table above.','의료진이 이용자 데이터를 열거나 알림을 바꾼 기록이에요.':'Records of care-team members opening user data or changing alerts.',
+ '이용자 목록':'User list','이용자 상세':'User details','목록에서 이용자를 선택하세요.':'Select a user from the list.','의료진이 이용자 데이터를 열거나 알림을 바꾼 기록이에요.':'Records of care-team members opening user data or changing alerts.',
  /* messages from the server */
  '아이디 또는 비밀번호가 맞지 않아요.':'The username or password is incorrect.','로그인에 여러 번 실패했어요. 10분 뒤에 다시 시도해 주세요.':'Too many failed attempts. Please try again in 10 minutes.','이미 사용 중인 아이디예요.':'That username is already taken.',
  '비밀번호는 8자 이상이어야 해요.':'The password must be at least 8 characters.','비밀번호에 문자와 숫자를 함께 넣어 주세요.':'Please use both letters and numbers in the password.','개인정보와 건강정보 이용에 동의해 주세요.':'Please agree to the use of your personal and health information.',
