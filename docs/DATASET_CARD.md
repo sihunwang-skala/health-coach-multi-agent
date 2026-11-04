@@ -30,6 +30,7 @@ Before any profile text goes to an LLM, `profile_text()` (`mcp_servers/user_serv
 - Ten profiles and 100 messages are small. Scores cannot be generalized to a population.
 - Answers were graded by an LLM (Claude) against author-written key points. There was no clinician review.
 - Nothing here supports a claim of clinical validity, safety in real patients, or effectiveness for older adults.
+- Wording: describe this as a system evaluation on fictional profiles. Do not say "conducted an experiment with 10 diabetes patients" or "clinically validated the system on elderly patients".
 - Ages were not changed to fit any claim; results depend on the fixed profiles.
 
 ## Needed before any real user study

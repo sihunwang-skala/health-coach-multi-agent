@@ -1,8 +1,12 @@
 # health-coach-multi-agent
 
-고령 사용자의 접근성과 안전을 고려한 **제2형 당뇨병 개인 맞춤 식단 및 신체활동 Health Agent** (논문 근거 기반 Multi-Agent, AI 서비스 개발 Mini Project, 2026-10, SKALA 4기 광주 3반 G088 왕시훈)
+**제2형 당뇨병 개인 맞춤 식단·신체활동 Agentic RAG Coach**
 
-A Personalized Agentic RAG Diet and Activity Coach for People with Type 2 Diabetes, Designed with Older Adults in Mind
+고령 사용자 접근성과 안전을 고려한 근거 기반 Multi-Agent Health Service
+
+*Personalized Agentic RAG Diet & Activity Coach for Type 2 Diabetes*
+
+AI 서비스 개발 Mini Project, 2026-10, SKALA 4기 광주 3반 G088 왕시훈
 
 > 이 서비스는 의사가 아니라 코칭 서비스입니다. 진단/처방이 필요한 요청에는 Safety Guard를 적용해 AI가 임의로 판단하지 않도록 하고, 약 변경은 의료진에게, 응급 증상은 119로 안내합니다. 예시 사용자 10명은 모두 가상 인물입니다.
 
@@ -68,7 +72,7 @@ Baseline(Before) = Standard Paper-Search RAG, Ablation = Health Agentic RAG, Sin
 구조: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), 안전/개인정보/데이터 흐름: [docs/SAFETY_PRIVACY.md](docs/SAFETY_PRIVACY.md)
 
 ## 기술 구성
-LangGraph (supervisor + compiled subgraph, 동시 실행, 조건부 edge, interrupt/checkpointer), LangChain LCEL (ChatOpenAI invoke/batch), LangSmith (입력/출력 숨김), MCP (fastmcp 서버 2개: 논문 검색 / 사용자 프로필/기록), RAG (하이브리드 검색, 대상 필터, 메모 검증), FastAPI + SSE, 의존성 주입 (`coach/deps.py`), 모듈화, 단위 테스트 20개 (test double: FakeLLM + in-memory mock MCP 서버, 네트워크/API 키 없이 실행)
+LangGraph (supervisor + compiled subgraph, 동시 실행, 조건부 edge, interrupt/checkpointer), LangChain LCEL (ChatOpenAI invoke/batch), LangSmith (입력/출력 숨김), MCP (fastmcp 서버 2개: 논문 검색 / 사용자 프로필/기록), RAG (하이브리드 검색, 대상 필터, 메모 검증), FastAPI + SSE, 의존성 주입 (`coach/deps.py`), 모듈화, automated tests (test double: FakeLLM + in-memory mock MCP 서버, 네트워크/API 키 없이 실행)
 
 ## 실행
 ```bash
@@ -91,13 +95,19 @@ cp .env.example .env                                  # OPENAI_API_KEY 입력 (L
 ## 평가의 성격과 근거 수준
 | 구분 | 내용 |
 |---|---|
-| Product target | 제2형 당뇨병이 있는 고령 사용자(주 대상 65세 이상)와 보호자 |
+| Product target | 제2형 당뇨병이 있는 고령 사용자(주 대상 65세 이상) |
 | Synthetic evaluation cohort | 제2형 당뇨병이 있는 가상 프로필 10명(56세부터 94세, 8명이 65세 이상), 메시지 100개 |
-| Clinical evidence | 없음. 임상 연구나 환자 시험이 아니며, 실제 환자 데이터로 검증하지 않았습니다 |
+| Clinical validation of this system | 없음. 실제 환자 대상 임상시험이나 효과 검증을 수행하지 않았습니다 |
 | System evaluation result | 위 결과 표. 가상 프로필 기반 시스템 평가이며 결과 파일에서 계산한 수치만 실었습니다 |
 
-The system was evaluated on 100 messages using 10 fictional synthetic profiles of people with type 2 diabetes. Eight of the ten profiles were aged 65 or older. This was a system evaluation, not a clinical study or patient trial.
+이 프로젝트는 제2형 당뇨병 가상 프로필 10명과 평가 메시지 100개를 이용해 개인 맞춤 Agentic RAG 시스템을 평가한 system evaluation이며, 실제 환자 대상 clinical study가 아닙니다.
 
-## How to describe this project
-- Recommended: "Built and evaluated a personalized Agentic RAG system for diet and physical-activity coaching using 10 fictional type 2 diabetes profiles and 100 evaluation messages."
-- Do not say: "Conducted an experiment with 10 diabetes patients." / "Clinically validated the system on elderly patients."
+## 연구 배경 및 참고
+
+이 프로젝트는 2024년 UIUC Information Experience and Accessibility Lab에서 참여한 고령자 대상 GenAI health coaching 연구 경험을 바탕으로, 제2형 당뇨병 식단·신체활동 코칭, Agentic RAG, deterministic safety rules를 독립적으로 확장한 프로젝트입니다.
+
+- [UIUC Information Experience and Accessibility Lab](https://infoaccesslab.web.illinois.edu/)
+- [IEA Lab 구성원 및 이전 참여자](https://infoaccesslab.web.illinois.edu/people/)
+- [Utilizing Generative AI in mHealth apps for Older Adults](https://infoaccesslab.web.illinois.edu/research-projects/)
+- 후속 연구: [Creating Opportunities: Co-designing an mHealth App with Older Adults](https://arxiv.org/abs/2512.14641)
+- 기술 참고: [MobileGPT](https://mobile-gpt.github.io/)와 [공식 코드](https://github.com/fclab-skku/MobileGPT)

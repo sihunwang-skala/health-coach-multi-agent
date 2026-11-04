@@ -62,3 +62,33 @@ def test_no_patient_study_claims():
             # the "do not say" list is allowed to quote the forbidden phrases
             if bad.search(line) and "do not" not in line.lower() and "금지" not in line:
                 raise AssertionError(f"{f}: {line}")
+
+
+def test_report_profile_table_matches_users_json():
+    """Each profile row in docs/REPORT.md (name, age, gender, conditions, medicines) must match data/users.json."""
+    CON = {"type 2 diabetes": None, "hypertension": "고혈압", "proliferative diabetic retinopathy": "증식성 망막병증",
+           "peripheral neuropathy (numb feet)": "말초신경병증", "chronic kidney disease stage 3": "만성 신장병 3기",
+           "low muscle mass": "근육량 감소"}
+    rows = {}
+    for line in (ROOT / "docs" / "REPORT.md").read_text().splitlines():
+        m = re.match(r"\| (\S+ \S+) \((\d+)·(남|여)\) \| (.*?) \| (.*?) \|", line)
+        if m:
+            rows[m.group(1)] = m.groups()
+    assert len(rows) == len(USERS) == 10
+    for u in USERS:
+        name, age, g, cond, meds = rows[u["name"]]
+        assert int(age) == u["age"], f'{u["name"]}: report {age}, data {u["age"]}'
+        assert g == ("남" if u["gender"] == "male" else "여")
+        for c in u["conditions"]:
+            if CON[c]:
+                assert CON[c] in cond, (u["name"], c)
+        assert sum(CON[c] is not None for c in u["conditions"]) == (0 if cond.strip() == "—" else len(cond.split(", ")))
+        for m_ in u["medications"]:
+            assert m_ in meds, (u["name"], m_)
+        assert len(re.findall(r"(metformin|glimepiride|gliclazide|lisinopril|amlodipine|insulin glargine|insulin aspart|premixed insulin)", meds)) == len(u["medications"])
+
+
+def test_titles_are_consistent():
+    title = "제2형 당뇨병 개인 맞춤 식단·신체활동 Agentic RAG Coach"
+    for f in ("README.md", "docs/REPORT.md", "docs/PRESENTATION_VIEW.md"):
+        assert title in (ROOT / f).read_text(), f
