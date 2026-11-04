@@ -1,10 +1,11 @@
-# health-coach-multi-agent
+# RAGuide
 
-**제2형 당뇨병 개인 맞춤 식단 및 신체활동 Agentic RAG Coach**
+**근거 기반 개인 맞춤 식단 및 신체활동 Health Agent**
 
-고령 사용자 접근성과 안전을 고려한 근거 기반 Multi-Agent 서비스
+제2형 당뇨병이 있는 고령 사용자의 접근성과 안전을 고려한 근거 기반 Multi-Agent 서비스
 
-*Personalized Agentic RAG Diet and Activity Coach for Type 2 Diabetes*
+*Personalized Diet & Activity Health Agent*  
+*Safety-Aware Agentic RAG with Profile Memory*
 
 2024년 UIUC Information Experience and Accessibility Lab의 고령자 대상 GenAI health coaching 연구 경험에서 출발해, 식단, 신체활동, 안전, 서비스 UI까지 확장한 개인 프로젝트입니다.
 

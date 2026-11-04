@@ -5,7 +5,7 @@ const K=(ko,en)=>LANG==='en'?en:ko;
 document.documentElement.lang=LANG;
 const EN={
  /* sign-in */
- '제2형 당뇨병 식단 및 신체활동 코치 로그인':'Type 2 Diabetes Diet & Activity Coach sign in','제2형 당뇨병 식단 및 신체활동 코치':'Type 2 Diabetes Diet & Activity Coach','논문 근거로 내 건강 상태에 맞는 식단과 운동을 알려 드려요. 고령 사용자도 쓰기 쉽고 안전하게 만들었어요.':'Paper-based diet and exercise guidance that fits your health, made to be easy and safe for older adults.','식단/운동 코치 로그인':'Diet & Exercise Coach sign in','식단/운동 코치':'Diet & Exercise Coach','내 건강 상태에 맞춰 식사와 운동을 함께 살펴봐 드려요.':'Meals and exercise, checked against your own health.',
+ 'RAGuide 로그인':'RAGuide sign in','제2형 당뇨병을 위한 근거 기반 개인 맞춤 식단 및 신체활동 Health Agent예요. 고령 사용자도 쓰기 쉽고 안전해요.':'An evidence-based, personalized diet and activity Health Agent for type 2 diabetes, easy and safe for older adults to use.','식단/운동 코치 로그인':'Diet & Exercise Coach sign in','식단/운동 코치':'Diet & Exercise Coach','내 건강 상태에 맞춰 식사와 운동을 함께 살펴봐 드려요.':'Meals and exercise, checked against your own health.',
  '로그인과 가입':'Sign in and sign up','로그인':'Sign in','가입하기':'Sign up','아이디':'Username','비밀번호':'Password','계정 만들기':'Create account','표시 이름':'Display name',
  '예: 길동':'e.g. Alex','AI에게는 이름을 보내지 않아요.':'Your name is never sent to the AI.','영문 소문자, 숫자, 밑줄(_) 4~20자':'4–20 characters: lowercase letters, numbers, underscore (_)',
  '8자 이상, 문자와 숫자를 함께 사용해 주세요.':'At least 8 characters, with letters and numbers.','답변을 내 상황에 맞게 드리는 데 사용해요. 나중에 언제든 바꿀 수 있어요.':'Used to tailor answers to you. You can change it later.',

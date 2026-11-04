@@ -1,4 +1,4 @@
-# DESIGN.md — 식단/운동 코치 design system v1 (2026-11-04)
+# DESIGN.md — RAGuide design system v1 (2026-11-04)
 
 Source of truth for values: `web/ds.css` (tokens + components), `web/ds.js` (helpers). Pages add layout only.
 Status: implemented and checked in a real browser (see "Checked"); the reference measurements are labelled **measured** or **assumed**.
