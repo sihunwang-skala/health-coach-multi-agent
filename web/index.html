@@ -139,7 +139,7 @@ const icon=n=>`<svg class="icon"><use href="#i-${n}"/></svg>`;
 async function load(){ME=await api('/api/auth/me',undefined,{signinUrl:'/login'});renderSide();renderThread()}
 function renderSide(){const p=ME.profile||{},n=ME.account.name;$('av').textContent=n.slice(0,1);$('meName').textContent=n;$('meUser').textContent='@'+ME.account.username;
  const g=(ME.records||[]).map(r=>r.text.match(/blood sugar (\d+)/i)||r.text.match(/혈당\D{0,4}(\d{2,3})/)).find(Boolean);
- const rows=[['나이·성별',`${p.age}세 · ${p.gender_ko||''}`],['질환',(p.conditions_ko||[]).join(', ')||'—'],['복용 약',(p.medications||[]).map(m=>m.name).filter(x=>x!=='none').join(', ')||'없음'],['최근 혈당 기록',g?g[1]+' mg/dL':'기록 없음'],['목표',p.goal&&p.goal!=='not given'?p.goal:'—']];
+ const rows=[['나이·성별',`${p.age}세 · ${p.gender_ko||''}`],['질환',(p.conditions_ko||[]).join(', ')||'—'],['복용 약',(p.medications||[]).map(m=>m.name).filter(x=>x!=='none').join(', ')||'없음'],['최근 혈당 기록',g?g[1]+' mg/dL':'기록 없음'],['목표',(p.ko&&p.ko.goal)||'—']];
  $('facts').innerHTML=rows.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('');
  $('recs').innerHTML=(ME.records||[]).slice(0,5).map(r=>`<div><span class="muted">${esc(r.ts.replace('T',' ').slice(5,16))}</span><br>${esc(r.text.replace('[demo] ',''))}</div>`).join('')||'<div class="muted">아직 기록이 없어요. 아래 대화창에 “오늘 30분 걸었어요”처럼 남겨 보세요.</div>'}
 /* ---------- thread ---------- */
@@ -160,10 +160,13 @@ function user(text){dropHello();hasMsgs=true;put(`<div class="bubble">${esc(text
 function citeMap(c){const m={};(c||[]).forEach(x=>m[x.document_id]=x.citation_id);return m}
 function botHtml(j){const map=citeMap(j.citations),em=j.route==='emergency';
  const body=esc((j.answer||'').trim()).replace(/\s*\[(PMC\d+)\]/g,(m,id)=>map[id]?`<button type="button" class="cite" data-c="${map[id]}" aria-label="근거 ${map[id]} 보기">${map[id]}</button>`:'');
+ const loose=[...new Set([...(j.answer||'').matchAll(/\[(PMC\d+)\]/g)].map(m=>m[1]).filter(id=>!map[id]))];
  const paras=body.split(/\n{2,}/).map(p=>`<p class="txt">${p}</p>`).join('');
  let h=em?`<div class="banner danger" role="alert"><b class="danger">응급일 수 있어요</b>${paras}</div><a class="btn danger-btn call" href="tel:119">${icon('phone')}119에 전화하기</a>`:paras;
  if(j.route==='handoff')h+=`<a class="btn call" href="tel:0000000000">${icon('phone')}의료진 상담 전화 (데모 번호)</a>`;
  if((j.citations||[]).length)h+=`<div class="srcs"><span class="small muted">근거</span>${j.citations.map(c=>`<button class="chip" type="button" data-c="${c.citation_id}">${c.citation_id} · ${esc((c.title||c.document_id).slice(0,28))}${(c.title||'').length>28?'…':''}</button>`).join('')}</div>`;
+ if(loose.length)h+=`<div class="srcs"><span class="small muted">사용한 논문</span>${loose.map(id=>`<a class="chip" href="https://pmc.ncbi.nlm.nih.gov/articles/${esc(id)}/" target="_blank" rel="noopener">${esc(id)} ↗</a>`).join('')}</div>`;
+ if(!/[가-힣]/.test(j.answer||'')&&(j.answer||'').length>40)h+=`<div class="note">영어 답변이에요. 저장된 데모 기록이거나 한국어 번역을 쓸 수 없을 때 이렇게 보여요.</div>`;
  if(j.safety_notes&&j.safety_notes.length)h+=`<div class="note">${icon('shield')}내 건강 정보에 맞춰 안전 규칙을 확인했어요.</div>`;
  if(ROUTE_HEALTH.includes(j.route))h+=`<div class="note">일반 건강 정보예요. 의료 조언을 대신하지 않아요.</div>`;
  return h}
@@ -182,11 +185,12 @@ function openCite(j,id,from){const c=(j.citations||[]).find(x=>x.citation_id===i
  <div class="csec"><h3>논문 원문 (영어)</h3>${highlighted(c)}<p class="small muted" style="margin-top:var(--s2)">원문 번역은 아직 제공하지 않아요.</p></div>
  ${(c.notes||[]).length?`<div class="csec"><h3>AI가 정리한 근거 메모 (영어)</h3>${c.notes.map(n=>`<p class="small muted" lang="en">• ${esc(n)}</p>`).join('')}</div>`:''}
  <div class="csec"><a href="${esc(c.url)}" target="_blank" rel="noopener">PMC에서 원문 열기 ↗</a>${c.location?'':`<p class="small muted">논문 안의 위치 정보가 없어서 발췌문과 링크만 보여 드려요.</p>`}</div>`;
- document.body.classList.add('panel-open');$('cpanel').focus()}
-function closeCite(){document.body.classList.remove('panel-open');if(lastFocus&&document.contains(lastFocus))lastFocus.focus()}
+ history.pushState({p:1},'');document.body.classList.add('panel-open');$('cpanel').focus()}
+function closeCite(fromPop){if(!document.body.classList.contains('panel-open'))return;document.body.classList.remove('panel-open');if(!fromPop&&history.state&&history.state.p)history.back();if(lastFocus&&document.contains(lastFocus))lastFocus.focus()}
 $('cclose').onclick=closeCite;
 /* ---------- nav drawer (phones) ---------- */
-const nav=o=>document.body.classList.toggle('nav-open',o);$('navOpen').onclick=()=>nav(true);$('navClose').onclick=()=>nav(false);
+const nav=(o,fromPop)=>{const was=document.body.classList.contains('nav-open');document.body.classList.toggle('nav-open',o);if(o&&!was)history.pushState({n:1},'');if(!o&&was&&!fromPop&&history.state&&history.state.n)history.back()};
+addEventListener('popstate',()=>{closeCite(true);nav(false,true)});$('navOpen').onclick=()=>nav(true);$('navClose').onclick=()=>nav(false);
 $('scrim').onclick=()=>{closeCite();nav(false)};
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(document.body.classList.contains('panel-open'))closeCite();nav(false)}});
 /* ---------- chat (fetch + SSE; no auto-retry because a retry would rerun the whole paid pipeline) ---------- */
@@ -201,7 +205,7 @@ async function send(text){const m=(text||msg.value).trim();if(!m||busy)return;ms
  const fail=(why)=>{end();const d=put(`<span class="avatar">${icon('leaf')}</span><div class="bot"><p class="danger" role="alert">${why}</p><p class="small muted">급한 증상이 있으면 기다리지 말고 119에 전화하세요.</p></div>`,'row');
   const b=document.createElement('button');b.type='button';b.className='btn secondary';b.textContent='다시 시도';b.onclick=()=>{d.remove();thread.lastElementChild&&thread.lastElementChild.classList.contains('me')&&thread.lastElementChild.remove();send(lastQ)};d.querySelector('.bot').appendChild(b)};
  try{const r=await fetch('/chat/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:m,lang:'ko'})});
-  if(r.status===401){location.href='/login';return}
+  if(r.status===401){location.replace('/login');return}
   if(!r.ok||!r.body)return fail('답변을 가져오지 못했어요. 잠시 뒤에 다시 해 주세요.');
   const rd=r.body.getReader(),dec=new TextDecoder();let buf='',done=false;
   while(true){const {value,done:fin}=await rd.read();if(fin)break;buf+=dec.decode(value,{stream:true});
@@ -222,9 +226,9 @@ $('nurse').onclick=()=>send('간호사와 이야기하고 싶어요.');
 const fsLabel=()=>$('fsNow').textContent=`지금 ${FS}px`;
 $('setBtn').onclick=()=>{nav(false);fsLabel();$('setDlg').showModal()};$('setClose').onclick=()=>$('setDlg').close();
 $('fsUp').onclick=()=>{FS=Math.min(26,FS+2);setPref('coach_fs',FS);applyTextSize();fsLabel()};$('fsDown').onclick=()=>{FS=Math.max(15,FS-2);setPref('coach_fs',FS);applyTextSize();fsLabel()};
-$('outBtn').onclick=async()=>{try{await api('/api/auth/logout',{})}catch(e){}location.href='/login'};
+$('outBtn').onclick=async()=>{try{await api('/api/auth/logout',{})}catch(e){}location.replace('/login')};
 $('pwForm').onsubmit=async e=>{e.preventDefault();$('pwErr').textContent='';try{await api('/api/me/password',{current:$('pwOld').value,new:$('pwNew').value});$('pwOld').value=$('pwNew').value='';$('setDlg').close();toast('비밀번호를 바꿨어요.')}catch(x){$('pwErr').textContent=x.message}};
-$('delForm').onsubmit=async e=>{e.preventDefault();$('delErr').textContent='';try{await api('/api/me/delete',{password:$('delPw').value});location.href='/login'}catch(x){$('delErr').textContent=x.message}};
+$('delForm').onsubmit=async e=>{e.preventDefault();$('delErr').textContent='';try{await api('/api/me/delete',{password:$('delPw').value});location.replace('/login')}catch(x){$('delErr').textContent=x.message}};
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
 load().then(()=>{const q=new URLSearchParams(location.search).get('q');if(q)setTimeout(()=>send(q),300)}).catch(()=>{});
 </script></body></html>

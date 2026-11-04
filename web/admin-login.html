@@ -19,6 +19,6 @@
 <script src="/ds.js"></script>
 <script>applyTextSize();
 fetch('/api/config').then(r=>r.json()).then(c=>{if(c.demo)$('demo').hidden=false}).catch(()=>{});
-$('demoBtn').onclick=async()=>{try{await api('/api/demo/staff',{});location.href='/admin'}catch(x){$('err').textContent=x.message}};$('f').onsubmit=async e=>{e.preventDefault();$('err').textContent='';$('b').disabled=true;
- try{await api('/api/staff/login',{username:$('u').value,password:$('p').value});location.href='/admin'}catch(x){$('err').textContent=x.message;$('p').value='';$('b').disabled=false}}</script>
+$('demoBtn').onclick=async()=>{try{await api('/api/demo/staff',{});location.replace('/admin')}catch(x){$('err').textContent=x.message}};$('f').onsubmit=async e=>{e.preventDefault();$('err').textContent='';$('b').disabled=true;
+ try{await api('/api/staff/login',{username:$('u').value,password:$('p').value});location.replace('/admin')}catch(x){$('err').textContent=x.message;$('p').value='';$('b').disabled=false}}</script>
 </body></html>

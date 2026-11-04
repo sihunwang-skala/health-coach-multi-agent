@@ -43,6 +43,18 @@ MED_KO = {  # (Korean name, what it is) shown next to each medicine on both scre
     "amlodipine": ("암로디핀", "혈압약"), "lisinopril": ("리시노프릴", "혈압약")}
 COND_KO = [("type 2 diabetes", "제2형 당뇨병"), ("hypertension", "고혈압"), ("kidney", "만성 신장병"), ("retinopathy", "당뇨병성 망막병증"),
            ("neuropathy", "말초신경병증(발 저림)"), ("heart", "심장 질환"), ("low muscle", "근육량 부족")]
+SEED_KO = {  # display only (the English profile text is what the agents read): the 10 synthetic people, free-text fields in Korean
+    "u01": ("저녁 식사 후 대부분 앉아 있고 잘 걷지 않아요", "양호", "식후 혈당 낮추기", "하루 콜라 한 캔, 흰쌀밥을 좋아해요"),
+    "u02": ("공원 걷기를 좋아해요", "양호, 발 저림", "안전하게 활동 유지", "락토오보 채식, 밤 11시쯤 야식"),
+    "u03": ("천천히 걷고 쉽게 지쳐요", "쇠약, 느린 걸음", "근력 유지", "매일 아침 오렌지 주스 한 잔"),
+    "u04": ("주 3회 헬스장에서 무거운 웨이트", "양호", "근육 키우기", "하루 맥주 2~3잔, 대부분 외식"),
+    "u05": ("넘어질까 봐 잘 걷지 않아요", "균형이 불안", "넘어지지 않기", "보통 아침을 거르고 식사 시간이 들쭉날쭉"),
+    "u06": ("점심 전 짧은 산책", "다리 힘이 약함", "근육 되찾기", "식욕이 없고 최근 6개월간 의도치 않게 5kg 감소"),
+    "u07": ("저녁에 40분 걷기", "양호", "혈압 낮추기", "짠 절임 반찬, 저녁은 밤 9~10시쯤"),
+    "u08": ("빠르게 걷기, 인터벌 운동을 해 보고 싶어요", "양호", "체력 키우기", "저녁에 와인 1~2잔, 아침은 자주 거름"),
+    "u09": ("대부분 앉아 지내고 지팡이를 써요", "지팡이 사용", "넘어지지 않고 더 움직이기", "불규칙한 시간에 소량, 부드러운 음식"),
+    "u10": ("주 2회 테니스, 웨이트 운동", "양호", "운동 계속하기", "빵과 면을 많이 먹고 주말에 맥주 여러 잔")}
+NOT_GIVEN = "입력 안 함"
 # sign-up choices: key sent by the page -> English token the safety rules and agents read
 SIGNUP_COND = {"hypertension": "hypertension", "kidney": "chronic kidney disease", "retinopathy": "diabetic retinopathy",
                "neuropathy": "peripheral neuropathy (numb feet)", "heart": "heart disease", "muscle": "low muscle mass"}
@@ -168,7 +180,10 @@ def _show(p: dict | None) -> dict | None:
         return None
     cond = [next((ko for key, ko in COND_KO if key in c.lower()), c) for c in p["conditions"]]
     meds = [{"name": MED_KO.get(m, (m, ""))[0], "kind": MED_KO.get(m, (m, ""))[1]} for m in p["medications"]]
-    return {**p, "conditions_ko": cond, "medications": meds, "gender_ko": {"female": "여성", "male": "남성"}.get(p["gender"], p["gender"])}
+    ko = dict(zip(("activity", "mobility", "goal", "diet"), SEED_KO.get(p.get("id"), ())))
+    for k in ("activity", "mobility", "goal", "diet"):   # real sign-ups: free text is already what the person typed
+        ko.setdefault(k, NOT_GIVEN if p.get(k) == "not given" else {"good": "양호", "poor balance": "균형이 불안", "uses a cane": "지팡이 사용", "weak legs": "다리 힘이 약함"}.get(p.get(k), p.get(k)))
+    return {**p, "ko": ko, "conditions_ko": cond, "medications": meds, "gender_ko": {"female": "여성", "male": "남성"}.get(p["gender"], p["gender"])}
 
 
 def _profiles() -> dict:

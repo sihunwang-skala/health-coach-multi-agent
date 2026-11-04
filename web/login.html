@@ -88,11 +88,11 @@ const picked=id=>[...$(id).querySelectorAll('[aria-pressed="true"]')].map(x=>x.d
 function tab(up){$('tabIn').setAttribute('aria-selected',!up);$('tabUp').setAttribute('aria-selected',up);$('formIn').hidden=up;$('formUp').hidden=!up;(up?$('upName'):$('inUser')).focus()}
 $('tabIn').onclick=()=>tab(false);$('tabUp').onclick=()=>tab(true);if(location.hash==='#signup')tab(true);
 $('formIn').onsubmit=async e=>{e.preventDefault();$('inErr').textContent='';$('inBtn').disabled=true;
- try{await api('/api/auth/login',{username:$('inUser').value,password:$('inPw').value});location.href='/'}
+ try{await api('/api/auth/login',{username:$('inUser').value,password:$('inPw').value});location.replace('/')}
  catch(x){$('inErr').textContent=x.message;$('inPw').value='';$('inBtn').disabled=false}};
 fetch('/api/demo/users').then(r=>r.ok?r.json():null).then(l=>{if(!l)return;$('demo').hidden=false;
  $('people').innerHTML=l.map(u=>`<button type="button" data-id="${u.id}"><b>${esc(u.name)} · ${u.age}세</b><small>${esc(u.line)}</small></button>`).join('');
- $('people').onclick=async e=>{const b=e.target.closest('button');if(!b)return;b.disabled=true;try{await api('/api/demo/enter',{user_id:b.dataset.id});location.href='/'}catch(x){toast(x.message);b.disabled=false}}}).catch(()=>{});
+ $('people').onclick=async e=>{const b=e.target.closest('button');if(!b)return;b.disabled=true;try{await api('/api/demo/enter',{user_id:b.dataset.id});location.replace('/')}catch(x){toast(x.message);b.disabled=false}}}).catch(()=>{});
 let step=1;const NAMES=['계정 만들기','내 건강 정보','동의하고 시작하기'];
 function show(n){step=n;[1,2,3].forEach(i=>{const s=$('s'+i);s.hidden=i!==n;s.style.display=i===n?'flex':'none'});$('stepNo').textContent=n;$('stepName').textContent=NAMES[n-1];
  $('back').hidden=n===1;$('next').textContent=n===3?'가입하고 시작하기':'다음';$('upErr').textContent='';window.scrollTo(0,0)}
@@ -106,6 +106,6 @@ $('formUp').onsubmit=async e=>{e.preventDefault();const m=check(step);if(m){$('u
  if(step<3)return show(step+1);
  $('next').disabled=true;
  try{await api('/api/auth/signup',{username:$('upUser').value,password:$('upPw').value,name:$('upName').value,age:+$('upAge').value,gender:picked('gender')[0],conditions:picked('conds'),
-  medications:picked('meds'),other_medications:$('upOther').value,mobility:$('upMob').value,activity:$('upAct').value,diet:$('upDiet').value,goal:$('upGoal').value,consent:true});location.href='/'}
+  medications:picked('meds'),other_medications:$('upOther').value,mobility:$('upMob').value,activity:$('upAct').value,diet:$('upDiet').value,goal:$('upGoal').value,consent:true});location.replace('/')}
  catch(x){$('upErr').textContent=x.message;$('next').disabled=false;if(x.status===409||x.status===422&&/아이디|비밀번호/.test(x.message))show(1)}};
 </script></body></html>

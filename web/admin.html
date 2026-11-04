@@ -22,7 +22,7 @@ dl.p{display:grid;grid-template-columns:max-content 1fr;gap:var(--s1) var(--s3);
 </style></head><body>
 <header class="bar"><div class="bar-in"><h1>의료진 콘솔</h1>
  <nav class="tabs" aria-label="화면"><a href="#overview" data-v="overview">개요</a><a href="#alerts" data-v="alerts">알림 <span class="badge" id="openBadge" hidden>0</span></a><a href="#people" data-v="people">이용자</a><a href="#audit" data-v="audit">열람 기록</a></nav>
- <div class="who"><span class="small muted" id="staffName"></span><button class="btn secondary sm" id="out" type="button">로그아웃</button></div></div></header>
+ <div class="who"><a class="small" href="/login">← 이용자 화면</a><span class="small muted" id="staffName"></span><button class="btn secondary sm" id="out" type="button">로그아웃</button></div></div></header>
 <main>
 <p class="small muted">가상 이용자와 데모 기록이에요. 이름은 이 화면에만 보이고, AI와 로그에는 이용자 ID만 전달돼요. 이용자의 건강 정보를 열면 열람 기록이 남아요.</p>
 
@@ -81,14 +81,14 @@ async function person(id){
  current=id;document.querySelectorAll('#users tr.pick').forEach(tr=>tr.classList.toggle('sel',tr.dataset.id===id));
  const j=await get('/api/admin/users/'+id),p=j.profile;
  const g=j.records.filter(r=>/blood sugar (\d+)/.test(r.text)).map(r=>({x:r.ts.slice(5,10),y:+r.text.match(/blood sugar (\d+)/)[1]})).reverse();
- $('person').innerHTML=`<h2>${esc(p.name)} · ${p.age}세 · ${esc(p.gender_ko)}</h2><div class="g11"><div><dl class="p"><dt>질환</dt><dd>${esc(p.conditions_ko.join(', '))}</dd><dt>복용 약</dt><dd>${p.medications.map(m=>`${esc(m.name)} <span class="muted">(${esc(m.kind)})</span>`).join('<br>')}</dd><dt>활동</dt><dd>${esc(p.activity)}</dd><dt>거동</dt><dd>${esc(p.mobility)}</dd><dt>식사</dt><dd>${esc(p.diet)}</dd><dt>목표</dt><dd>${esc(p.goal)}</dd></dl>
+ $('person').innerHTML=`<h2>${esc(p.name)} · ${p.age}세 · ${esc(p.gender_ko)}</h2><div class="g11"><div><dl class="p"><dt>질환</dt><dd>${esc(p.conditions_ko.join(', '))}</dd><dt>복용 약</dt><dd>${p.medications.map(m=>`${esc(m.name)} <span class="muted">(${esc(m.kind)})</span>`).join('<br>')}</dd><dt>활동</dt><dd>${esc(p.ko.activity)}</dd><dt>거동</dt><dd>${esc(p.ko.mobility)}</dd><dt>식사</dt><dd>${esc(p.ko.diet)}</dd><dt>목표</dt><dd>${esc(p.ko.goal)}</dd></dl>
   <h3 style="margin-top:var(--s4)">기록에서 가져온 혈당</h3><canvas id="glu"></canvas><h3 style="margin-top:var(--s4)">기록</h3><div class="scroll"><table>${j.records.map(r=>`<tr><td class="muted">${when(r.ts)}</td><td>${esc(r.text.replace('[demo] ',''))}</td></tr>`).join('')||'<tr><td class="muted">없음</td></tr>'}</table></div></div>
   <div><h3>대화 (${j.events.length})</h3><div class="scroll" style="max-height:640px"><table>${j.events.map(e=>`<tr><td class="muted">${when(e.ts)}<br>${e.alert?tag(e.alert):esc(label(e.route))}${e.safety_rules?`<br>안전 규칙 ${esc(e.safety_rules)}`:''}</td><td><div class="msg q">${esc(e.message)}</div><details><summary class="muted">답변 · ${e.latency_s??'–'}초 · $${(e.cost||0).toFixed(4)}</summary><div class="msg">${esc(e.answer)}</div></details></td></tr>`).join('')}</table></div></div></div>`;
  chart('glu',{type:'line',data:{labels:g.map(x=>x.x),datasets:[{label:'mg/dL',data:g.map(x=>x.y),borderColor:css('--chart-1'),tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
  $('person').scrollIntoView({behavior:'smooth'})}
 async function audit(){const a=await get('/api/admin/audit');$('auditT').innerHTML=`<tr><th>시각</th><th>의료진</th><th>행동</th><th>대상</th></tr>`+a.map(x=>`<tr><td class="muted">${when(x.ts)}</td><td>${esc(x.staff)}</td><td>${x.action==='sign in'?'로그인':x.action==="opened a person's data"?'이용자 정보 열람':x.action.startsWith('alert marked')?'알림 처리':esc(x.action)}</td><td>${esc(NAMES[x.target]||x.target)}</td></tr>`).join('')}
 $('af').onchange=alerts;
-$('out').onclick=async()=>{try{await api('/api/staff/logout',{})}catch(e){}location.href='/admin/login'};
+$('out').onclick=async()=>{try{await api('/api/staff/logout',{})}catch(e){}location.replace('/admin/login')};
 get('/api/staff/me').then(m=>$('staffName').textContent=m.name).catch(()=>{});
 view();load();setInterval(()=>{load()},30000);
 </script></body></html>
