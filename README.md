@@ -87,6 +87,31 @@ cp .env.example .env                                  # OPENAI_API_KEY 입력 (L
 ```
 평가 다시 실행: [docs/EVALUATION.md §8](docs/EVALUATION.md#8-다시-계산하기)
 
+## 화면 (UI)
+실제 서비스처럼 로그인이 있는 채팅 앱과 별도의 의료진 콘솔입니다. 디자인 규칙은 [DESIGN.md](docs/ui/DESIGN.md), 계정과 보안은 [ACCOUNTS.md](docs/ACCOUNTS.md)에 있습니다.
+
+| 이용자 로그인 | 채팅과 논문 근거 | 의료진 콘솔 |
+|---|---|---|
+| ![login](docs/ui/screenshots/2026-11/login_ko_1280.png) | ![chat](docs/ui/screenshots/2026-11/chat_ko_desktop_1280_evidence.png) | ![admin](docs/ui/screenshots/2026-11/admin_overview_ko_1280.png) |
+
+| 모바일 채팅 | 영어 화면 | 큰 글자(24px) |
+|---|---|---|
+| ![mobile](docs/ui/screenshots/2026-11/chat_ko_mobile_390_history.png) | ![en](docs/ui/screenshots/2026-11/chat_en_desktop_1280_history.png) | ![fs](docs/ui/screenshots/2026-11/chat_ko_mobile_390_text_size_24.png) |
+
+공개 화면 사진은 [docs/ui/screenshots/2026-11/](docs/ui/screenshots/2026-11/)에 있습니다(로그인, 의료진 콘솔 알림/이용자 탭, 한국어/영어, 모바일). 사진은 가상 사용자의 저장된 데모 기록을 보여 주며 실시간 답변이 아닙니다.
+
+**확장한 기능**
+- 이용자 로그인과 회원가입, 가상 사용자 원클릭 체험(`COACH_DEMO=1`), 의료진 전용 로그인(브라우저를 닫으면 종료, 30분 미사용 시 자동 로그아웃).
+- 채팅 기록 보관, 답변 속 논문 번호를 눌러 보는 근거 패널(인용 문장과 논문 원문), 한국어/영어 전환, 글자 크기 12px부터 26px.
+- 기록 삭제 요청은 채팅 안에서 삭제할 기록을 정확히 보여 주고, 사용자가 확인해야 삭제합니다(한 번만 쓸 수 있고 10분 안에 만료, 본인 것만 승인).
+- 의료진 콘솔: 개요, 알림, 이용자, 열람 기록. 기간은 2주 단위로 고르며 기본값은 메시지가 가장 많았던 기간입니다.
+
+**번역에 대한 안내**
+- 영어 답변은 LLM API가 만든 원본입니다. 한국어 문장은 사용자 편의를 위해 번역한 것입니다.
+- 화면에 보이는 가상 사용자의 데모 기록(질문과 답변)의 한국어는 Claude Sonnet 5.5가 번역했고, 번역 문장은 `data/demo_translations_ko.json`에 있습니다. 숫자와 논문 번호 표시가 원문과 같은지 검사했습니다.
+- 논문 제목, 논문 원문, 근거 메모는 영어 그대로 보여 줍니다. 그 외 화면 문구는 선택한 언어를 따릅니다.
+- 한국어 번역은 평가 점수에 쓰이지 않았습니다. 평가는 영어 원본 답변으로 했습니다.
+
 ## 데이터
 - 논문: `data/paper_ids.json` — 86편. 운동 Agent 묶음은 핵심 운동 논문 21편 + 주제가 다른 운동 논문 15편, 식단 Agent 묶음은 당뇨 식단 논문 50편. 원문은 라이선스 때문에 저장소에 넣지 않고 스크립트로 내려받습니다.
 - 평가셋: `eval/questions.json` — 100개 (건강 질문 60 + 그 외 40). 구성은 [평가 방법](docs/EVALUATION.md#2-질문-100개).
