@@ -192,7 +192,7 @@ function sentenceFor(j,c){/* the text just before each marker of this paper (bac
  while((m=re.exec(a))){const seg=a.slice(last,m.index).replace(/^[\s.!?。]+/,'').trim()||prev;if(m[1]===c.document_id&&seg&&!out.includes(seg))out.push(seg);prev=seg;last=m.index+m[0].length}
  if(out.length)return out.map(x=>/[.!?。…]$/.test(x)?x:x+'.').join(' ');const st=(j.statements||[]).find(x=>(x.citation_ids||[]).includes(c.citation_id));return st?st.text:''}
 function highlighted(c){const t=c.source_text||'';if(!t)return `<p class="small muted">${K('이 논문의 발췌문을 찾지 못했어요. 링크에서 원문을 확인해 주세요.','No excerpt was found for this paper. Open the link to read the original.')}</p>`;let h=esc(t);
- (c.support_sentences||[]).forEach(s=>{const e=esc(s);h=h.replace(e,`<mark>${e}</mark>`)});return `<div class="chunk" lang="en">${h}</div><p class="small muted" style="margin-top:var(--s1)">${K('옅은 배경은 AI가 읽은 부분, 진한 표시는 답변을 직접 뒷받침하는 문장이에요.','Light background: the part the AI read. Strong highlight: the sentence that directly supports the answer.')}</p>`}
+ (c.support_sentences||[]).forEach(s=>{const e=esc(s);h=h.replace(e,`<mark>${e}</mark>`)});return `<div class="chunk" lang="en">${h}</div><p class="small muted" style="margin-top:var(--s1)">${K('진한 노란색으로 표시된 문장이 답변의 근거예요.','The sentences highlighted in strong yellow are the basis for the answer.')}</p>`}
 function openCite(j,id,from){const c=(j.citations||[]).find(x=>x.citation_id===id);if(!c)return;lastFocus=from;$('ctitle').textContent=`${c.citation_id}. ${c.title||c.document_id}`;
  const s=sentenceFor(j,c);
  const rule=c.kind==='safety_rule';
@@ -200,7 +200,7 @@ function openCite(j,id,from){const c=(j.citations||[]).find(x=>x.citation_id===i
  ${s?`<div class="csec"><h3>${K('이 근거를 인용한 문장','Sentence that cites this reference')}</h3><div class="ko">${esc(s)}</div></div>`:''}
  ${rule?`<div class="csec"><h3>${K('이 근거는 어디서 왔나요?','Where does this come from?')}</h3><p class="small">${K('검색해서 찾은 논문 발췌문이 아니라, 이 논문의 권고를 정리해 둔 서비스의 안전 규칙에서 왔어요. 내 질환이나 약에 해당하는 규칙이 있을 때 붙어요.','This is not a retrieved excerpt. It comes from the service\'s safety rules, which restate a recommendation of this paper. A rule is added when it matches your conditions or medicines.')}</p></div>
  <div class="csec"><h3>${K('규칙 내용','The rule')}</h3>${(c.notes||[]).map(n=>`<p class="small" lang="en">${esc(n)}</p>`).join('')}</div>`
- :`<div class="csec"><h3>${K('논문 원문','Original text')}</h3>${highlighted(c)}<p class="small muted" style="margin-top:var(--s2)">${K('논문 원문과 근거 메모는 영어 그대로 보여요.','The paper text and evidence notes are shown in English.')}</p></div>
+ :`<div class="csec"><h3>${K('논문 원문','Original text')}</h3>${highlighted(c)}</div>
  ${(c.notes||[]).length?`<div class="csec"><h3>${K('AI가 정리한 근거 메모','Evidence notes written by the AI')}</h3>${c.notes.map(n=>`<p class="small muted" lang="en">• ${esc(n)}</p>`).join('')}</div>`:''}`}
  <div class="csec"><a href="${esc(c.url)}" target="_blank" rel="noopener">${K('PMC에서 원문 열기','Open the PMC article')} ↗</a>${c.location||rule?'':`<p class="small muted">${K('논문 안의 위치 정보가 없어서 발췌문과 링크만 보여 드려요.','There is no position inside the paper, so only the excerpt and the link are shown.')}</p>`}</div>`;
  history.pushState({p:1},'');document.body.classList.add('panel-open');$('cpanel').focus()}
