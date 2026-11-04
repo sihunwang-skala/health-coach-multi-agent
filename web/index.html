@@ -195,11 +195,11 @@ function openCite(j,id,from){const c=(j.citations||[]).find(x=>x.citation_id===i
  const s=sentenceFor(j,c);
  const rule=c.kind==='safety_rule';
  $('cbody').innerHTML=`<dl class="meta">${c.authors_year?`<dt>${K('저자·연도','Authors, year')}</dt><dd>${esc(c.authors_year)}</dd>`:''}<dt>${K('문서 번호','Document ID')}</dt><dd>${esc(c.document_id)}</dd>${rule?'':`<dt>${K('발췌 위치','Excerpt')}</dt><dd>${c.chunk_id??'–'}${c.section?' · '+esc(c.section):''}</dd>`}</dl>
- ${s?`<div class="csec"><h3>${K('이 근거가 받쳐 주는 답변','The answer this supports')}</h3><div class="ko">${esc(s)}</div></div>`:''}
+ ${s?`<div class="csec"><h3>${K('이 근거를 인용한 문장','Sentence that cites this reference')}</h3><div class="ko">${esc(s)}</div></div>`:''}
  ${rule?`<div class="csec"><h3>${K('이 근거는 어디서 왔나요?','Where does this come from?')}</h3><p class="small">${K('검색해서 찾은 논문 발췌문이 아니라, 이 논문의 권고를 정리해 둔 서비스의 안전 규칙에서 왔어요. 내 질환이나 약에 해당하는 규칙이 있을 때 붙어요.','This is not a retrieved excerpt. It comes from the service\'s safety rules, which restate a recommendation of this paper. A rule is added when it matches your conditions or medicines.')}</p></div>
- <div class="csec"><h3>${K('규칙 내용 (영어)','The rule (English)')}</h3>${(c.notes||[]).map(n=>`<p class="small" lang="en">${esc(n)}</p>`).join('')}</div>`
- :`<div class="csec"><h3>${K('논문 원문 (영어)','Original text (English)')}</h3>${highlighted(c)}<p class="small muted" style="margin-top:var(--s2)">${K('원문 번역은 아직 제공하지 않아요.','No translation of the original is provided.')}</p></div>
- ${(c.notes||[]).length?`<div class="csec"><h3>${K('AI가 정리한 근거 메모 (영어)','Evidence notes written by the AI')}</h3>${c.notes.map(n=>`<p class="small muted" lang="en">• ${esc(n)}</p>`).join('')}</div>`:''}`}
+ <div class="csec"><h3>${K('규칙 내용','The rule')}</h3>${(c.notes||[]).map(n=>`<p class="small" lang="en">${esc(n)}</p>`).join('')}</div>`
+ :`<div class="csec"><h3>${K('논문 원문','Original text')}</h3>${highlighted(c)}<p class="small muted" style="margin-top:var(--s2)">${K('논문 원문과 근거 메모는 영어 그대로 보여요.','The paper text and evidence notes are shown in English.')}</p></div>
+ ${(c.notes||[]).length?`<div class="csec"><h3>${K('AI가 정리한 근거 메모','Evidence notes written by the AI')}</h3>${c.notes.map(n=>`<p class="small muted" lang="en">• ${esc(n)}</p>`).join('')}</div>`:''}`}
  <div class="csec"><a href="${esc(c.url)}" target="_blank" rel="noopener">${K('PMC에서 원문 열기','Open the PMC article')} ↗</a>${c.location||rule?'':`<p class="small muted">${K('논문 안의 위치 정보가 없어서 발췌문과 링크만 보여 드려요.','There is no position inside the paper, so only the excerpt and the link are shown.')}</p>`}</div>`;
  history.pushState({p:1},'');document.body.classList.add('panel-open');$('cpanel').focus()}
 function closeCite(fromPop){if(!document.body.classList.contains('panel-open'))return;document.body.classList.remove('panel-open');if(!fromPop&&history.state&&history.state.p)history.back();if(lastFocus&&document.contains(lastFocus))lastFocus.focus()}
