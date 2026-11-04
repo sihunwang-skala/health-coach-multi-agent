@@ -1,18 +1,15 @@
 # health-coach-multi-agent
 
-**제2형 당뇨병 개인 맞춤 식단 및 신체활동 Agentic RAG Coach**
-
-고령 이용자 접근성과 안전을 고려한 근거 기반 Multi-Agent 서비스
-
+**제2형 당뇨병 개인 맞춤 식단 및 신체활동 Agentic RAG Coach**  
 *Personalized Agentic RAG Diet and Activity Coach for Type 2 Diabetes*
 
-2024년 UIUC Information Experience and Accessibility Lab의 고령자 대상 GenAI health coaching 연구 경험에서 출발해, 식단, 신체활동, 안전, 서비스 UI까지 추가 구현하고 Agentic RAG, MCP, LangGraph 같은 최신 기술을 적용한 프로젝트입니다.
+고령 이용자의 접근성과 안전을 고려한 근거 기반 Multi-Agent 서비스입니다. 2024년 UIUC Information Experience and Accessibility Lab의 고령자 대상 GenAI health coaching 연구 경험에서 출발해, 식단, 신체활동, 안전, 서비스 UI까지 추가 구현하고 Agentic RAG, MCP, LangGraph 같은 최신 기술을 적용했습니다.
 
 | 대상 | 핵심 기술 | 평가 범위 |
 |---|---|---|
-| 제2형 당뇨병이 있는 고령 이용자 | Personalized Agentic RAG, Multi-Agent, deterministic safety rules | 가상 프로필 10명, 메시지 100개 |
+| 제2형 당뇨병이 있는 고령 이용자 | Personalized Agentic RAG, Multi-Agent, deterministic safety rules | 가상 프로필 10명(실제 환자 아님), 메시지 100개 |
 
-> 이 서비스는 진단이나 처방을 하지 않는 건강 코칭 서비스입니다. 진단과 처방이 필요한 요청은 Safety Guard로 AI의 임의 판단을 막고, 약 변경은 의료진에게, 응급 증상은 119로 안내합니다. 예시 이용자 10명은 모두 가상 인물입니다.
+> 이 서비스는 진단이나 처방을 하지 않는 건강 코칭 서비스입니다. 진단과 처방이 필요한 요청은 Safety Guard로 AI의 임의 판단을 막고, 약 변경은 의료진에게, 응급 증상은 119로 안내합니다.
 
 ### 프로젝트 문서
 
@@ -223,7 +220,7 @@ cp .env.example .env                                  # OPENAI_API_KEY 입력 (L
 
 ## 연구 배경 및 참고
 
-이 프로젝트는 2024년 UIUC Information Experience and Accessibility Lab에서 참여한 고령자 대상 GenAI health coaching 연구 경험을 바탕으로, 제2형 당뇨병 식단 및 신체활동 코칭으로 주제를 넓히고, Agentic RAG와 deterministic safety rules 등 최신 기술을 적용해 추가 구현한 프로젝트입니다.
+연구 배경과 관련된 공개 자료입니다. 연구실의 자료는 배경 참고이며 이 프로젝트의 결과가 아닙니다.
 
 - [UIUC Information Experience and Accessibility Lab](https://infoaccesslab.web.illinois.edu/)
 - [IEA Lab 구성원](https://infoaccesslab.web.illinois.edu/people/)
