@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>식단·운동 코치</title><meta name="theme-color" content="#1F6F5C"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/icon.svg" type="image/svg+xml">
+<title>식단·운동 코치</title><meta name="theme-color" content="#1D4ED8"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/icon-192.png"><link rel="stylesheet" href="/ds.css">
 <style>
 html,body{height:100%}body{overflow:hidden}
@@ -23,10 +23,11 @@ html,body{height:100%}body{overflow:hidden}
 #banner:not(:empty){padding:var(--s3) var(--s4) 0}
 .scroll{flex:1;overflow:auto;padding:var(--s5) var(--s4) var(--s4);scroll-behavior:smooth}
 .thread{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:var(--s5)}
+.notice{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s3) var(--s4);font-size:var(--fs-sm);color:var(--ink-2)}.notice b{color:var(--ink)}
 .date{align-self:center;font-size:var(--fs-sm);color:var(--ink-2);background:var(--surface-2);padding:2px var(--s3);border-radius:var(--r-pill)}
 .row{display:flex;gap:var(--s3);align-items:flex-start}.row.me{justify-content:flex-end}
-.bubble{background:var(--brand-soft);color:var(--ink);padding:var(--s3) var(--s4);border-radius:20px 20px 6px 20px;max-width:82%;white-space:pre-wrap}
-.bot{flex:1;min-width:0;display:flex;flex-direction:column;gap:var(--s2);max-width:680px}.bot p+p{margin-top:var(--s3)}.bot .txt{white-space:pre-wrap}
+.bubble{background:var(--brand-soft);color:var(--ink);padding:var(--s3) var(--s4);border-radius:var(--r-md) var(--r-md) 4px var(--r-md);max-width:82%;white-space:pre-wrap}
+.bot{flex:0 1 auto;min-width:0;display:flex;flex-direction:column;gap:var(--s2);max-width:680px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:var(--s3) var(--s4);box-shadow:var(--sh-1)}.bot p+p{margin-top:var(--s3)}.bot .txt{white-space:pre-wrap}
 .cite{min-width:28px;min-height:28px;margin:0 2px;padding:0 6px;border-radius:var(--r-sm);border:1px solid var(--brand);background:var(--brand-soft);color:var(--brand);font:inherit;font-size:.8rem;font-weight:700;cursor:pointer;vertical-align:baseline}
 .srcs{display:flex;flex-wrap:wrap;gap:var(--s2);align-items:center}.srcs .chip{min-height:36px;font-size:var(--fs-sm)}
 .note{display:flex;align-items:center;gap:6px;font-size:var(--fs-sm);color:var(--ink-2)}.note .icon{width:16px;height:16px}
@@ -65,7 +66,7 @@ dl.meta{display:grid;grid-template-columns:max-content 1fr;gap:2px var(--s3);mar
 }
 </style></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
- <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-14 15-14 0 10-6 15-14 15"/><path d="M5 19c3-5 6-8 10-10"/></symbol>
+ <symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-5 4v-4H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></symbol>
  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A15 15 0 0 1 3 6a2 2 0 0 1 2-2z"/></symbol>
  <symbol id="i-send" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
@@ -146,8 +147,9 @@ const dayLabel=ts=>{const d=new Date(ts),t=new Date(),y=new Date(t-864e5),same=(
 function scrollEnd(){requestAnimationFrame(()=>scroller.scrollTo({top:scroller.scrollHeight}))}
 function put(html,cls=''){const d=document.createElement('div');d.className=cls;d.innerHTML=html;thread.appendChild(d);scrollEnd();return d}
 function renderThread(){thread.innerHTML='';hasMsgs=false;let last='';
+ put('<b>이 서비스는 의사가 아니라 건강 코칭 서비스예요.</b> 논문에서 찾은 일반 정보와 생활 습관만 알려 드려요. 답변을 보고 약을 시작하거나 끊거나 바꾸지 말고, 의사·간호사·약사와 먼저 상의하세요. <b>응급이면 119에 전화하세요.</b>','notice');
  (ME.history||[]).forEach(h=>{const day=dayLabel(h.ts);if(day!==last){put(esc(day),'date');last=day}
-  if(!h.message.startsWith('(approval)'))user(h.message);bot({answer:h.answer,route:h.route,citations:(h.meta&&h.meta.citations)||[]})});
+  if(!h.message.startsWith('(approval)'))user(h.message);if((h.answer||'').trim())bot({answer:h.answer,route:h.route,citations:(h.meta&&h.meta.citations)||[]})});
  if(!hasMsgs)hello();scrollEnd()}
 function hello(){const n=ME.account.name;const d=put(`<div class="hello"><span class="avatar">${icon('leaf')}</span><h2>안녕하세요, ${esc(n)}님</h2><p class="muted">식사와 운동, 궁금한 걸 편하게 물어보세요.</p></div>
  <div class="sugg">${SUGG.map(s=>`<button type="button">${esc(s)}</button>`).join('')}</div>

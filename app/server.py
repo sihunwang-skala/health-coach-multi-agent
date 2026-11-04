@@ -12,6 +12,7 @@ Care team: GET /api/admin/summary|users|users/{id}|alerts|audit, POST /api/admin
 from __future__ import annotations
 
 import json
+import os
 import secrets
 import sys
 import time
@@ -49,11 +50,18 @@ SIGNUP_MED = {"metformin": "metformin", "glimepiride": "glimepiride", "gliclazid
               "aspart": "insulin aspart", "premixed": "premixed insulin", "amlodipine": "amlodipine", "lisinopril": "lisinopril"}
 SIGNUP_MOB = {"good": "good", "balance": "poor balance", "cane": "uses a cane", "legs": "weak legs"}
 
+# Demo mode (default ON for this synthetic-data PoC): the 10 synthetic users and a demo care-team account can be entered with one
+# click, no password. Set COACH_DEMO=0 for anything with real people's data (docs/ACCOUNTS.md).
+DEMO = os.environ.get("COACH_DEMO", "1") == "1"
+SYNTHETIC = {u["id"] for u in json.loads((ROOT / "data" / "users.json").read_text())}
+
 STATE: dict = {}
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    if DEMO:
+        print("WARNING: COACH_DEMO=1 - one-click demo sign-in is ON. Set COACH_DEMO=0 when real people's data is stored.")
     STATE["deps"] = default_container()   # built once: settings, LLM, MCP servers (dependency injection)
     STATE["graph"] = build_graph()
     import asyncio
@@ -244,6 +252,47 @@ def delete_me(body: DeleteIn, request: Request, response: Response, user: dict =
     auth.delete_account(user["id"])
     response.delete_cookie(auth.USER_COOKIE, path="/")
     return {"ok": True}
+
+
+def _demo_only():
+    if not DEMO:
+        raise HTTPException(404)
+
+
+class DemoIn(BaseModel):
+    user_id: str
+
+
+@app.get("/api/demo/users", dependencies=[Depends(_demo_only)])
+def demo_users():
+    """Login page, demo mode: the synthetic people (first name, age, one line) - never real sign-ups."""
+    return [{"id": i, "name": p["name"].split()[0], "age": p["age"], "line": ", ".join(c for c in p["conditions_ko"] if c != "제2형 당뇨병") or "제2형 당뇨병"}
+            for i, p in _profiles().items() if i in SYNTHETIC]
+
+
+@app.post("/api/demo/enter", dependencies=[Depends(_demo_only), Depends(_same_origin)])
+def demo_enter(body: DemoIn, request: Request, response: Response):
+    if body.user_id not in SYNTHETIC:
+        raise HTTPException(404)
+    row = auth.run("SELECT id FROM accounts WHERE user_id = ? AND role = 'user'", (body.user_id,), one=True)
+    aid = row["id"] if row else auth.create_account(f"demo_{body.user_id}", secrets.token_urlsafe(24) + "a1", "user",
+                                                    (get_full_profile(body.user_id) or {}).get("name", body.user_id), body.user_id)
+    auth.start_session(request, response, aid, "user")
+    return {"ok": True}
+
+
+@app.post("/api/demo/staff", dependencies=[Depends(_demo_only), Depends(_same_origin)])
+def demo_staff(request: Request, response: Response):
+    row = auth.run("SELECT id FROM accounts WHERE username = 'demo_staff'", one=True)
+    aid = row["id"] if row else auth.create_account("demo_staff", secrets.token_urlsafe(24) + "a1", "staff", "데모 의료진")
+    auth.start_session(request, response, aid, "staff")
+    auth.audit("demo_staff", "sign in (demo)")
+    return {"ok": True}
+
+
+@app.get("/api/config")
+def config():
+    return {"demo": DEMO}
 
 
 @app.post("/api/staff/login", dependencies=[Depends(_same_origin)])

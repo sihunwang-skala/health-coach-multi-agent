@@ -13,12 +13,13 @@ No reference URL was given, so three were chosen for what they teach, not to cop
 | Ada Health site (**measured**: Noto Sans 17/28 px, navy ink #293754, pill buttons radius 100 px, serif headings) | Friendly health tone, 17 px body, pill buttons | Serif headings (poor Korean pairing), marketing layout |
 | KakaoTalk-style messenger (**assumed** from product knowledge, not measured) | Bubble shapes, big touch targets, date separators, a calm single accent | Yellow brand colour |
 
-Chosen: warm paper background, one green accent, bubble only for the user, assistant as plain text with an avatar,
-evidence as small numbered chips that open a side panel / bottom sheet.
+Chosen (revised 2026-11-04 after review): keep the look of the first published UI — cool grey background, **blue accent #1D4ED8**, white cards with thin borders — and
+add the chat structure: user bubble, assistant answer in a white card with an avatar, evidence as small numbered chips that open a side panel / bottom sheet.
+The first draft used a warm paper background and a green accent; it was dropped because it looked less polished than the published version.
 
 ## 2. Tokens (all in `ds.css`; light, with a dark variant)
-- **Colour:** `--bg #FBF9F6`, `--surface #FFF`, `--ink #1F2933`, `--ink-2 #52606D`, `--brand #1F6F5C` (contrast 6.0 on white), `--brand-soft #E3F1EC`,
-  `--danger #B42318`, `--warn #8A4B08`, `--ok #067647`. Semantic use only: brand = actions and user bubble, danger = emergency, warn = caution.
+- **Colour:** `--bg #F6F7F9`, `--surface #FFF`, `--ink #1D2430`, `--ink-2 #4B5565`, `--brand #1D4ED8` (contrast 6.7 on white), `--brand-soft #E3ECFF`,
+  `--danger #B42318`, `--warn #B54708`, `--ok #067647`. Semantic use only: brand = actions and user bubble, danger = emergency, warn = caution.
 - **Type:** system Korean stack (Apple SD Gothic Neo, Noto Sans KR, Malgun Gothic). Base **17 px** (user can set 15–26 px), line height 1.65,
   `word-break: keep-all` so Korean words do not split. Scale: 0.85 / 1 / 1.15 / 1.45 / 1.9 rem.
 - **Space:** 4 px scale `--s1…--s8` (4, 8, 12, 16, 24, 32, 48, 72). **Radius:** 8 / 14 / 22 / pill. **Shadow:** two levels. **Touch target:** 48 px.
@@ -32,7 +33,7 @@ Chat-only: user bubble, assistant text block, evidence chips and `cite` number b
 Rules: emergency is the only red surface; every control has a visible 3 px focus ring; no new colour or size outside the tokens.
 
 ## 4. Information architecture
-- `/login` (log in / sign up in 3 steps: account → health profile → consent) · `/` chat with sidebar (profile summary, records, settings, log out) ·
+- `/login` (log in / sign up in 3 steps: account → health profile → consent; in demo mode also “가상 사용자로 체험하기” cards) · `/` chat with sidebar (profile summary, records, settings, log out) ·
   `/admin/login` → `/admin` (overview, alerts, people, access log). Two separate sign-ins and roles.
 - Always visible in chat: “응급 119” and an “의료진과 이야기하기” button. A banner repeats the 119 call on an emergency answer.
 - Evidence: numbered buttons inside the answer + chips under it → panel with the supporting sentence, the paper excerpt (supporting sentences highlighted) and the PMC link.

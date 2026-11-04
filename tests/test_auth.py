@@ -129,3 +129,26 @@ def test_opening_a_person_and_changing_an_alert_are_audited(client):
     assert client.get("/api/admin/users/u01").status_code == 200
     actions = [r["action"] for r in client.get("/api/admin/audit").json()]
     assert "opened a person's data" in actions and "sign in" in actions
+
+
+def test_demo_mode_enters_only_synthetic_people_and_the_demo_staff(client, monkeypatch):
+    monkeypatch.setattr(server, "DEMO", True)
+    names = [u["name"] for u in client.get("/api/demo/users").json()]
+    assert len(names) == 10 and "Maria" in names
+    client.post("/api/auth/signup", json=SIGNUP)                      # a real sign-up never appears in the demo list
+    assert len(client.get("/api/demo/users").json()) == 10
+    real = auth.run("SELECT user_id FROM accounts WHERE username = ?", ("new_user1",), one=True)["user_id"]
+    client.cookies.clear()
+    assert client.post("/api/demo/enter", json={"user_id": real}).status_code == 404
+    assert client.post("/api/demo/enter", json={"user_id": "u04"}).status_code == 200
+    assert auth.session_account(types.SimpleNamespace(cookies=client.cookies), "user")["user_id"] == "u04"
+    assert client.get("/api/admin/users").status_code == 401           # a demo user is not staff
+    assert client.post("/api/demo/staff").status_code == 200 and client.get("/api/admin/users").status_code == 200
+    assert "sign in (demo)" in [r["action"] for r in client.get("/api/admin/audit").json()]
+
+
+def test_demo_mode_off_closes_every_demo_door(client, monkeypatch):
+    monkeypatch.setattr(server, "DEMO", False)
+    assert client.get("/api/demo/users").status_code == 404
+    assert client.post("/api/demo/enter", json={"user_id": "u01"}).status_code == 404
+    assert client.post("/api/demo/staff").status_code == 404

@@ -15,6 +15,12 @@ Implementation: `app/auth.py`, endpoints in `app/server.py`, tests in `tests/tes
 | Account deletion | settings → deletes the account, profile, records and monitoring-log rows after a password check |
 | Care-team audit | opening a person's data, changing an alert and signing in are written to `audit` and shown on the console's “열람 기록” tab |
 
+## Demo mode (`COACH_DEMO`, default **on**)
+This project uses synthetic people, so a clone should work without creating accounts: the login page shows the 10 synthetic users (one click, no password) and the
+care-team login has “데모 의료진으로 입장”. Real sign-ups never appear in that list and cannot be entered this way; the demo staff sign-in is written to the audit log.
+**Set `COACH_DEMO=0` in any deployment that stores real people's data** — the demo staff entry opens the whole care-team console.
+Normal sign-in (accounts, passwords, lockout) works the same in both modes.
+
 Create accounts: `scripts/manage_accounts.py seed-demo | create-staff USER "Name" | reset-password USER`.
 `seed-demo` writes random passwords to `data/demo_accounts.txt` (mode 600, git-ignored).
 
