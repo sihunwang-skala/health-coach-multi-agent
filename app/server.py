@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import secrets
 import sys
 import time
@@ -59,6 +60,25 @@ SEED_KO = {  # display only (the English profile text is what the agents read): 
     "u09": ("대부분 앉아 지내고 지팡이를 써요", "지팡이 사용", "넘어지지 않고 더 움직이기", "불규칙한 시간에 소량, 부드러운 음식"),
     "u10": ("주 2회 테니스, 웨이트 운동", "양호", "운동 계속하기", "빵과 면을 많이 먹고 주말에 맥주 여러 잔")}
 NOT_GIVEN = "입력 안 함"
+RECORD_KO = {  # display only: the demo records are English text; a person's own records are shown exactly as typed
+    "1 can of soda": "탄산음료 1캔", "2 beers with dinner": "저녁에 맥주 2잔", "I had oatmeal with berries for breakfast.": "아침으로 오트밀과 베리를 먹었어요.",
+    "I walked 15 minutes with my cane this morning.": "오늘 아침 지팡이를 짚고 15분 걸었어요.", "I walked 30 minutes after dinner today.": "오늘 저녁 식사 후 30분 걸었어요.",
+    "My glucose was 132 before my walk.": "걷기 전 혈당이 132였어요.", "a glass of wine with dinner": "저녁에 와인 한 잔", "ate half of lunch, low appetite": "점심을 절반만 먹었어요, 식욕이 없어요",
+    "ate out: noodle soup": "외식: 국수", "beers on Saturday": "토요일에 맥주", "brisk walk 30 min": "빠르게 걷기 30분", "chair exercises 10 min": "의자 운동 10분",
+    "dinner at 9:30 pm, kimchi and pickles": "저녁 9시 30분, 김치와 절임 반찬", "gym: weights 45 min": "헬스장: 웨이트 45분", "noodles for lunch": "점심은 국수",
+    "orange juice at breakfast": "아침에 오렌지 주스", "sat-to-stand practice 5 times": "앉았다 일어서기 연습 5회", "short walk before lunch": "점심 전 짧은 산책", "skipped breakfast": "아침을 걸렀어요",
+    "slow walk 10 min": "천천히 걷기 10분", "snack at 11 pm: yogurt": "밤 11시 간식: 요거트", "soft rice porridge at 3 pm": "오후 3시 부드러운 죽", "tennis 1 hour": "테니스 1시간",
+    "walked 15 min after dinner": "저녁 식사 후 15분 걸었어요", "walked 30 min in the park, checked feet: ok": "공원에서 30분 걸었어요, 발 상태 확인: 이상 없음",
+    "walked 40 min in the evening": "저녁에 40분 걸었어요", "white rice at lunch, half bowl": "점심에 흰쌀밥 반 공기"}
+
+
+def _records(recs: list[dict]) -> list[dict]:
+    out = []
+    for r in recs:
+        t = r["text"].replace("[demo] ", "")
+        ko = RECORD_KO.get(t) or (re.sub(r"^blood sugar (\d+) mg/dL$", r"혈당 \1 mg/dL", t) if t.startswith("blood sugar ") else None)
+        out.append({**r, "text_ko": ko})
+    return out
 # sign-up choices: key sent by the page -> English token the safety rules and agents read
 SIGNUP_COND = {"hypertension": "hypertension", "kidney": "chronic kidney disease", "retinopathy": "diabetic retinopathy",
                "neuropathy": "peripheral neuropathy (numb feet)", "heart": "heart disease", "muscle": "low muscle mass"}
@@ -195,7 +215,7 @@ def _profiles() -> dict:
 
 
 def _history(user_id: str, limit: int = 40) -> list[dict]:
-    rows = tracelog.rows("SELECT ts, route, message, answer, meta FROM events WHERE user_id = ? ORDER BY id DESC LIMIT ?", (user_id, limit))
+    rows = tracelog.rows("SELECT ts, route, message, answer, meta FROM events WHERE user_id = ? ORDER BY ts DESC, id DESC LIMIT ?", (user_id, limit))
     for r in rows:
         r["meta"] = json.loads(r["meta"]) if r.get("meta") else None
     return rows[::-1]
@@ -248,7 +268,7 @@ async def me(user: dict = Depends(auth.current_user), deps: Container = Depends(
     uid = user["user_id"]
     recs = await deps.users("list_records", user_id=uid, limit=20)
     return {"account": {"username": user["username"], "name": user["display_name"]}, "profile": _show(get_full_profile(uid)),
-            "records": recs["records"], "history": _history(uid)}
+            "records": _records(recs["records"]), "history": _history(uid)}
 
 
 @app.post("/api/me/password", dependencies=[Depends(_same_origin)])
@@ -352,7 +372,7 @@ async def admin_user(user_id: str, deps: Container = Depends(get_deps), staff: d
     auth.audit(staff["username"], "opened a person's data", user_id)   # every look at personal health data is logged
     recs = await deps.users("list_records", user_id=user_id, limit=50)
     ev = tracelog.rows("SELECT * FROM events WHERE user_id = ? ORDER BY ts DESC LIMIT 100", (user_id,))
-    return {"profile": _profiles().get(user_id), "records": recs["records"], "events": ev}
+    return {"profile": _profiles().get(user_id), "records": _records(recs["records"]), "events": ev}
 
 
 @app.get("/api/admin/alerts", dependencies=[Depends(auth.current_staff)])
