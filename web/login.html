@@ -26,7 +26,7 @@ form{display:flex;flex-direction:column;gap:var(--s4)}
 <div class="lang lang-corner" id="lang" role="group"></div>
 <main class="wrap">
  <header class="brand"><div class="mark" aria-hidden="true"><svg class="icon"><use href="#i-leaf"/></svg></div>
-  <h1 style="font-size:var(--fs-2xl)">식단·운동 코치</h1><p class="muted">내 몸 상태에 맞춰 식사와 운동을 같이 살펴봐요.</p></header>
+  <h1 style="font-size:var(--fs-2xl)">식단·운동 코치</h1><p class="muted">내 건강 상태에 맞춰 식사와 운동을 함께 살펴봐 드려요.</p></header>
 
  <section class="card panel" aria-label="로그인과 가입">
   <div class="tabs" role="tablist"><button role="tab" id="tabIn" aria-selected="true" aria-controls="formIn">로그인</button><button role="tab" id="tabUp" aria-selected="false" aria-controls="formUp">가입하기</button></div>
@@ -42,29 +42,29 @@ form{display:flex;flex-direction:column;gap:var(--s4)}
    <div class="steps" aria-live="polite"><b id="stepNo">1</b>/3 <span id="stepName">계정 만들기</span></div>
 
    <div id="s1" class="step" style="display:flex;flex-direction:column;gap:var(--s4)">
-    <div class="field"><label for="upName">앱에서 부를 이름</label><input class="input" id="upName" maxlength="20" autocomplete="name" placeholder="예: 길동">
+    <div class="field"><label for="upName">표시 이름</label><input class="input" id="upName" maxlength="20" autocomplete="name" placeholder="예: 길동">
      <span class="hint">AI에게는 이름을 보내지 않아요.</span></div>
     <div class="field"><label for="upUser">아이디</label><input class="input" id="upUser" maxlength="20" autocomplete="username" autocapitalize="none" aria-describedby="upUserH"><span class="hint" id="upUserH">영문 소문자, 숫자, 밑줄(_) 4~20자</span></div>
-    <div class="field"><label for="upPw">비밀번호</label><input class="input" id="upPw" type="password" autocomplete="new-password" aria-describedby="upPwH"><span class="hint" id="upPwH">8자 이상, 문자와 숫자를 함께 넣어 주세요.</span></div>
+    <div class="field"><label for="upPw">비밀번호</label><input class="input" id="upPw" type="password" autocomplete="new-password" aria-describedby="upPwH"><span class="hint" id="upPwH">8자 이상, 문자와 숫자를 함께 사용해 주세요.</span></div>
    </div>
 
    <div id="s2" class="step" style="display:none;flex-direction:column;gap:var(--s4)" hidden>
-    <p class="muted small">답변을 내 상황에 맞추는 데 써요. 나중에 바꿀 수 있어요.</p>
+    <p class="muted small">답변을 내 상황에 맞게 드리는 데 사용해요. 나중에 언제든 바꿀 수 있어요.</p>
     <div class="field"><label for="upAge">나이</label><input class="input" id="upAge" type="number" min="18" max="110" inputmode="numeric"></div>
     <div class="field"><span class="label" id="gl">성별</span><div class="chips" role="group" aria-labelledby="gl" id="gender">
      <button type="button" class="chip" data-v="female" aria-pressed="false">여성</button><button type="button" class="chip" data-v="male" aria-pressed="false">남성</button></div></div>
-    <div class="field"><span class="label" id="cl">당뇨 말고 함께 있는 질환 (해당하는 것 모두)</span><div class="chips" role="group" aria-labelledby="cl" id="conds"></div></div>
-    <div class="field"><span class="label" id="ml">먹거나 맞는 약</span><div class="chips" role="group" aria-labelledby="ml" id="meds"></div>
+    <div class="field"><span class="label" id="cl">당뇨병 외에 앓고 있는 질환 (해당하는 것 모두 선택)</span><div class="chips" role="group" aria-labelledby="cl" id="conds"></div></div>
+    <div class="field"><span class="label" id="ml">복용 중인 약 (인슐린 포함)</span><div class="chips" role="group" aria-labelledby="ml" id="meds"></div>
      <input class="input" id="upOther" maxlength="60" placeholder="목록에 없는 약이 있으면 적어 주세요" aria-label="그 밖의 약"></div>
-    <div class="field"><label for="upMob">걷기와 균형</label><select class="input" id="upMob"><option value="good">불편하지 않아요</option><option value="balance">균형이 불안해요</option><option value="cane">지팡이나 보행기를 써요</option><option value="legs">다리 힘이 약해요</option></select></div>
-    <div class="field"><label for="upGoal">바라는 점 <span class="muted">(선택)</span></label><input class="input" id="upGoal" maxlength="100" placeholder="예: 식후 혈당 낮추기"></div>
-    <div class="field"><label for="upAct">평소 활동 <span class="muted">(선택)</span></label><input class="input" id="upAct" maxlength="100" placeholder="예: 저녁마다 공원 걷기"></div>
-    <div class="field"><label for="upDiet">평소 식사 <span class="muted">(선택)</span></label><input class="input" id="upDiet" maxlength="100" placeholder="예: 아침을 자주 거름"></div>
+    <div class="field"><label for="upMob">걷기와 균형</label><select class="input" id="upMob"><option value="good">불편함 없음</option><option value="balance">균형이 불안해요</option><option value="cane">지팡이나 보행기를 써요</option><option value="legs">다리 힘이 약해요</option></select></div>
+    <div class="field"><label for="upGoal">건강 목표 <span class="muted">(선택)</span></label><input class="input" id="upGoal" maxlength="100" placeholder="예: 식후 혈당 낮추기"></div>
+    <div class="field"><label for="upAct">평소 운동·활동 <span class="muted">(선택)</span></label><input class="input" id="upAct" maxlength="100" placeholder="예: 저녁마다 공원 걷기"></div>
+    <div class="field"><label for="upDiet">평소 식습관 <span class="muted">(선택)</span></label><input class="input" id="upDiet" maxlength="100" placeholder="예: 아침을 자주 거름"></div>
    </div>
 
    <div id="s3" class="step" style="display:none;flex-direction:column;gap:var(--s4)" hidden>
-    <div class="banner info"><b>이 서비스는 의사를 대신하지 않아요.</b> 논문에서 찾은 일반 정보와 생활 습관 제안만 드려요. 약을 시작하거나 끊거나 바꾸는 일은 꼭 의료진과 상의해 주세요. <b>응급이면 바로 119에 전화하세요.</b></div>
-    <label class="check"><input type="checkbox" id="upConsent"><span>내 건강 정보를 저장하고, 이름을 뺀 건강 정보를 AI 답변에 쓰는 데 동의해요. (필수) <span class="hint" style="display:block">설정에서 언제든 계정과 기록을 삭제할 수 있어요.</span></span></label>
+    <div class="banner info"><b>이 서비스는 의사를 대신하지 않아요.</b> 논문에서 찾은 일반적인 건강 정보와 생활 습관을 안내해 드려요. 약을 시작하거나 끊거나 바꾸실 때는 꼭 의료진과 먼저 상의해 주세요. <b>응급 상황이면 바로 119에 전화하세요.</b></div>
+    <label class="check"><input type="checkbox" id="upConsent"><span>내 건강 정보를 저장하고, 이름을 제외한 건강 정보를 AI 답변에 활용하는 데 동의합니다. (필수) <span class="hint" style="display:block">설정에서 언제든 계정과 기록을 삭제할 수 있어요.</span></span></label>
    </div>
 
    <p class="error" id="upErr" role="alert"></p>
@@ -72,7 +72,7 @@ form{display:flex;flex-direction:column;gap:var(--s4)}
   </form>
  </section>
  <section class="card demo" id="demo" hidden aria-labelledby="demoH"><h2 id="demoH">가상 사용자로 체험하기</h2>
-  <p class="small muted">비밀번호 없이 바로 들어가요. 모두 가상의 인물이에요.</p><div class="people" id="people"></div>
+  <p class="small muted">비밀번호 없이 바로 체험할 수 있어요. 모든 사용자는 가상의 인물이에요.</p><div class="people" id="people"></div>
   <a class="small" href="/admin/login">의료진 화면으로 가기 →</a></section>
  <p class="foot small muted">건강 정보는 이 서비스의 서버에만 저장돼요.</p>
 </main>
@@ -99,8 +99,8 @@ let step=1;mountLang($('lang'));translateDom();const NAMES=K(['계정 만들기'
 function show(n){step=n;[1,2,3].forEach(i=>{const s=$('s'+i);s.hidden=i!==n;s.style.display=i===n?'flex':'none'});$('stepNo').textContent=n;$('stepName').textContent=NAMES[n-1];
  $('back').hidden=n===1;$('next').textContent=n===3?K('가입하고 시작하기','Sign up and start'):K('다음','Next');$('upErr').textContent='';window.scrollTo(0,0)}
 function check(n){
- if(n===1){if(!$('upName').value.trim())return K('앱에서 부를 이름을 적어 주세요.','Please enter the name to show in the app.');if(!/^[a-z0-9_]{4,20}$/.test($('upUser').value.trim().toLowerCase()))return K('아이디는 영문 소문자, 숫자, 밑줄(_) 4~20자예요.','The username must be 4–20 characters: lowercase letters, numbers, underscore (_).');
-  const p=$('upPw').value;if(p.length<8||/^\d+$/.test(p)||/^[A-Za-z]+$/.test(p))return K('비밀번호는 8자 이상, 문자와 숫자를 함께 넣어 주세요.','The password needs at least 8 characters, with letters and numbers.')}
+ if(n===1){if(!$('upName').value.trim())return K('표시할 이름을 입력해 주세요.','Please enter a display name.');if(!/^[a-z0-9_]{4,20}$/.test($('upUser').value.trim().toLowerCase()))return K('아이디는 영문 소문자, 숫자, 밑줄(_) 4~20자예요.','The username must be 4–20 characters: lowercase letters, numbers, underscore (_).');
+  const p=$('upPw').value;if(p.length<8||/^\d+$/.test(p)||/^[A-Za-z]+$/.test(p))return K('비밀번호는 8자 이상, 문자와 숫자를 함께 사용해 주세요.','The password needs at least 8 characters, with letters and numbers.')}
  if(n===2){const a=+$('upAge').value;if(!(a>=18&&a<=110))return K('나이를 18~110 사이로 적어 주세요.','Please enter an age between 18 and 110.');if(!picked('gender').length)return K('성별을 골라 주세요.','Please select your sex.')}
  if(n===3&&!$('upConsent').checked)return K('계속하려면 동의가 필요해요.','You need to agree to continue.');return''}
 $('back').onclick=()=>show(step-1);

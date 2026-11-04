@@ -74,13 +74,14 @@ def set_alert_status(event_id: int, status: str, path=None) -> int:
 
 def windows(days: int = 14, path=None) -> dict:
     """The two-week periods the care-team screen can show. `busiest` is the period of `days` days with the most messages (ties: the
-    latest), `blocks` are consecutive periods counted back from the newest message, newest first."""
+    latest), `blocks` are consecutive periods counted back from the newest message, newest first, `current` is the period ending today."""
     per_day: dict[str, int] = {}
     for r in rows("SELECT substr(ts, 1, 10) AS d, COUNT(*) AS n FROM events GROUP BY d ORDER BY d", (), path):
         per_day[r["d"]] = r["n"]
     if not per_day:
         today = datetime.now().date()
-        return {"busiest": {"start": (today - timedelta(days=days - 1)).isoformat(), "end": today.isoformat(), "messages": 0}, "blocks": []}
+        empty = {"start": (today - timedelta(days=days - 1)).isoformat(), "end": today.isoformat(), "messages": 0}
+        return {"busiest": empty, "current": empty, "blocks": []}
     first, last = (datetime.fromisoformat(min(per_day)).date(), datetime.fromisoformat(max(per_day)).date())
 
     def count(end):
@@ -97,7 +98,7 @@ def windows(days: int = 14, path=None) -> dict:
         end -= timedelta(days=days)
         if end < first:
             break
-    return {"busiest": span(best), "blocks": blocks}
+    return {"busiest": span(best), "current": span(datetime.now().date()), "blocks": blocks}
 
 
 def summary(days: int = 14, path=None, end: str | None = None) -> dict:

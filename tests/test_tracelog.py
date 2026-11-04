@@ -26,3 +26,10 @@ def test_windows_pick_the_busiest_two_weeks_and_summary_follows_end(tmp_path):
     s = tracelog.summary(path=db, end="2026-10-23")
     assert s["messages"] == 15 and s["days"][0] == "2026-10-10" and s["days"][-1] == "2026-10-23"
     assert tracelog.summary(path=db, end="2026-11-03")["messages"] == 5
+
+
+def test_windows_include_the_period_ending_today(tmp_path):
+    db = tmp_path / "t.db"
+    tracelog.log_event("u01", "q", {"route": "chat", "answer": "a"}, ts="2026-10-10T12:00:00", path=db)
+    w = tracelog.windows(path=db)
+    assert w["current"]["end"] == __import__("datetime").date.today().isoformat() and w["current"]["messages"] == 0

@@ -8,14 +8,14 @@
 <div class="lang lang-corner" id="lang" role="group"></div>
 <main class="wrap">
  <header style="display:flex;flex-direction:column;gap:var(--s2)"><span class="badge">의료진 전용</span><h1>의료진 콘솔 로그인</h1>
-  <p class="muted small">이용자의 건강 정보를 다루는 화면이에요. 열람 기록이 남습니다.</p></header>
+  <p class="muted small">이용자의 건강 정보를 다루는 화면입니다. 모든 열람 내역이 기록됩니다.</p></header>
  <section class="card panel"><form id="f" novalidate>
   <div class="field"><label for="u">아이디</label><input class="input" id="u" autocomplete="username" autocapitalize="none" required></div>
   <div class="field"><label for="p">비밀번호</label><input class="input" id="p" type="password" autocomplete="current-password" required></div>
   <p class="error" id="err" role="alert"></p><button class="btn block" id="b" type="submit">로그인</button></form></section>
- <section class="card panel" id="demo" hidden><h2 style="font-size:var(--fs-lg)">데모로 바로 보기</h2><p class="small muted">가상 이용자의 기록만 있는 체험용 입장이에요. 열람 기록은 그대로 남아요.</p>
+ <section class="card panel" id="demo" hidden><h2 style="font-size:var(--fs-lg)">데모로 바로 보기</h2><p class="small muted">가상 이용자 데이터만 볼 수 있는 체험용 입장이에요. 열람 내역은 동일하게 기록돼요.</p>
   <button class="btn secondary block" id="demoBtn" type="button">데모 의료진으로 입장</button></section>
- <p class="small muted">의료진 계정은 관리자가 따로 만들어 드려요. 이용자 화면은 <a href="/login">여기</a>에서 로그인하세요.</p>
+ <p class="small muted">의료진 계정은 관리자가 별도로 발급해요. 이용자 로그인은 <a href="/login">여기</a>에서 하세요.</p>
 </main>
 <script src="/ds.js"></script><script src="/i18n.js"></script>
 <script>applyTextSize();mountLang($('lang'));translateDom();

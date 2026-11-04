@@ -81,7 +81,7 @@ def check_password_rules(pw: str) -> str | None:
     if len(pw) < 8:
         return "비밀번호는 8자 이상이어야 해요."
     if pw.isdigit() or pw.isalpha():
-        return "비밀번호에 문자와 숫자를 함께 넣어 주세요."
+        return "비밀번호에 문자와 숫자를 함께 사용해 주세요."
     return None
 
 
@@ -119,7 +119,7 @@ def login(request: Request, response: Response, username: str, password: str, ro
     ip = request.client.host if request.client else "?"
     key = (norm(username), ip)
     if _locked(key):
-        raise HTTPException(429, "로그인에 여러 번 실패했어요. 10분 뒤에 다시 시도해 주세요.")
+        raise HTTPException(429, "로그인에 여러 번 실패했어요. 10분 후에 다시 시도해 주세요.")
     row = run("SELECT * FROM accounts WHERE username = ?", (norm(username),), one=True)
     ok = verify_password(password or "", row["pw_hash"] if row else DUMMY)
     if not (row and ok and row["role"] == role and not row["disabled"]):   # same message for every cause
