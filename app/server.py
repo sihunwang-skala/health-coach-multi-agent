@@ -354,8 +354,14 @@ def staff_me(staff: dict = Depends(auth.current_staff)):
 
 
 @app.get("/api/admin/summary", dependencies=[Depends(auth.current_staff)])
-def admin_summary(days: int = 14):
-    return tracelog.summary(days)
+def admin_summary(days: int = 14, end: str | None = None):
+    return tracelog.summary(days, end=end)
+
+
+@app.get("/api/admin/windows", dependencies=[Depends(auth.current_staff)])
+def admin_windows():
+    """The two-week periods to choose from; `busiest` is the default view."""
+    return tracelog.windows()
 
 
 @app.get("/api/admin/users", dependencies=[Depends(auth.current_staff)])

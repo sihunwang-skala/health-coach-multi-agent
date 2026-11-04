@@ -19,16 +19,18 @@ main{max-width:1240px;margin:0 auto;padding:var(--s4);display:grid;gap:var(--s4)
 .btn.sm{min-height:36px;padding:0 var(--s3);font-size:var(--fs-sm)}select.input.sm{min-height:36px;width:auto;padding:0 var(--s3)}
 dl.p{display:grid;grid-template-columns:max-content 1fr;gap:var(--s1) var(--s3);margin:0}dl.p dt{color:var(--ink-2)}dl.p dd{margin:0}
 .view[hidden]{display:none}
+.period{display:flex;align-items:center;gap:var(--s2);margin-bottom:var(--s3)}.period select{max-width:100%}
 </style></head><body>
 <header class="bar"><div class="bar-in"><h1>의료진 콘솔</h1>
  <nav class="tabs" aria-label="화면"><a href="#overview" data-v="overview">개요</a><a href="#alerts" data-v="alerts">알림 <span class="badge" id="openBadge" hidden>0</span></a><a href="#people" data-v="people">이용자</a><a href="#audit" data-v="audit">열람 기록</a></nav>
- <div class="who"><a class="small" href="/login">← 이용자 화면</a><span class="small muted" id="staffName"></span><button class="btn secondary sm" id="out" type="button">로그아웃</button></div></div></header>
+ <div class="who"><div class="lang" id="lang" role="group"></div><a class="small" href="/login">← 이용자 화면</a><span class="small muted" id="staffName"></span><button class="btn secondary sm" id="out" type="button">로그아웃</button></div></div></header>
 <main>
 <p class="small muted">가상 이용자와 데모 기록이에요. 이름은 이 화면에만 보이고, AI와 로그에는 이용자 ID만 전달돼요. 이용자의 건강 정보를 열면 열람 기록이 남아요.</p>
 
 <section class="view" id="v-overview">
+ <div class="period"><label for="period">기간</label><select class="input sm" id="period"></select></div>
  <div class="kpis" id="kpis"></div>
- <div class="g2" style="margin-top:var(--s4)"><div class="card"><h2>하루 메시지 수 (최근 14일)</h2><canvas id="perDay" role="img" aria-label="하루 메시지 수 막대 그래프"></canvas></div>
+ <div class="g2" style="margin-top:var(--s4)"><div class="card"><h2>하루 메시지 수</h2><canvas id="perDay" role="img" aria-label="하루 메시지 수 막대 그래프"></canvas></div>
   <div class="card"><h2>어떤 요청이 많았나</h2><canvas id="routes" role="img" aria-label="요청 종류별 건수 막대 그래프"></canvas></div></div>
  <div class="g11" style="margin-top:var(--s4)"><div class="card"><h2>이용자별 메시지·알림</h2><canvas id="byUser" role="img" aria-label="이용자별 메시지와 알림 막대 그래프"></canvas></div>
   <div class="card"><h2>하루 AI 비용</h2><canvas id="cost" role="img" aria-label="하루 AI 비용 선 그래프"></canvas></div></div>
@@ -45,11 +47,14 @@ dl.p{display:grid;grid-template-columns:max-content 1fr;gap:var(--s1) var(--s3);
 
 <section class="view card" id="v-audit" hidden><h2>열람 기록</h2><p class="small muted" style="margin-bottom:var(--s3)">의료진이 이용자 데이터를 열거나 알림을 바꾼 기록이에요.</p><div class="wrap"><table id="auditT"></table></div></section>
 </main>
-<script src="/ds.js"></script>
+<script src="/ds.js"></script><script src="/i18n.js"></script>
 <script>
-const ALERT={emergency:"응급",handoff:"상담 요청",med_change:"약 변경",other_user:"다른 사람 정보"};
-const ROUTE={...ALERT,diet:"식단",exercise:"운동",diet_exercise:"식단+운동",log:"기록 저장",my_data:"내 정보",delete_record:"기록 삭제",chat:"잡담",privacy_info:"개인정보 안내"};
-const GROUP={'Diet / exercise advice':'식단·운동 상담','Records & my data':'기록·내 정보','Chat & service':'잡담·서비스','Alerts':'알림'};
+const ALERT=K({emergency:"응급",handoff:"상담 요청",med_change:"약 변경",other_user:"다른 사람 정보"},{emergency:"Emergency",handoff:"Call request",med_change:"Medicine change",other_user:"Other person's data"});
+const ROUTE={...ALERT,...K({diet:"식단",exercise:"운동",diet_exercise:"식단+운동",log:"기록 저장",my_data:"내 정보",delete_record:"기록 삭제",chat:"잡담",privacy_info:"개인정보 안내"},{diet:"Diet",exercise:"Exercise",diet_exercise:"Diet + exercise",log:"Record saved",my_data:"My data",delete_record:"Delete record",chat:"Chat",privacy_info:"Privacy info"})};
+const GROUP=K({'Diet / exercise advice':'식단·운동 상담','Records & my data':'기록·내 정보','Chat & service':'잡담·서비스','Alerts':'알림'},{});
+const md=d=>{const [,m,dd]=d.split('-');return K(`${+m}월 ${+dd}일`,`${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]} ${+dd}`)};
+const evText=(e,f)=>{let m=null;try{m=e.meta?JSON.parse(e.meta):null}catch(x){}return LANG==='ko'&&m&&m.ko&&m.ko[f]?m.ko[f]:(LANG==='en'&&m&&m.en&&m.en[f]?m.en[f]:e[f])};
+const cap=t=>t?t.charAt(0).toUpperCase()+t.slice(1):t;
 const label=r=>ROUTE[r]||r,css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const get=u=>api(u,undefined,{signinUrl:'/admin/login'}),when=t=>esc((t||'').replace('T',' ').slice(5,16));
 let NAMES={},charts={},current=null;
@@ -58,37 +63,51 @@ const tag=a=>`<span class="tag ${a}">${label(a)}</span>`;
 function view(){const v=(location.hash||'#overview').slice(1);document.querySelectorAll('.view').forEach(e=>e.hidden=e.id!=='v-'+v);
  document.querySelectorAll('.tabs a').forEach(a=>a.dataset.v===v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));if(v==='audit')audit();if(v==='overview')setTimeout(()=>Object.values(charts).forEach(c=>c.resize()),0)}
 addEventListener('hashchange',view);
+let END=null,PERIODS=null;
+async function periods(){
+ const w=await get('/api/admin/windows');const seen=new Set();const opts=[];
+ const lab=(x,tag)=>`${tag?tag+' · ':''}${md(x.start)} – ${md(x.end)} · ${K(`메시지 ${x.messages}건`,`${x.messages} messages`)}`;
+ opts.push({end:w.busiest.end,text:lab(w.busiest,K('가장 활발한 기간','Busiest period'))});seen.add(w.busiest.end);
+ w.blocks.forEach((x,i)=>{if(!seen.has(x.end)){opts.push({end:x.end,text:lab(x,i===0?K('최근','Latest'):'')});seen.add(x.end)}});
+ const today=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
+ if(!seen.has(today)){const st=new Date(Date.parse(today)-13*864e5).toISOString().slice(0,10);opts.push({end:today,text:`${K('오늘 기준 2주','Last 2 weeks')} · ${md(st)} – ${md(today)}`})}
+ $('period').innerHTML=opts.map(o=>`<option value="${o.end}">${esc(o.text)}</option>`).join('');END=opts[0].end;$('period').value=END}
 async function load(){
- const [s,users]=await Promise.all([get('/api/admin/summary'),get('/api/admin/users')]);users.forEach(u=>NAMES[u.id]=u.name);
- const k=[["메시지 (14일)",s.messages],["활동 이용자",s.active_users+" / "+users.length],["처리 전 알림",s.open_alerts,"alert"],["건강 답변 평균 시간",(s.advice_latency_avg??'–')+" 초"],["안전 재작성 / 삭제 문장",s.safety_retries+" / "+s.removed_sentences],["AI 비용 (14일)","$"+s.cost.toFixed(3)]];
+ if(!END)await periods();
+ const [s,users]=await Promise.all([get('/api/admin/summary?end='+END),get('/api/admin/users')]);users.forEach(u=>NAMES[u.id]=u.name);
+ const k=[[K("메시지","Messages"),s.messages],[K("활동 이용자","Active users"),s.active_users+" / "+users.length],[K("처리 전 알림","Open alerts"),s.open_alerts,"alert"],[K("건강 답변 평균 시간","Avg. health answer time"),(s.advice_latency_avg??'–')+K(" 초"," s")],[K("안전 재작성 / 삭제 문장","Safety rewrites / removed sentences"),s.safety_retries+" / "+s.removed_sentences],[K("AI 비용","AI cost"),"$"+s.cost.toFixed(3)]];
  $('kpis').innerHTML=k.map(([l,v,c])=>`<div class="card kpi ${c||''}"><b>${v}</b><span>${l}</span></div>`).join('');
  $('openBadge').textContent=s.open_alerts;$('openBadge').hidden=!s.open_alerts;
  const cols=[css('--chart-1'),css('--chart-2'),css('--chart-3'),css('--chart-4')];
  chart('perDay',{type:'bar',data:{labels:s.days.map(d=>d.slice(5)),datasets:Object.entries(s.per_day).map(([g,v],i)=>({label:GROUP[g]||g,data:v,backgroundColor:cols[i]}))},options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true,ticks:{precision:0}}},plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}}});
  const r=Object.entries(s.routes).sort((a,b)=>b[1]-a[1]);
  chart('routes',{type:'bar',data:{labels:r.map(x=>label(x[0])),datasets:[{data:r.map(x=>x[1]),backgroundColor:r.map(x=>ALERT[x[0]]?cols[3]:cols[0])}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{precision:0}},y:{ticks:{autoSkip:false,font:{size:11}}}}}});
- chart('byUser',{type:'bar',data:{labels:users.map(u=>u.name.split(' ')[0]),datasets:[{label:'메시지',data:users.map(u=>u.messages||0),backgroundColor:cols[0]},{label:'알림',data:users.map(u=>u.alerts||0),backgroundColor:cols[3]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}},scales:{y:{ticks:{precision:0}}}}});
- chart('cost',{type:'line',data:{labels:s.days.map(d=>d.slice(5)),datasets:[{label:'하루 AI 비용 ($)',data:s.cost_per_day,borderColor:cols[1],tension:.3}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}},plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}}});
- $('users').innerHTML=`<tr><th>이름</th><th>나이</th><th>질환</th><th>메시지</th><th>알림</th><th>마지막</th></tr>`+users.map(u=>`<tr class="pick ${u.id===current?'sel':''}" data-id="${u.id}" tabindex="0" role="button" aria-label="${esc(u.name)} 자세히 보기"><td>${esc(u.name)}</td><td>${u.age}</td><td>${esc(u.conditions_ko.filter(c=>c!=='제2형 당뇨병').join(', ')||'—')}</td><td>${u.messages||0}</td><td>${u.open_alerts?`<span class="open">${u.open_alerts}건 처리 전</span>`:(u.alerts||0)}</td><td class="muted">${when(u.last_ts)}</td></tr>`).join('');
+ chart('byUser',{type:'bar',data:{labels:users.map(u=>u.name.split(' ')[0]),datasets:[{label:K('메시지','Messages'),data:users.map(u=>s.by_user[u.id]||0),backgroundColor:cols[0]},{label:K('알림','Alerts'),data:users.map(u=>s.alerts_by_user[u.id]||0),backgroundColor:cols[3]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}},scales:{y:{ticks:{precision:0}}}}});
+ chart('cost',{type:'line',data:{labels:s.days.map(d=>d.slice(5)),datasets:[{label:K('하루 AI 비용 ($)','AI cost per day ($)'),data:s.cost_per_day,borderColor:cols[1],tension:.3}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}},plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}}});
+ const cond=u=>(LANG==='en'?u.conditions_en.filter(c=>c!=='type 2 diabetes').map(cap):u.conditions_ko.filter(c=>c!=='제2형 당뇨병')).join(', ')||'—';
+ $('users').innerHTML=`<tr><th>${K('이름','Name')}</th><th>${K('나이','Age')}</th><th>${K('질환','Conditions')}</th><th>${K('메시지(전체)','Messages (all)')}</th><th>${K('알림','Alerts')}</th><th>${K('마지막','Last')}</th></tr>`+users.map(u=>`<tr class="pick ${u.id===current?'sel':''}" data-id="${u.id}" tabindex="0" role="button" aria-label="${esc(u.name)} ${K('자세히 보기','details')}"><td>${esc(u.name)}</td><td>${u.age}</td><td>${esc(cond(u))}</td><td>${u.messages||0}</td><td>${u.open_alerts?`<span class="open">${K(`${u.open_alerts}건 처리 전`,`${u.open_alerts} open`)}</span>`:(u.alerts||0)}</td><td class="muted">${when(u.last_ts)}</td></tr>`).join('');
  document.querySelectorAll('#users tr.pick').forEach(tr=>{tr.onclick=()=>person(tr.dataset.id);tr.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();person(tr.dataset.id)}}});
  alerts()}
 async function alerts(){
  const a=await get('/api/admin/alerts?status='+$('af').value);
- $('alerts').innerHTML=`<tr><th>시각</th><th>종류</th><th>이용자</th><th>메시지</th><th>상태</th><th></th></tr>`+(a.length?a.map(x=>`<tr><td class="muted">${when(x.ts)}</td><td>${tag(x.alert)}</td><td><a href="#people" data-id="${x.user_id}" class="pl">${esc(NAMES[x.user_id]||x.user_id)}</a></td><td class="msg">${esc(x.message)}</td><td class="${x.alert_status}">${x.alert_status==='open'?'처리 전':'처리 완료'}</td><td>${x.alert_status==='open'?`<button class="btn secondary sm" data-ev="${x.id}">처리 완료로 표시</button>`:''}</td></tr>`).join(''):'<tr><td colspan="6" class="muted">알림이 없어요</td></tr>');
+ $('alerts').innerHTML=`<tr><th>${K('시각','Time')}</th><th>${K('종류','Type')}</th><th>${K('이용자','User')}</th><th>${K('메시지','Message')}</th><th>${K('상태','Status')}</th><th></th></tr>`+(a.length?a.map(x=>`<tr><td class="muted">${when(x.ts)}</td><td>${tag(x.alert)}</td><td><a href="#people" data-id="${x.user_id}" class="pl">${esc(NAMES[x.user_id]||x.user_id)}</a></td><td class="msg">${esc(evText(x,'message'))}</td><td class="${x.alert_status}">${x.alert_status==='open'?K('처리 전','Open'):K('처리 완료','Handled')}</td><td>${x.alert_status==='open'?`<button class="btn secondary sm" data-ev="${x.id}">${K('처리 완료로 표시','Mark handled')}</button>`:''}</td></tr>`).join(''):`<tr><td colspan="6" class="muted">${K('알림이 없어요','No alerts')}</td></tr>`);
  document.querySelectorAll('#alerts button').forEach(b=>b.onclick=async()=>{await api('/api/admin/alerts/'+b.dataset.ev,{status:'handled'},{signinUrl:'/admin/login'});load()});
  document.querySelectorAll('#alerts a.pl').forEach(a=>a.onclick=()=>setTimeout(()=>person(a.dataset.id),0))}
 async function person(id){
  current=id;document.querySelectorAll('#users tr.pick').forEach(tr=>tr.classList.toggle('sel',tr.dataset.id===id));
- const j=await get('/api/admin/users/'+id),p=j.profile;
+ const j=await get('/api/admin/users/'+id),p=j.profile,en=LANG==='en';
  const g=j.records.filter(r=>/blood sugar (\d+)/.test(r.text)).map(r=>({x:r.ts.slice(5,10),y:+r.text.match(/blood sugar (\d+)/)[1]})).reverse();
- $('person').innerHTML=`<h2>${esc(p.name)} · ${p.age}세 · ${esc(p.gender_ko)}</h2><div class="g11"><div><dl class="p"><dt>질환</dt><dd>${esc(p.conditions_ko.join(', '))}</dd><dt>복용 약</dt><dd>${p.medications.map(m=>`${esc(m.name)} <span class="muted">(${esc(m.kind)})</span>`).join('<br>')}</dd><dt>활동</dt><dd>${esc(p.ko.activity)}</dd><dt>거동</dt><dd>${esc(p.ko.mobility)}</dd><dt>식사</dt><dd>${esc(p.ko.diet)}</dd><dt>목표</dt><dd>${esc(p.ko.goal)}</dd></dl>
-  <h3 style="margin-top:var(--s4)">기록에서 가져온 혈당</h3><canvas id="glu"></canvas><h3 style="margin-top:var(--s4)">기록</h3><div class="scroll"><table>${j.records.map(r=>`<tr><td class="muted">${when(r.ts)}</td><td>${esc(r.text.replace('[demo] ',''))}</td></tr>`).join('')||'<tr><td class="muted">없음</td></tr>'}</table></div></div>
-  <div><h3>대화 (${j.events.length})</h3><div class="scroll" style="max-height:640px"><table>${j.events.map(e=>`<tr><td class="muted">${when(e.ts)}<br>${e.alert?tag(e.alert):esc(label(e.route))}${e.safety_rules?`<br>안전 규칙 ${esc(e.safety_rules)}`:''}</td><td><div class="msg q">${esc(e.message)}</div><details><summary class="muted">답변 · ${e.latency_s??'–'}초 · $${(e.cost||0).toFixed(4)}</summary><div class="msg">${esc(e.answer)}</div></details></td></tr>`).join('')}</table></div></div></div>`;
+ const meds=p.medications.map(m=>en?`${esc(cap(m.name_en))} <span class="muted">(${esc(m.kind_en)})</span>`:`${esc(m.name)} <span class="muted">(${esc(m.kind)})</span>`).join('<br>');
+ const f=k=>esc(en?(p[k]==='not given'?'—':p[k]):p.ko[k]);
+ $('person').innerHTML=`<h2>${esc(p.name)} · ${en?`${p.age} · ${cap(p.gender)}`:`${p.age}세 · ${esc(p.gender_ko)}`}</h2><div class="g11"><div><dl class="p"><dt>${K('질환','Conditions')}</dt><dd>${esc((en?p.conditions_en.map(cap):p.conditions_ko).join(', '))}</dd><dt>${K('복용 약','Medicines')}</dt><dd>${meds}</dd><dt>${K('활동','Activity')}</dt><dd>${f('activity')}</dd><dt>${K('거동','Mobility')}</dt><dd>${f('mobility')}</dd><dt>${K('식사','Diet')}</dt><dd>${f('diet')}</dd><dt>${K('목표','Goal')}</dt><dd>${f('goal')}</dd></dl>
+  <h3 style="margin-top:var(--s4)">${K('기록에서 가져온 혈당','Blood sugar from records')}</h3><canvas id="glu"></canvas><h3 style="margin-top:var(--s4)">${K('기록','Records')}</h3><div class="scroll"><table>${j.records.map(r=>`<tr><td class="muted">${when(r.ts)}</td><td>${esc(en?r.text.replace('[demo] ',''):(r.text_ko||r.text.replace('[demo] ','')))}</td></tr>`).join('')||`<tr><td class="muted">${K('없음','None')}</td></tr>`}</table></div></div>
+  <div><h3>${K('대화','Conversations')} (${j.events.length})</h3><div class="scroll" style="max-height:640px"><table>${j.events.map(e=>`<tr><td class="muted">${when(e.ts)}<br>${e.alert?tag(e.alert):esc(label(e.route))}${e.safety_rules?`<br>${K('안전 규칙','Safety rules')} ${esc(e.safety_rules)}`:''}</td><td><div class="msg q">${esc(evText(e,'message'))}</div><details><summary class="muted">${K('답변','Answer')} · ${e.latency_s??'–'}${K('초',' s')} · $${(e.cost||0).toFixed(4)}</summary><div class="msg">${esc(evText(e,'answer'))}</div></details></td></tr>`).join('')}</table></div></div></div>`;
  chart('glu',{type:'line',data:{labels:g.map(x=>x.x),datasets:[{label:'mg/dL',data:g.map(x=>x.y),borderColor:css('--chart-1'),tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
  $('person').scrollIntoView({behavior:'smooth'})}
-async function audit(){const a=await get('/api/admin/audit');$('auditT').innerHTML=`<tr><th>시각</th><th>의료진</th><th>행동</th><th>대상</th></tr>`+a.map(x=>`<tr><td class="muted">${when(x.ts)}</td><td>${esc(x.staff)}</td><td>${x.action==='sign in'?'로그인':x.action==="opened a person's data"?'이용자 정보 열람':x.action.startsWith('alert marked')?'알림 처리':esc(x.action)}</td><td>${esc(NAMES[x.target]||x.target)}</td></tr>`).join('')}
-$('af').onchange=alerts;
+async function audit(){const a=await get('/api/admin/audit');$('auditT').innerHTML=`<tr><th>${K('시각','Time')}</th><th>${K('의료진','Staff')}</th><th>${K('행동','Action')}</th><th>${K('대상','Target')}</th></tr>`+a.map(x=>`<tr><td class="muted">${when(x.ts)}</td><td>${esc(x.staff)}</td><td>${x.action==='sign in'?K('로그인','Signed in'):x.action==='sign in (demo)'?K('데모 로그인','Demo sign-in'):x.action==="opened a person's data"?K('이용자 정보 열람','Opened a person\'s data'):x.action.startsWith('alert marked')?K('알림 처리','Alert handled'):esc(x.action)}</td><td>${esc(NAMES[x.target]||x.target)}</td></tr>`).join('')}
+$('af').onchange=alerts;$('period').onchange=()=>{END=$('period').value;load()};
 $('out').onclick=async()=>{try{await api('/api/staff/logout',{})}catch(e){}location.replace('/admin/login')};
 get('/api/staff/me').then(m=>$('staffName').textContent=m.name).catch(()=>{});
-view();load();setInterval(()=>{load()},30000);
+mountLang($('lang'));translateDom();
+view();load();setInterval(()=>{if(document.visibilityState==='visible')load()},30000);
 </script></body></html>
