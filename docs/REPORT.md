@@ -4,7 +4,7 @@
 
 **GitHub:** [sihunwang-skala/health-coach-multi-agent](https://github.com/sihunwang-skala/health-coach-multi-agent)
 
-> **제2형 당뇨병 개인 맞춤 식단·신체활동 Agentic RAG Coach**, 고령 사용자 접근성과 안전을 고려한 근거 기반 Multi-Agent Health Service (Personalized Agentic RAG Diet & Activity Coach for Type 2 Diabetes) (AI 서비스 개발 Mini Project, 과제 2: 신규 주제 Agent)
+> **제2형 당뇨병 개인 맞춤 식단 및 신체활동 Agentic RAG Coach**, 고령 사용자 접근성과 안전을 고려한 근거 기반 Multi-Agent 서비스 (Personalized Agentic RAG Diet and Activity Coach for Type 2 Diabetes) (AI 서비스 개발 Mini Project, 과제 2: 신규 주제 Agent)
 > 이 서비스는 의사가 아니라 코칭 서비스입니다. 진단·처방이 필요한 요청에는 Safety Guard를 적용해 AI가 임의로 판단하지 않도록 하고, 약 변경은 의료진에게, 응급 증상은 119로 안내합니다. 예시 사용자 10명은 모두 가상 인물입니다.
 
 보고서 순서는 과제 안내의 발표 순서를 따릅니다: **1. 문제 → 2. 개선·추가 포인트 → 3. Before / After 수치 → 4. 한계와 Trade-off → 5. 추가 개선**.

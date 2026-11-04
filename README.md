@@ -1,10 +1,10 @@
 # health-coach-multi-agent
 
-**제2형 당뇨병 개인 맞춤 식단·신체활동 Agentic RAG Coach**
+**제2형 당뇨병 개인 맞춤 식단 및 신체활동 Agentic RAG Coach**
 
-고령 사용자 접근성과 안전을 고려한 근거 기반 Multi-Agent Health Service
+고령 사용자 접근성과 안전을 고려한 근거 기반 Multi-Agent 서비스
 
-*Personalized Agentic RAG Diet & Activity Coach for Type 2 Diabetes*
+*Personalized Agentic RAG Diet and Activity Coach for Type 2 Diabetes*
 
 AI 서비스 개발 Mini Project, 2026-10, SKALA 4기 광주 3반 G088 왕시훈
 
@@ -110,4 +110,3 @@ cp .env.example .env                                  # OPENAI_API_KEY 입력 (L
 - [IEA Lab 구성원 및 이전 참여자](https://infoaccesslab.web.illinois.edu/people/)
 - [Utilizing Generative AI in mHealth apps for Older Adults](https://infoaccesslab.web.illinois.edu/research-projects/)
 - 후속 연구: [Creating Opportunities: Co-designing an mHealth App with Older Adults](https://arxiv.org/abs/2512.14641)
-- 기술 참고: [MobileGPT](https://mobile-gpt.github.io/)와 [공식 코드](https://github.com/fclab-skku/MobileGPT)

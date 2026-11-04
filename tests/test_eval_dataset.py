@@ -89,6 +89,6 @@ def test_report_profile_table_matches_users_json():
 
 
 def test_titles_are_consistent():
-    title = "제2형 당뇨병 개인 맞춤 식단·신체활동 Agentic RAG Coach"
+    title = "제2형 당뇨병 개인 맞춤 식단 및 신체활동 Agentic RAG Coach"
     for f in ("README.md", "docs/REPORT.md", "docs/PRESENTATION_VIEW.md"):
         assert title in (ROOT / f).read_text(), f
