@@ -98,6 +98,10 @@ cp .env.example .env                                  # OPENAI_API_KEY 입력 (L
 |---|---|---|
 | ![mobile](docs/ui/screenshots/2026-11/chat_ko_mobile_390_history.png) | ![en](docs/ui/screenshots/2026-11/chat_en_desktop_1280_history.png) | ![fs](docs/ui/screenshots/2026-11/chat_ko_mobile_390_text_size_24.png) |
 
+| 의료진 콘솔: 이용자 목록 | 이용자 상세 (혈당 그래프, 기록, 대화 내역) |
+|---|---|
+| ![list](docs/ui/screenshots/2026-11/admin_people_list_ko_1280.png) | ![detail](docs/ui/screenshots/2026-11/admin_person_detail_ko_1280.png) |
+
 공개 화면 사진은 [docs/ui/screenshots/2026-11/](docs/ui/screenshots/2026-11/)에 있습니다(로그인, 의료진 콘솔 알림/이용자 탭, 한국어/영어, 모바일). 사진은 가상 사용자의 저장된 데모 기록을 보여 주며 실시간 답변이 아닙니다.
 
 **확장한 기능**

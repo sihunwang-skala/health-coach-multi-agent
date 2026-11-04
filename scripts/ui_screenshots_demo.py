@@ -35,6 +35,11 @@ def main():
             for v in ("alerts", "people"):
                 pg.goto(BASE + f"/admin#{v}"); pg.wait_for_timeout(900)
                 pg.screenshot(path=OUT / f"admin_{v}_{lang}_1280.png", full_page=True)
+            pg.goto(BASE + "/admin#people"); pg.wait_for_selector("#users tr.pick"); pg.wait_for_timeout(600)
+            pg.screenshot(path=OUT / f"admin_people_list_{lang}_1280.png")
+            pg.locator("#users tr.pick").nth(4).click(); pg.wait_for_timeout(1500)   # user detail: profile, blood sugar graph, records, history
+            pg.evaluate("document.getElementById('person').scrollIntoView();window.scrollBy(0,-110)"); pg.wait_for_timeout(500)
+            pg.screenshot(path=OUT / f"admin_person_detail_{lang}_1280.png")
         # chat: history with citations, evidence panel, mobile, big text
         for lang in ("ko", "en"):
             for name, w, h in (("desktop_1280", 1280, 860), ("mobile_390", 390, 844)):
