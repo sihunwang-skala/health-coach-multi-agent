@@ -1,112 +1,63 @@
 # 화면 모음
 
-가상 사용자의 저장된 데모 기록 화면입니다(실시간 답변 아님). `scripts/ui_screenshots_demo.py`로 다시 만들 수 있습니다.
+가상 사용자의 저장된 데모 기록 화면입니다(실시간 답변 아님). 설명은 [README](../../README.md#서비스-화면)에 있고, `scripts/ui_screenshots_readme.py`로 다시 만들 수 있습니다.
 
 ## 이용자 로그인
 
-**login_en_1280**
+| 한국어 | English |
+|:---:|:---:|
+| <img src="screenshots/readme/01_user_login_ko.png" width="470"> | <img src="screenshots/readme/01_user_login_en.png" width="470"> |
 
-<img src="screenshots/2026-11/login_en_1280.png" width="760">
+## 채팅 답변과 근거 칩
 
-**login_ko_1280**
+| 한국어 | English |
+|:---:|:---:|
+| <img src="screenshots/readme/02_chat_answer_ko.png" width="470"> | <img src="screenshots/readme/02_chat_answer_en.png" width="470"> |
 
-<img src="screenshots/2026-11/login_ko_1280.png" width="760">
+## 근거 패널
+
+| 한국어 | English |
+|:---:|:---:|
+| <img src="screenshots/readme/03_evidence_panel_ko.png" width="470"> | <img src="screenshots/readme/03_evidence_panel_en.png" width="470"> |
+
+## 응급 안내
+
+| 한국어 | English |
+|:---:|:---:|
+| <img src="screenshots/readme/04_emergency_ko.png" width="470"> | <img src="screenshots/readme/04_emergency_en.png" width="470"> |
 
 ## 의료진 로그인
 
-**admin_login_en_1280**
+| 한국어 | English |
+|:---:|:---:|
+| <img src="screenshots/readme/05_care_login_ko.png" width="470"> | <img src="screenshots/readme/05_care_login_en.png" width="470"> |
 
-<img src="screenshots/2026-11/admin_login_en_1280.png" width="760">
+## 의료진 콘솔 개요
 
-**admin_login_ko_1280**
+| 한국어 | English |
+|:---:|:---:|
+| <img src="screenshots/readme/06_care_overview_ko.png" width="470"> | <img src="screenshots/readme/06_care_overview_en.png" width="470"> |
 
-<img src="screenshots/2026-11/admin_login_ko_1280.png" width="760">
+## 의료진 콘솔 알림
 
-## 의료진 콘솔: 개요
+| 한국어 | English |
+|:---:|:---:|
+| <img src="screenshots/readme/07_care_alerts_ko.png" width="470"> | <img src="screenshots/readme/07_care_alerts_en.png" width="470"> |
 
-**admin_overview_en_1280**
+## 의료진 콘솔 이용자 목록
 
-<img src="screenshots/2026-11/admin_overview_en_1280.png" width="760">
+| 한국어 | English |
+|:---:|:---:|
+| <img src="screenshots/readme/08_care_users_ko.png" width="470"> | <img src="screenshots/readme/08_care_users_en.png" width="470"> |
 
-**admin_overview_ko_1280**
+## 의료진 콘솔 이용자 상세
 
-<img src="screenshots/2026-11/admin_overview_ko_1280.png" width="760">
+| 한국어 | English |
+|:---:|:---:|
+| <img src="screenshots/readme/09_care_user_detail_ko.png" width="470"> | <img src="screenshots/readme/09_care_user_detail_en.png" width="470"> |
 
-## 의료진 콘솔: 알림
+## 모바일
 
-**admin_alerts_en_1280**
-
-<img src="screenshots/2026-11/admin_alerts_en_1280.png" width="760">
-
-**admin_alerts_ko_1280**
-
-<img src="screenshots/2026-11/admin_alerts_ko_1280.png" width="760">
-
-## 의료진 콘솔: 이용자 목록
-
-**admin_people_list_en_1280**
-
-<img src="screenshots/2026-11/admin_people_list_en_1280.png" width="760">
-
-**admin_people_list_ko_1280**
-
-<img src="screenshots/2026-11/admin_people_list_ko_1280.png" width="760">
-
-## 의료진 콘솔: 이용자 상세 (혈당 그래프, 기록, 대화 내역)
-
-**admin_person_detail_en_1280**
-
-<img src="screenshots/2026-11/admin_person_detail_en_1280.png" width="760">
-
-**admin_person_detail_ko_1280**
-
-<img src="screenshots/2026-11/admin_person_detail_ko_1280.png" width="760">
-
-## 의료진 콘솔: 이용자 탭 전체
-
-**admin_people_en_1280**
-
-<img src="screenshots/2026-11/admin_people_en_1280.png" width="760">
-
-**admin_people_ko_1280**
-
-<img src="screenshots/2026-11/admin_people_ko_1280.png" width="760">
-
-## 채팅 기록
-
-**chat_en_desktop_1280_evidence**
-
-<img src="screenshots/2026-11/chat_en_desktop_1280_evidence.png" width="760">
-
-**chat_en_desktop_1280_history**
-
-<img src="screenshots/2026-11/chat_en_desktop_1280_history.png" width="760">
-
-**chat_en_mobile_390_evidence**
-
-<img src="screenshots/2026-11/chat_en_mobile_390_evidence.png" width="760">
-
-**chat_en_mobile_390_history**
-
-<img src="screenshots/2026-11/chat_en_mobile_390_history.png" width="760">
-
-**chat_ko_desktop_1280_evidence**
-
-<img src="screenshots/2026-11/chat_ko_desktop_1280_evidence.png" width="760">
-
-**chat_ko_desktop_1280_history**
-
-<img src="screenshots/2026-11/chat_ko_desktop_1280_history.png" width="760">
-
-**chat_ko_mobile_390_evidence**
-
-<img src="screenshots/2026-11/chat_ko_mobile_390_evidence.png" width="760">
-
-**chat_ko_mobile_390_history**
-
-<img src="screenshots/2026-11/chat_ko_mobile_390_history.png" width="760">
-
-**chat_ko_mobile_390_text_size_24**
-
-<img src="screenshots/2026-11/chat_ko_mobile_390_text_size_24.png" width="760">
-
+| 채팅 | 근거 패널 | 큰 글자 | 영어 |
+|:---:|:---:|:---:|:---:|
+| <img src="screenshots/readme/11_mobile_chat.png" width="200"> | <img src="screenshots/readme/12_mobile_evidence.png" width="200"> | <img src="screenshots/readme/13_mobile_large_text.png" width="200"> | <img src="screenshots/readme/14_mobile_english.png" width="200"> |

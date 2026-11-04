@@ -21,31 +21,64 @@
 
 ## 서비스 화면
 
-실제 서비스처럼 로그인이 있는 이용자 앱과 별도 로그인이 필요한 의료진 콘솔로 구성했습니다. 아래 화면은 가상 사용자의 저장된 데모 기록이며 실시간 답변이 아닙니다.
+실제 서비스처럼 로그인이 있는 **이용자 앱**과, 별도 로그인이 필요한 **의료진 콘솔**로 구성했습니다. 아래는 가상 사용자 Robert Brown(58세, 제2형 당뇨병과 고혈압, 메트포르민과 암로디핀 복용) 등의 저장된 데모 기록 화면이며 실시간 답변이 아닙니다. 모든 화면 사진은 한국어와 영어 두 가지가 [화면 모음](docs/ui/SCREENSHOTS.md)에 있습니다.
 
-### 이용자 채팅과 근거 확인
+### 이용자 앱
 
-답변 속 번호를 누르면 인용 문장과 논문 원문을 같은 화면에서 확인할 수 있습니다.
+#### 1. 로그인
+<p align="center"><img src="docs/ui/screenshots/readme/01_user_login_ko.png" alt="이용자 로그인 화면" width="760"></p>
 
-<p align="center">
-  <img src="docs/ui/screenshots/2026-11/chat_ko_desktop_1280_evidence.png" alt="답변과 논문 근거를 함께 보여 주는 이용자 채팅 화면" width="960">
-</p>
+아이디와 비밀번호로 로그인하거나 가입합니다. 아래 카드의 가상 사용자 10명 중 한 명을 누르면 가입 없이 바로 체험할 수 있습니다(데모 모드, 실제 서비스에서는 `COACH_DEMO=0`으로 끕니다). 오른쪽 위에서 한국어와 영어를 바꿉니다.
 
-### 데스크톱 진입 및 의료진 콘솔
+#### 2. 채팅 답변과 근거 칩
+<p align="center"><img src="docs/ui/screenshots/readme/02_chat_answer_ko.png" alt="채팅 답변과 근거 칩" width="960"></p>
 
-| 이용자 로그인 | 의료진 콘솔 |
-|:---:|:---:|
-| <img src="docs/ui/screenshots/2026-11/login_ko_1280.png" alt="이용자 로그인 화면" width="480"> | <img src="docs/ui/screenshots/2026-11/admin_overview_ko_1280.png" alt="의료진 콘솔 개요 화면" width="480"> |
+왼쪽에는 로그인한 사람의 건강 요약(나이, 질환, 복용 약, 최근 혈당)과 내 기록이 보입니다. 질문 "2형 당뇨는 저녁 먹고 잠깐 걸으면 혈당에 좋아요?"에 대한 답변 문장 끝의 파란 번호와 답변 아래 "근거" 칩이 이 문장을 뒷받침하는 논문입니다. 논문 제목은 원문 그대로 영어로 보여 줍니다.
 
-의료진 콘솔에서는 2주 단위 사용량과 알림, 이용자별 상태를 확인할 수 있습니다.
+#### 3. 근거 패널: 인용 문장과 논문 원문
+<p align="center"><img src="docs/ui/screenshots/readme/03_evidence_panel_ko.png" alt="근거 패널" width="960"></p>
 
-### 모바일 및 접근성
+번호를 누르면 오른쪽에 패널이 열립니다. 맨 위는 논문 제목, 문서 번호(PMC6190726), 논문 속 위치(Abstract)입니다. **파란 선이 있는 칸**은 이 논문을 인용한 답변 문장이고, 그 아래 **노란색으로 강조한 부분**은 AI가 근거로 삼은 논문 원문 문장입니다(식사 후 20분 트레드밀 걷기가 식후 2시간 혈당 상승을 줄였다는 내용). 답변이 논문에서 온 것인지 사용자가 직접 확인할 수 있습니다.
 
-| 한국어 모바일 | 큰 글자 24px | 영어 모바일 |
-|:---:|:---:|:---:|
-| <img src="docs/ui/screenshots/2026-11/chat_ko_mobile_390_history.png" alt="한국어 모바일 채팅 화면" width="240"> | <img src="docs/ui/screenshots/2026-11/chat_ko_mobile_390_text_size_24.png" alt="24px 큰 글자 모바일 화면" width="240"> | <img src="docs/ui/screenshots/2026-11/chat_en_mobile_390_history.png" alt="영어 모바일 채팅 화면" width="240"> |
+#### 4. 응급 증상
+<p align="center"><img src="docs/ui/screenshots/readme/04_emergency_ko.png" alt="응급 안내 화면" width="960"></p>
 
-의료진 콘솔의 이용자 상세 화면과 혈당 그래프, 기록, 대화 내역은 [전체 화면 모음](docs/ui/SCREENSHOTS.md)에서 확인할 수 있습니다. 디자인 규칙은 [DESIGN.md](docs/ui/DESIGN.md), 계정과 보안은 [ACCOUNTS.md](docs/ACCOUNTS.md)에 정리했습니다.
+"지금 역기 들다가 가슴이 아파요"처럼 응급 증상이 감지되면 AI에게 묻기 전에 코드 규칙이 먼저 붉은 안내와 **119에 전화하기** 버튼을 보여 줍니다. 이 요청은 의료진 콘솔의 알림에도 올라갑니다.
+
+### 의료진 콘솔 (별도 로그인)
+
+#### 5. 의료진 로그인
+<p align="center"><img src="docs/ui/screenshots/readme/05_care_login_ko.png" alt="의료진 로그인 화면" width="760"></p>
+
+이용자 로그인과 분리된 화면입니다. 의료진 계정은 관리자가 따로 만들고, 로그인은 브라우저를 닫으면 끝나며 30분 동안 쓰지 않으면 자동으로 로그아웃됩니다. 데모 입장 버튼은 데모 모드에서만 나타납니다.
+
+#### 6. 개요: 사용량, 비용, 안전
+<p align="center"><img src="docs/ui/screenshots/readme/06_care_overview_ko.png" alt="의료진 콘솔 개요" width="960"></p>
+
+위에서 2주 단위 기간을 고르면(기본은 메시지가 가장 많았던 2026.10.09부터 10.22) 카드 6개와 그래프 4개로 서비스 상태를 봅니다. 카드는 총 메시지 160건, 활성 이용자 10명 중 10명, 미처리 알림 7건, 건강 답변 평균 18.3초, 안전 점검으로 고친 답변 5건과 삭제한 문장 0건, AI 사용 비용 $0.364입니다. 그래프는 일별 메시지 수(유형별 색), 요청 유형별 건수(응급, 약 변경, 상담은 붉은색), 이용자별 메시지와 알림, 일별 AI 비용입니다.
+
+#### 7. 알림
+<p align="center"><img src="docs/ui/screenshots/readme/07_care_alerts_ko.png" alt="의료진 콘솔 알림" width="960"></p>
+
+응급, 상담 요청, 약 변경 문의, 타인 정보 요청이 한 목록에 모입니다. 일시, 유형, 이용자, 사용자가 보낸 원문, 처리 상태가 보이고 **처리 완료로 변경** 버튼으로 확인한 알림을 닫습니다. 이용자 이름을 누르면 상세 화면으로 이동합니다. 사용자 원문은 번역하지 않고 입력한 그대로 보여 줍니다.
+
+#### 8. 이용자 목록
+<p align="center"><img src="docs/ui/screenshots/readme/08_care_users_ko.png" alt="의료진 콘솔 이용자 목록" width="960"></p>
+
+이름, 나이, 질환, 누적 메시지, 미처리 알림 수, 최근 이용 시각을 한눈에 보고, 행을 누르면 그 사람의 상세로 들어갑니다. 미처리 알림이 있는 사람은 붉은색으로 표시됩니다.
+
+#### 9. 이용자 상세: 혈당 그래프, 기록, 대화 내역
+<p align="center"><img src="docs/ui/screenshots/readme/09_care_user_detail_ko.png" alt="의료진 콘솔 이용자 상세" width="960"></p>
+
+Linda Park(83세)의 프로필(질환, 복용 약과 저혈당 주의 표시, 평소 활동, 거동 상태, 식습관, 목표), 10월 10일부터 20일까지의 **혈당 기록 그래프**(114부터 162 mg/dL), 저장된 기록, 오른쪽의 **대화 내역**이 보입니다. 대화 내역에는 질문 유형, 약 변경 문의 표시, 적용된 안전 규칙(D3, R2, R8 등), 답변 시간과 비용이 있어 안전 규칙이 실제로 작동했는지 확인할 수 있습니다.
+
+### 모바일과 접근성
+
+| 모바일 채팅 | 근거 패널(아래에서 올라옴) | 큰 글자 24px | 영어 화면 |
+|:---:|:---:|:---:|:---:|
+| <img src="docs/ui/screenshots/readme/11_mobile_chat.png" alt="모바일 채팅" width="220"> | <img src="docs/ui/screenshots/readme/12_mobile_evidence.png" alt="모바일 근거 패널" width="220"> | <img src="docs/ui/screenshots/readme/13_mobile_large_text.png" alt="큰 글자" width="220"> | <img src="docs/ui/screenshots/readme/14_mobile_english.png" alt="영어 모바일" width="220"> |
+
+휴대폰에서는 근거 패널이 화면 아래에서 올라오는 시트로 바뀝니다. 글자 크기는 설정에서 12px부터 26px까지 고를 수 있고(그림은 24px), 한국어와 영어는 어느 화면에서나 바꿀 수 있습니다. 디자인 규칙은 [DESIGN.md](docs/ui/DESIGN.md), 계정과 보안은 [ACCOUNTS.md](docs/ACCOUNTS.md)에 있습니다.
 
 ## 평가 결과
 
