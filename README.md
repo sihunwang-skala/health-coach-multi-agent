@@ -7,7 +7,7 @@
 
 | 대상 | 핵심 기술 | 평가 범위 |
 |---|---|---|
-| 제2형 당뇨병이 있는 고령 이용자 | Personalized Agentic RAG, Multi-Agent, deterministic safety rules | 가상 프로필 10명(실제 환자 아님), 메시지 100개 |
+| 제2형 당뇨병이 있는 고령 이용자 | Personalized Agentic RAG, Multi-Agent, Deterministic Safety Rules | 가상 환자 10명, 메시지 100개 |
 
 > 이 서비스는 진단이나 처방을 하지 않는 건강 코칭 서비스입니다. 진단과 처방이 필요한 요청은 Safety Guard로 AI의 임의 판단을 막고, 약 변경은 의료진에게, 응급 증상은 119로 안내합니다.
 
