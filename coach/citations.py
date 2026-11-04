@@ -4,17 +4,29 @@ The writer ends sentences with paper markers such as [PMC6190726]. This module t
 and, for each one, the passage the picker chose from that paper plus the sentences inside it that support the answer (the
 sentences that share the most words with the verified notes). It only re-shapes what the graph already produced: no LLM.
 
+A citation without a retrieved chunk (`kind` = "safety_rule") comes from the safety-rule table in coach/safety/rules.py, which restates a recommendation
+of that paper: its `notes` hold the rule text and there is no excerpt to show.
+
 There is no position inside the paper (no HTML anchor, offset or PDF page) in our index, so `location` is always None and the
 UI shows the link and the excerpt only.
 """
 from __future__ import annotations
 
+import json
 import re
+from functools import lru_cache
+from pathlib import Path
 
 from coach.agents.common import stems
 
 MARK = re.compile(r"\s*\[(PMC\d+)\]")
 SENT = re.compile(r"(?<=[.!?])\s+")
+
+
+@lru_cache(maxsize=1)
+def _paper_titles() -> dict:
+    f = Path(__file__).resolve().parents[1] / "data" / "corpus_meta.json"
+    return {k: v.get("title", "") for k, v in json.loads(f.read_text()).items()} if f.exists() else {}
 
 
 def _support(passage: str, notes: list[str]) -> list[str]:
@@ -50,11 +62,11 @@ def build(answer: str, evidence: dict, titles: dict | None = None) -> dict:
                 for h in (ev.get("results") or {}).get(pk["query"], []):
                     if h["pid"] in pk["best"] and h["pmcid"] == p and chunk is None:
                         chunk = h
-        titles.setdefault(p, (chunk or {}).get("title", ""))
+        titles.setdefault(p, (chunk or {}).get("title") or _paper_titles().get(p, ""))
         citations.append({
             "citation_id": num[p], "document_id": p, "title": titles.get(p, ""), "authors_year": None,
             "url": f"https://pmc.ncbi.nlm.nih.gov/articles/{p}/",
-            "chunk_id": chunk["pid"] if chunk else None, "section": (chunk or {}).get("section"),
+            "kind": "paper_chunk" if chunk else "safety_rule", "chunk_id": chunk["pid"] if chunk else None, "section": (chunk or {}).get("section"),
             "source_text": (chunk or {}).get("text"), "support_sentences": _support((chunk or {}).get("text", ""), notes),
             "notes": notes, "translated_text": None, "document_version": "PMC open-access full text (scripts/fetch_papers.py)",
             "location": None})

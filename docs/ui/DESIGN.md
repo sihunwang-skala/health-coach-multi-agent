@@ -46,6 +46,14 @@ Rules: emergency is the only red surface; every control has a visible 3 px focus
 - Errors say what to do and repeat the 119 hint: “죄송해요, 답변을 만들다가 문제가 생겼어요. 급한 증상이 있으면 기다리지 말고 119에 전화하세요.”
 - Not changed: the answer text itself comes from the translation step (`coach/i18n.py`, 존댓말); its tone was not re-tuned because it cannot be tested while the OpenAI key is invalid.
 
+## 5b. Korean / English
+Switch at the top right of the sign-in pages and the chat (한국어 | EN); one preference (`coach_lang`) shared by the pages, switching reloads the page.
+Korean is the source text in the HTML; `web/i18n.js` holds the English text (`tests/test_i18n.py` fails if a Korean string has no English entry).
+In English mode the chat asks the server for `lang=en`: the safety-checked English answer is shown as is (no translation call).
+Demo-history rows carry both versions (`meta.ko` / `meta.en`); the Korean text of the 198 demo messages and answers was written by Claude (sub-agents) and checked by
+script for identical citation markers and numbers (`data/demo_translations_ko.json`, applied by `scripts/backfill_demo_citations.py`).
+Live Korean answers still need the service model (OpenAI key) for the translation step. The care-team console is Korean only.
+
 ## 6. Checked / not checked
 Checked (real Chrome via Playwright, throw-away database): axe-core WCAG 2 A/AA scan on login, chat (empty, evidence panel at 390 / 768 / 1280 px) and the care-team
 screens = **0 violations**, no horizontal scroll; keyboard sign-in; emergency message end-to-end (code path, no LLM); screenshots in `docs/ui/screenshots/`

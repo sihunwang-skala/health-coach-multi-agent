@@ -23,6 +23,7 @@ form{display:flex;flex-direction:column;gap:var(--s4)}
 .people button:hover{background:var(--surface-2)}.people small{color:var(--ink-2);font-size:.78rem;line-height:1.3}
 </style></head><body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 5h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2h-7l-5 4v-4H5a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/></symbol></svg>
+<div class="lang lang-corner" id="lang" role="group"></div>
 <main class="wrap">
  <header class="brand"><div class="mark" aria-hidden="true"><svg class="icon"><use href="#i-leaf"/></svg></div>
   <h1 style="font-size:var(--fs-2xl)">식단·운동 코치</h1><p class="muted">내 몸 상태에 맞춰 식사와 운동을 같이 살펴봐요.</p></header>
@@ -71,15 +72,16 @@ form{display:flex;flex-direction:column;gap:var(--s4)}
   </form>
  </section>
  <section class="card demo" id="demo" hidden aria-labelledby="demoH"><h2 id="demoH">가상 사용자로 체험하기</h2>
-  <p class="small muted">비밀번호 없이 바로 들어가요. 모두 가상의 인물이에요.</p><div class="people" id="people"></div></section>
+  <p class="small muted">비밀번호 없이 바로 들어가요. 모두 가상의 인물이에요.</p><div class="people" id="people"></div>
+  <a class="small" href="/admin/login">의료진 화면으로 가기 →</a></section>
  <p class="foot small muted">건강 정보는 이 서비스의 서버에만 저장돼요.</p>
 </main>
-<script src="/ds.js"></script>
+<script src="/ds.js"></script><script src="/i18n.js"></script>
 <script>
 applyTextSize();
-const COND=[['hypertension','고혈압'],['kidney','만성 신장병'],['retinopathy','당뇨병성 망막병증'],['neuropathy','발 저림(신경병증)'],['heart','심장 질환'],['muscle','근육량 부족']];
-const MED=[['metformin','메트포르민'],['glimepiride','글리메피리드'],['gliclazide','글리클라지드'],['glargine','지속형 인슐린(글라진)'],['aspart','식사 인슐린(아스파트)'],['premixed','혼합형 인슐린'],['amlodipine','암로디핀(혈압약)'],['lisinopril','리시노프릴(혈압약)']];
-const chipBox=(id,list)=>{$(id).innerHTML=list.map(([k,l])=>`<button type="button" class="chip" data-v="${k}" aria-pressed="false">${l}</button>`).join('')};
+const COND=[['hypertension','고혈압','High blood pressure'],['kidney','만성 신장병','Chronic kidney disease'],['retinopathy','당뇨병성 망막병증','Diabetic retinopathy'],['neuropathy','발 저림(신경병증)','Numb feet (neuropathy)'],['heart','심장 질환','Heart disease'],['muscle','근육량 부족','Low muscle mass']];
+const MED=[['metformin','메트포르민','Metformin'],['glimepiride','글리메피리드','Glimepiride'],['gliclazide','글리클라지드','Gliclazide'],['glargine','지속형 인슐린(글라진)','Long-acting insulin (glargine)'],['aspart','식사 인슐린(아스파트)','Mealtime insulin (aspart)'],['premixed','혼합형 인슐린','Premixed insulin'],['amlodipine','암로디핀(혈압약)','Amlodipine (blood pressure)'],['lisinopril','리시노프릴(혈압약)','Lisinopril (blood pressure)']];
+const chipBox=(id,list)=>{$(id).innerHTML=list.map(([k,ko,en])=>`<button type="button" class="chip" data-v="${k}" aria-pressed="false">${K(ko,en)}</button>`).join('')};
 chipBox('conds',COND);chipBox('meds',MED);
 document.addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;const single=c.parentElement.id==='gender';
  if(single)c.parentElement.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));
@@ -91,16 +93,16 @@ $('formIn').onsubmit=async e=>{e.preventDefault();$('inErr').textContent='';$('i
  try{await api('/api/auth/login',{username:$('inUser').value,password:$('inPw').value});location.replace('/')}
  catch(x){$('inErr').textContent=x.message;$('inPw').value='';$('inBtn').disabled=false}};
 fetch('/api/demo/users').then(r=>r.ok?r.json():null).then(l=>{if(!l)return;$('demo').hidden=false;
- $('people').innerHTML=l.map(u=>`<button type="button" data-id="${u.id}"><b>${esc(u.name)} · ${u.age}세</b><small>${esc(u.line)}</small></button>`).join('');
+ $('people').innerHTML=l.map(u=>`<button type="button" data-id="${u.id}"><b>${esc(u.name)} · ${K(u.age+'세',u.age+' y')}</b><small>${esc(K(u.line,u.line_en))}</small></button>`).join('');
  $('people').onclick=async e=>{const b=e.target.closest('button');if(!b)return;b.disabled=true;try{await api('/api/demo/enter',{user_id:b.dataset.id});location.replace('/')}catch(x){toast(x.message);b.disabled=false}}}).catch(()=>{});
-let step=1;const NAMES=['계정 만들기','내 건강 정보','동의하고 시작하기'];
+let step=1;mountLang($('lang'));translateDom();const NAMES=K(['계정 만들기','내 건강 정보','동의하고 시작하기'],['Create account','Your health information','Agree and start']);
 function show(n){step=n;[1,2,3].forEach(i=>{const s=$('s'+i);s.hidden=i!==n;s.style.display=i===n?'flex':'none'});$('stepNo').textContent=n;$('stepName').textContent=NAMES[n-1];
- $('back').hidden=n===1;$('next').textContent=n===3?'가입하고 시작하기':'다음';$('upErr').textContent='';window.scrollTo(0,0)}
+ $('back').hidden=n===1;$('next').textContent=n===3?K('가입하고 시작하기','Sign up and start'):K('다음','Next');$('upErr').textContent='';window.scrollTo(0,0)}
 function check(n){
- if(n===1){if(!$('upName').value.trim())return'앱에서 부를 이름을 적어 주세요.';if(!/^[a-z0-9_]{4,20}$/.test($('upUser').value.trim().toLowerCase()))return'아이디는 영문 소문자, 숫자, 밑줄(_) 4~20자예요.';
-  const p=$('upPw').value;if(p.length<8||/^\d+$/.test(p)||/^[A-Za-z]+$/.test(p))return'비밀번호는 8자 이상, 문자와 숫자를 함께 넣어 주세요.'}
- if(n===2){const a=+$('upAge').value;if(!(a>=18&&a<=110))return'나이를 18~110 사이로 적어 주세요.';if(!picked('gender').length)return'성별을 골라 주세요.'}
- if(n===3&&!$('upConsent').checked)return'계속하려면 동의가 필요해요.';return''}
+ if(n===1){if(!$('upName').value.trim())return K('앱에서 부를 이름을 적어 주세요.','Please enter the name to show in the app.');if(!/^[a-z0-9_]{4,20}$/.test($('upUser').value.trim().toLowerCase()))return K('아이디는 영문 소문자, 숫자, 밑줄(_) 4~20자예요.','The username must be 4–20 characters: lowercase letters, numbers, underscore (_).');
+  const p=$('upPw').value;if(p.length<8||/^\d+$/.test(p)||/^[A-Za-z]+$/.test(p))return K('비밀번호는 8자 이상, 문자와 숫자를 함께 넣어 주세요.','The password needs at least 8 characters, with letters and numbers.')}
+ if(n===2){const a=+$('upAge').value;if(!(a>=18&&a<=110))return K('나이를 18~110 사이로 적어 주세요.','Please enter an age between 18 and 110.');if(!picked('gender').length)return K('성별을 골라 주세요.','Please select your sex.')}
+ if(n===3&&!$('upConsent').checked)return K('계속하려면 동의가 필요해요.','You need to agree to continue.');return''}
 $('back').onclick=()=>show(step-1);
 $('formUp').onsubmit=async e=>{e.preventDefault();const m=check(step);if(m){$('upErr').textContent=m;return}
  if(step<3)return show(step+1);

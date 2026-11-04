@@ -90,7 +90,7 @@ dl.meta{display:grid;grid-template-columns:max-content 1fr;gap:2px var(--s3);mar
  <section class="main">
   <header class="top"><button class="icon-btn menu" id="navOpen" type="button" aria-label="메뉴 열기" aria-controls="side"><svg class="icon"><use href="#i-menu"/></svg></button>
    <h1>코치</h1>
-   <button class="icon-btn" id="nurse" type="button" aria-label="의료진과 이야기하기" title="의료진과 이야기하기"><svg class="icon"><use href="#i-phone"/></svg></button>
+   <div class="lang" id="lang" role="group" aria-label="언어"></div><button class="icon-btn" id="nurse" type="button" aria-label="의료진과 이야기하기" title="의료진과 이야기하기"><svg class="icon"><use href="#i-phone"/></svg></button>
    <a class="pill119" href="tel:119">응급 119</a></header>
   <div id="banner" aria-live="assertive"></div>
   <div class="scroll" id="scroll"><div class="thread" id="thread" role="log" aria-label="대화"></div></div>
@@ -124,7 +124,7 @@ dl.meta{display:grid;grid-template-columns:max-content 1fr;gap:2px var(--s3);mar
    <p class="error" id="delErr" role="alert"></p><button class="btn danger-btn" type="submit">계정 삭제</button></form></details>
  <div class="row"><button class="btn" id="setClose" type="button">닫기</button></div></dialog>
 
-<script src="/ds.js"></script>
+<script src="/ds.js"></script><script src="/i18n.js"></script>
 <script>
 let FS=applyTextSize(),ME=null,busy=false,lastQ='',lastFocus=null,pendingT=null,hasMsgs=false;
 const thread=$('thread'),scroller=$('scroll'),msg=$('msg');
@@ -132,59 +132,75 @@ const STEP={guard:'응급 상황인지 살펴보고 있어요…',supervisor:'�
  'diet.make_queries_lite':'자료를 찾을 준비를 하고 있어요…','exercise.make_queries_lite':'자료를 찾을 준비를 하고 있어요…','diet.retrieve_mcp':'식단 논문을 찾고 있어요…','exercise.retrieve_mcp':'운동 논문을 찾고 있어요…',
  'diet.pick_notes':'논문을 읽고 있어요…','exercise.pick_notes':'논문을 읽고 있어요…','diet.verify_notes':'근거를 확인하고 있어요…','exercise.verify_notes':'근거를 확인하고 있어요…',
  safety_agent:'내 건강 정보에 맞는 안전 규칙을 확인하고 있어요…',writer:'답변을 쓰고 있어요…',validate:'위험한 조언이 없는지 검사하고 있어요…',retry:'더 안전하게 다시 쓰고 있어요…',records:'기록을 열어 보고 있어요…'};
+const STEP_EN={guard:'Checking whether this is an emergency…',supervisor:'Understanding your question…','diet.make_queries':'Preparing to search diet sources…','exercise.make_queries':'Preparing to search exercise sources…',
+ 'diet.make_queries_lite':'Preparing the search…','exercise.make_queries_lite':'Preparing the search…','diet.retrieve_mcp':'Searching diet papers…','exercise.retrieve_mcp':'Searching exercise papers…',
+ 'diet.pick_notes':'Reading the papers…','exercise.pick_notes':'Reading the papers…','diet.verify_notes':'Checking the evidence…','exercise.verify_notes':'Checking the evidence…',
+ safety_agent:'Checking safety rules for your health profile…',writer:'Writing the answer…',validate:'Checking for unsafe advice…',retry:'Rewriting more safely…',records:'Opening your records…'};
+const stepText=k=>LANG==='en'?STEP_EN[k]:STEP[k];
+const histMsg=h=>{const m=h.meta||{};return LANG==='ko'&&m.ko&&m.ko.message?m.ko.message:h.message};
+const histAns=h=>{const m=h.meta||{};return LANG==='ko'?((m.ko&&m.ko.answer)||h.answer):((m.en&&m.en.answer)||h.answer)};
+const cap=t=>t?t.charAt(0).toUpperCase()+t.slice(1):t;
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const ROUTE_HEALTH=['diet','exercise','diet_exercise'];
-const SUGG=['저녁 먹고 산책해도 괜찮을까요?','콜라 한 캔은 정말 안 좋은가요?','무거운 운동을 계속해도 되나요?','아침을 자주 거르는데 괜찮을까요?'];
+const SUGG=K(['저녁 먹고 산책해도 괜찮을까요?','콜라 한 캔은 정말 안 좋은가요?','무거운 운동을 계속해도 되나요?','아침을 자주 거르는데 괜찮을까요?'],['Is it okay to take a walk after dinner?','Is one can of soda really that bad?','Can I keep doing heavy workouts?','I often skip breakfast. Is that okay?']);
 const icon=n=>`<svg class="icon"><use href="#i-${n}"/></svg>`;
 /* ---------- data ---------- */
 async function load(){ME=await api('/api/auth/me',undefined,{signinUrl:'/login'});renderSide();renderThread()}
 function renderSide(){const p=ME.profile||{},n=ME.account.name;$('av').textContent=n.slice(0,1);$('meName').textContent=n;$('meUser').textContent='@'+ME.account.username;
  const g=(ME.records||[]).map(r=>r.text.match(/blood sugar (\d+)/i)||r.text.match(/혈당\D{0,4}(\d{2,3})/)).find(Boolean);
- const rows=[['나이·성별',`${p.age}세 · ${p.gender_ko||''}`],['질환',(p.conditions_ko||[]).join(', ')||'—'],['복용 약',(p.medications||[]).map(m=>m.name).filter(x=>x!=='none').join(', ')||'없음'],['최근 혈당 기록',g?g[1]+' mg/dL':'기록 없음'],['목표',(p.ko&&p.ko.goal)||'—']];
+ const en=LANG==='en',none=K('없음','None');
+ const rows=[[K('나이·성별','Age · sex'),en?`${p.age} · ${cap(p.gender)}`:`${p.age}세 · ${p.gender_ko||''}`],[K('질환','Conditions'),(en?(p.conditions_en||[]).map(cap):(p.conditions_ko||[])).join(', ')||'—'],
+  [K('복용 약','Medicines'),(p.medications||[]).map(m=>en?cap(m.name_en):m.name).filter(x=>x&&x!=='none'&&x!=='None').join(', ')||none],[K('최근 혈당 기록','Latest blood sugar'),g?g[1]+' mg/dL':K('기록 없음','No record')],
+  [K('목표','Goal'),(en?(p.goal==='not given'?'':cap(p.goal)):(p.ko&&p.ko.goal))||'—']];
  $('facts').innerHTML=rows.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('');
- $('recs').innerHTML=(ME.records||[]).slice(0,5).map(r=>`<div><span class="muted">${esc(r.ts.replace('T',' ').slice(5,16))}</span><br>${esc(r.text.replace('[demo] ',''))}</div>`).join('')||'<div class="muted">아직 기록이 없어요. 아래 대화창에 “오늘 30분 걸었어요”처럼 남겨 보세요.</div>'}
+ $('recs').innerHTML=(ME.records||[]).slice(0,5).map(r=>`<div><span class="muted">${esc(r.ts.replace('T',' ').slice(5,16))}</span><br>${esc(r.text.replace('[demo] ',''))}</div>`).join('')||`<div class="muted">${K('아직 기록이 없어요. 아래 대화창에 “오늘 30분 걸었어요”처럼 남겨 보세요.','No records yet. Type something like “I walked 30 minutes today” in the chat below.')}</div>`}
 /* ---------- thread ---------- */
-const dayLabel=ts=>{const d=new Date(ts),t=new Date(),y=new Date(t-864e5),same=(a,b)=>a.toDateString()===b.toDateString();return same(d,t)?'오늘':same(d,y)?'어제':`${d.getMonth()+1}월 ${d.getDate()}일`};
+const dayLabel=ts=>{const d=new Date(ts),t=new Date(),y=new Date(t-864e5),same=(a,b)=>a.toDateString()===b.toDateString();return same(d,t)?K('오늘','Today'):same(d,y)?K('어제','Yesterday'):K(`${d.getMonth()+1}월 ${d.getDate()}일`,`${MONTHS[d.getMonth()]} ${d.getDate()}`)};
 function scrollEnd(){requestAnimationFrame(()=>scroller.scrollTo({top:scroller.scrollHeight}))}
 function put(html,cls=''){const d=document.createElement('div');d.className=cls;d.innerHTML=html;thread.appendChild(d);scrollEnd();return d}
 function renderThread(){thread.innerHTML='';hasMsgs=false;let last='';
- put('<b>이 서비스는 의사가 아니라 건강 코칭 서비스예요.</b> 논문에서 찾은 일반 정보와 생활 습관만 알려 드려요. 답변을 보고 약을 시작하거나 끊거나 바꾸지 말고, 의사·간호사·약사와 먼저 상의하세요. <b>응급이면 119에 전화하세요.</b>','notice');
+ put(K('<b>이 서비스는 의사가 아니라 건강 코칭 서비스예요.</b> 논문에서 찾은 일반 정보와 생활 습관만 알려 드려요. 답변을 보고 약을 시작하거나 끊거나 바꾸지 말고, 의사·간호사·약사와 먼저 상의하세요. <b>응급이면 119에 전화하세요.</b>','<b>This is a health-coaching service, not a doctor.</b> It gives only general information from research papers and lifestyle tips. Do not start, stop or change a medicine because of an answer here; talk to your doctor, nurse or pharmacist first. <b>In an emergency, call 119.</b>'),'notice');
  (ME.history||[]).forEach(h=>{const day=dayLabel(h.ts);if(day!==last){put(esc(day),'date');last=day}
-  if(!h.message.startsWith('(approval)'))user(h.message);if((h.answer||'').trim())bot({answer:h.answer,route:h.route,citations:(h.meta&&h.meta.citations)||[]})});
+  if(!h.message.startsWith('(approval)'))user(histMsg(h));if((histAns(h)||'').trim())bot({answer:histAns(h),route:h.route,citations:(h.meta&&h.meta.citations)||[]})});
  if(!hasMsgs)hello();scrollEnd()}
-function hello(){const n=ME.account.name;const d=put(`<div class="hello"><span class="avatar">${icon('leaf')}</span><h2>안녕하세요, ${esc(n)}님</h2><p class="muted">식사와 운동, 궁금한 걸 편하게 물어보세요.</p></div>
+function hello(){const n=ME.account.name;const d=put(`<div class="hello"><span class="avatar">${icon('leaf')}</span><h2>${K(`안녕하세요, ${esc(n)}님`,`Hello, ${esc(n)}`)}</h2><p class="muted">${K('식사와 운동, 궁금한 걸 편하게 물어보세요.','Ask anything about meals and exercise.')}</p></div>
  <div class="sugg">${SUGG.map(s=>`<button type="button">${esc(s)}</button>`).join('')}</div>
- <div class="quick"><button class="chip" type="button" data-q="오늘 저녁 먹고 30분 걸었어요.">오늘 걸은 걸 기록하기</button><button class="chip" type="button" data-q="간호사와 이야기하고 싶어요.">의료진과 이야기하기</button></div>`,'empty');
+ <div class="quick"><button class="chip" type="button" data-q="${K('오늘 저녁 먹고 30분 걸었어요.','I walked 30 minutes after dinner today.')}">${K('오늘 걸은 걸 기록하기','Log today\'s walk')}</button><button class="chip" type="button" data-q="${K('간호사와 이야기하고 싶어요.','I want to talk to a nurse.')}">${K('의료진과 이야기하기','Talk to the care team')}</button></div>`,'empty');
  d.querySelectorAll('.sugg button').forEach(b=>b.onclick=()=>send(b.textContent));d.querySelectorAll('.quick .chip').forEach(b=>b.onclick=()=>send(b.dataset.q))}
 function dropHello(){const e=thread.querySelector('.empty');if(e)e.remove()}
 function user(text){dropHello();hasMsgs=true;put(`<div class="bubble">${esc(text)}</div>`,'row me')}
 function citeMap(c){const m={};(c||[]).forEach(x=>m[x.document_id]=x.citation_id);return m}
 function botHtml(j){const map=citeMap(j.citations),em=j.route==='emergency';
- const body=esc((j.answer||'').trim()).replace(/\s*\[(PMC\d+)\]/g,(m,id)=>map[id]?`<button type="button" class="cite" data-c="${map[id]}" aria-label="근거 ${map[id]} 보기">${map[id]}</button>`:'');
+ const body=esc((j.answer||'').trim()).replace(/\s*\[(PMC\d+)\]/g,(m,id)=>map[id]?`<button type="button" class="cite" data-c="${map[id]}" aria-label="${K('근거','Reference')} ${map[id]}">${map[id]}</button>`:'');
  const loose=[...new Set([...(j.answer||'').matchAll(/\[(PMC\d+)\]/g)].map(m=>m[1]).filter(id=>!map[id]))];
  const paras=body.split(/\n{2,}/).map(p=>`<p class="txt">${p}</p>`).join('');
- let h=em?`<div class="banner danger" role="alert"><b class="danger">응급일 수 있어요</b>${paras}</div><a class="btn danger-btn call" href="tel:119">${icon('phone')}119에 전화하기</a>`:paras;
- if(j.route==='handoff')h+=`<a class="btn call" href="tel:0000000000">${icon('phone')}의료진 상담 전화 (데모 번호)</a>`;
- if((j.citations||[]).length)h+=`<div class="srcs"><span class="small muted">근거</span>${j.citations.map(c=>`<button class="chip" type="button" data-c="${c.citation_id}">${c.citation_id} · ${esc((c.title||c.document_id).slice(0,28))}${(c.title||'').length>28?'…':''}</button>`).join('')}</div>`;
- if(loose.length)h+=`<div class="srcs"><span class="small muted">사용한 논문</span>${loose.map(id=>`<a class="chip" href="https://pmc.ncbi.nlm.nih.gov/articles/${esc(id)}/" target="_blank" rel="noopener">${esc(id)} ↗</a>`).join('')}</div>`;
- if(!/[가-힣]/.test(j.answer||'')&&(j.answer||'').length>40)h+=`<div class="note">영어 답변이에요. 저장된 데모 기록이거나 한국어 번역을 쓸 수 없을 때 이렇게 보여요.</div>`;
- if(j.safety_notes&&j.safety_notes.length)h+=`<div class="note">${icon('shield')}내 건강 정보에 맞춰 안전 규칙을 확인했어요.</div>`;
- if(ROUTE_HEALTH.includes(j.route))h+=`<div class="note">일반 건강 정보예요. 의료 조언을 대신하지 않아요.</div>`;
+ let h=em?`<div class="banner danger" role="alert"><b class="danger">${K('응급일 수 있어요','This may be an emergency')}</b>${paras}</div><a class="btn danger-btn call" href="tel:119">${icon('phone')}${K('119에 전화하기','Call 119')}</a>`:paras;
+ if(j.route==='handoff')h+=`<a class="btn call" href="tel:0000000000">${icon('phone')}${K('의료진 상담 전화 (데모 번호)','Call the care team (demo number)')}</a>`;
+ if((j.citations||[]).length)h+=`<div class="srcs"><span class="small muted">${K('근거','References')}</span>${j.citations.map(c=>`<button class="chip" type="button" data-c="${c.citation_id}">${c.citation_id} · ${esc((c.title||c.document_id).slice(0,28))}${(c.title||'').length>28?'…':''}${c.kind==='safety_rule'?' · '+K('안전 규칙','safety rule'):''}</button>`).join('')}</div>`;
+ if(loose.length)h+=`<div class="srcs"><span class="small muted">${K('사용한 논문','Papers used')}</span>${loose.map(id=>`<a class="chip" href="https://pmc.ncbi.nlm.nih.gov/articles/${esc(id)}/" target="_blank" rel="noopener">${esc(id)} ↗</a>`).join('')}</div>`;
+ if(LANG==='ko'&&!/[가-힣]/.test(j.answer||'')&&(j.answer||'').length>40)h+=`<div class="note">영어 답변이에요. 한국어 번역이 없는 기록이거나 번역을 쓸 수 없을 때 이렇게 보여요.</div>`;
+ if(LANG==='en'&&/[가-힣]/.test(j.answer||''))h+=`<div class="note">This answer is only available in Korean.</div>`;
+ if(j.safety_notes&&j.safety_notes.length)h+=`<div class="note">${icon('shield')}${K('내 건강 정보에 맞춰 안전 규칙을 확인했어요.','Safety rules were checked against your health profile.')}</div>`;
+ if(ROUTE_HEALTH.includes(j.route))h+=`<div class="note">${K('일반 건강 정보예요. 의료 조언을 대신하지 않아요.','General health information, not medical advice.')}</div>`;
  return h}
 function bot(j){dropHello();hasMsgs=true;const d=put(`<span class="avatar">${icon('leaf')}</span><div class="bot">${botHtml(j)}</div>`,'row');
  d.querySelectorAll('[data-c]').forEach(b=>b.onclick=()=>openCite(j,+b.dataset.c,b));if(j.route==='emergency')$('banner').innerHTML='';return d}
-function typing(){return put(`<span class="avatar">${icon('leaf')}</span><div class="bot"><div class="note" id="stepLabel" aria-live="polite">질문을 확인하고 있어요…</div><div class="dots" aria-hidden="true"><i></i><i></i><i></i></div><div class="note" id="waitNote" hidden>건강 답변은 보통 20초쯤 걸려요.</div></div>`,'row')}
+function typing(){return put(`<span class="avatar">${icon('leaf')}</span><div class="bot"><div class="note" id="stepLabel" aria-live="polite">${K('질문을 확인하고 있어요…','Reading your question…')}</div><div class="dots" aria-hidden="true"><i></i><i></i><i></i></div><div class="note" id="waitNote" hidden>${K('건강 답변은 보통 20초쯤 걸려요.','Health answers usually take about 20 seconds.')}</div></div>`,'row')}
 /* ---------- evidence panel ---------- */
 function sentenceFor(j,c){const mk='['+c.document_id+']',m=(j.answer||'').split(/(?<=[.!?。다요])\s+/).find(x=>x.includes(mk));if(m)return m.replace(/\s*\[PMC\d+\]/g,'');
  const s=(j.statements||[]).find(x=>(x.citation_ids||[]).includes(c.citation_id));return s?s.text:''}
-function highlighted(c){const t=c.source_text||'';if(!t)return '<p class="small muted">이 논문의 발췌문을 찾지 못했어요. 링크에서 원문을 확인해 주세요.</p>';let h=esc(t);
- (c.support_sentences||[]).forEach(s=>{const e=esc(s);h=h.replace(e,`<mark>${e}</mark>`)});return `<div class="chunk" lang="en">${h}</div><p class="small muted" style="margin-top:var(--s1)">옅은 배경은 AI가 읽은 부분, 진한 표시는 답변을 직접 뒷받침하는 문장이에요.</p>`}
+function highlighted(c){const t=c.source_text||'';if(!t)return `<p class="small muted">${K('이 논문의 발췌문을 찾지 못했어요. 링크에서 원문을 확인해 주세요.','No excerpt was found for this paper. Open the link to read the original.')}</p>`;let h=esc(t);
+ (c.support_sentences||[]).forEach(s=>{const e=esc(s);h=h.replace(e,`<mark>${e}</mark>`)});return `<div class="chunk" lang="en">${h}</div><p class="small muted" style="margin-top:var(--s1)">${K('옅은 배경은 AI가 읽은 부분, 진한 표시는 답변을 직접 뒷받침하는 문장이에요.','Light background: the part the AI read. Strong highlight: the sentence that directly supports the answer.')}</p>`}
 function openCite(j,id,from){const c=(j.citations||[]).find(x=>x.citation_id===id);if(!c)return;lastFocus=from;$('ctitle').textContent=`${c.citation_id}. ${c.title||c.document_id}`;
  const s=sentenceFor(j,c);
- $('cbody').innerHTML=`<dl class="meta">${c.authors_year?`<dt>저자·연도</dt><dd>${esc(c.authors_year)}</dd>`:''}<dt>문서 번호</dt><dd>${esc(c.document_id)}</dd><dt>발췌 위치</dt><dd>${c.chunk_id??'–'}${c.section?' · '+esc(c.section):''}</dd></dl>
- ${s?`<div class="csec"><h3>이 근거가 받쳐 주는 답변</h3><div class="ko">${esc(s)}</div></div>`:''}
- <div class="csec"><h3>논문 원문 (영어)</h3>${highlighted(c)}<p class="small muted" style="margin-top:var(--s2)">원문 번역은 아직 제공하지 않아요.</p></div>
- ${(c.notes||[]).length?`<div class="csec"><h3>AI가 정리한 근거 메모 (영어)</h3>${c.notes.map(n=>`<p class="small muted" lang="en">• ${esc(n)}</p>`).join('')}</div>`:''}
- <div class="csec"><a href="${esc(c.url)}" target="_blank" rel="noopener">PMC에서 원문 열기 ↗</a>${c.location?'':`<p class="small muted">논문 안의 위치 정보가 없어서 발췌문과 링크만 보여 드려요.</p>`}</div>`;
+ const rule=c.kind==='safety_rule';
+ $('cbody').innerHTML=`<dl class="meta">${c.authors_year?`<dt>${K('저자·연도','Authors, year')}</dt><dd>${esc(c.authors_year)}</dd>`:''}<dt>${K('문서 번호','Document ID')}</dt><dd>${esc(c.document_id)}</dd>${rule?'':`<dt>${K('발췌 위치','Excerpt')}</dt><dd>${c.chunk_id??'–'}${c.section?' · '+esc(c.section):''}</dd>`}</dl>
+ ${s?`<div class="csec"><h3>${K('이 근거가 받쳐 주는 답변','The answer this supports')}</h3><div class="ko">${esc(s)}</div></div>`:''}
+ ${rule?`<div class="csec"><h3>${K('이 근거는 어디서 왔나요?','Where does this come from?')}</h3><p class="small">${K('검색해서 찾은 논문 발췌문이 아니라, 이 논문의 권고를 정리해 둔 서비스의 안전 규칙에서 왔어요. 내 질환이나 약에 해당하는 규칙이 있을 때 붙어요.','This is not a retrieved excerpt. It comes from the service\'s safety rules, which restate a recommendation of this paper. A rule is added when it matches your conditions or medicines.')}</p></div>
+ <div class="csec"><h3>${K('규칙 내용 (영어)','The rule (English)')}</h3>${(c.notes||[]).map(n=>`<p class="small" lang="en">${esc(n)}</p>`).join('')}</div>`
+ :`<div class="csec"><h3>${K('논문 원문 (영어)','Original text (English)')}</h3>${highlighted(c)}<p class="small muted" style="margin-top:var(--s2)">${K('원문 번역은 아직 제공하지 않아요.','No translation of the original is provided.')}</p></div>
+ ${(c.notes||[]).length?`<div class="csec"><h3>${K('AI가 정리한 근거 메모 (영어)','Evidence notes written by the AI')}</h3>${c.notes.map(n=>`<p class="small muted" lang="en">• ${esc(n)}</p>`).join('')}</div>`:''}`}
+ <div class="csec"><a href="${esc(c.url)}" target="_blank" rel="noopener">${K('PMC에서 원문 열기','Open the PMC article')} ↗</a>${c.location||rule?'':`<p class="small muted">${K('논문 안의 위치 정보가 없어서 발췌문과 링크만 보여 드려요.','There is no position inside the paper, so only the excerpt and the link are shown.')}</p>`}</div>`;
  history.pushState({p:1},'');document.body.classList.add('panel-open');$('cpanel').focus()}
 function closeCite(fromPop){if(!document.body.classList.contains('panel-open'))return;document.body.classList.remove('panel-open');if(!fromPop&&history.state&&history.state.p)history.back();if(lastFocus&&document.contains(lastFocus))lastFocus.focus()}
 $('cclose').onclick=closeCite;
@@ -202,33 +218,34 @@ $('form').onsubmit=e=>{e.preventDefault();send()};
 async function send(text){const m=(text||msg.value).trim();if(!m||busy)return;msg.value='';grow();lastQ=m;setBusy(true);user(m);const tp=typing();
  const wait=setTimeout(()=>{const w=$('waitNote');if(w)w.hidden=false},5000);
  const end=()=>{clearTimeout(wait);tp.remove();setBusy(false)};
- const fail=(why)=>{end();const d=put(`<span class="avatar">${icon('leaf')}</span><div class="bot"><p class="danger" role="alert">${why}</p><p class="small muted">급한 증상이 있으면 기다리지 말고 119에 전화하세요.</p></div>`,'row');
-  const b=document.createElement('button');b.type='button';b.className='btn secondary';b.textContent='다시 시도';b.onclick=()=>{d.remove();thread.lastElementChild&&thread.lastElementChild.classList.contains('me')&&thread.lastElementChild.remove();send(lastQ)};d.querySelector('.bot').appendChild(b)};
- try{const r=await fetch('/chat/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:m,lang:'ko'})});
+ const fail=(why)=>{end();const d=put(`<span class="avatar">${icon('leaf')}</span><div class="bot"><p class="danger" role="alert">${why}</p><p class="small muted">${K('급한 증상이 있으면 기다리지 말고 119에 전화하세요.','If you have urgent symptoms, do not wait: call 119.')}</p></div>`,'row');
+  const b=document.createElement('button');b.type='button';b.className='btn secondary';b.textContent=K('다시 시도','Try again');b.onclick=()=>{d.remove();thread.lastElementChild&&thread.lastElementChild.classList.contains('me')&&thread.lastElementChild.remove();send(lastQ)};d.querySelector('.bot').appendChild(b)};
+ try{const r=await fetch('/chat/stream',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:m,lang:LANG})});
   if(r.status===401){location.replace('/login');return}
-  if(!r.ok||!r.body)return fail('답변을 가져오지 못했어요. 잠시 뒤에 다시 해 주세요.');
+  if(!r.ok||!r.body)return fail(K('답변을 가져오지 못했어요. 잠시 뒤에 다시 해 주세요.','Could not get an answer. Please try again in a moment.'));
   const rd=r.body.getReader(),dec=new TextDecoder();let buf='',done=false;
   while(true){const {value,done:fin}=await rd.read();if(fin)break;buf+=dec.decode(value,{stream:true});
    let i;while((i=buf.indexOf('\n\n'))>=0){const chunk=buf.slice(0,i);buf=buf.slice(i+2);if(!chunk.startsWith('data: '))continue;const j=JSON.parse(chunk.slice(6));
-    if(j.event==='error')return fail('죄송해요, 답변을 만들다가 문제가 생겼어요.');
-    if(!j.done){const l=STEP[j.step];const s=$('stepLabel');if(l&&s)s.textContent=l;continue}
+    if(j.event==='error')return fail(K('죄송해요, 답변을 만들다가 문제가 생겼어요.','Sorry, something went wrong while writing the answer.'));
+    if(!j.done){const l=stepText(j.step);const s=$('stepLabel');if(l&&s)s.textContent=l;continue}
     done=true;end();showDone(j)}}
-  if(!done)fail('연결이 끊겼어요. 다시 시도해 주세요.')}
- catch(x){fail(navigator.onLine?'죄송해요, 문제가 생겼어요.':'인터넷 연결을 확인해 주세요.')}}
+  if(!done)fail(K('연결이 끊겼어요. 다시 시도해 주세요.','The connection was lost. Please try again.'))}
+ catch(x){fail(navigator.onLine?K('죄송해요, 문제가 생겼어요.','Sorry, something went wrong.'):K('인터넷 연결을 확인해 주세요.','Please check your internet connection.'))}}
 function showDone(j){const em=j.route==='emergency';bot(j);
- $('banner').innerHTML=em?`<div class="banner danger" role="alert"><b class="danger">응급일 수 있어요.</b> 지금 바로 119에 전화하세요. 혼자 계시면 보호자에게도 알려 주세요. <a class="btn danger-btn" style="margin-top:var(--s2)" href="tel:119">119에 전화하기</a></div>`:'';
+ $('banner').innerHTML=em?`<div class="banner danger" role="alert"><b class="danger">${K('응급일 수 있어요.','This may be an emergency.')}</b> ${K('지금 바로 119에 전화하세요. 혼자 계시면 보호자에게도 알려 주세요.','Call 119 now. If you are alone, tell your guardian too.')} <a class="btn danger-btn" style="margin-top:var(--s2)" href="tel:119">${K('119에 전화하기','Call 119')}</a></div>`:'';
  if(j.interrupt){pendingT=j.thread_id;$('adtext').textContent=j.interrupt.question||'';$('approveDlg').showModal()}
  api('/api/auth/me',undefined,{signinUrl:'/login'}).then(m=>{ME=m;renderSide()})}
 async function decide(yes){$('approveDlg').close();try{const j=await api('/approve',{thread_id:pendingT,approve:yes,lang:'ko'});bot({answer:j.answer,route:'chat',citations:[]});ME=await api('/api/auth/me');renderSide()}catch(x){toast(x.message)}}
 $('adYes').onclick=()=>decide(true);$('adNo').onclick=()=>decide(false);
-$('nurse').onclick=()=>send('간호사와 이야기하고 싶어요.');
+$('nurse').onclick=()=>send(K('간호사와 이야기하고 싶어요.','I want to talk to a nurse.'));
 /* ---------- settings, sign out ---------- */
-const fsLabel=()=>$('fsNow').textContent=`지금 ${FS}px`;
+const fsLabel=()=>$('fsNow').textContent=K(`지금 ${FS}px`,`Now ${FS}px`);
 $('setBtn').onclick=()=>{nav(false);fsLabel();$('setDlg').showModal()};$('setClose').onclick=()=>$('setDlg').close();
 $('fsUp').onclick=()=>{FS=Math.min(26,FS+2);setPref('coach_fs',FS);applyTextSize();fsLabel()};$('fsDown').onclick=()=>{FS=Math.max(15,FS-2);setPref('coach_fs',FS);applyTextSize();fsLabel()};
 $('outBtn').onclick=async()=>{try{await api('/api/auth/logout',{})}catch(e){}location.replace('/login')};
-$('pwForm').onsubmit=async e=>{e.preventDefault();$('pwErr').textContent='';try{await api('/api/me/password',{current:$('pwOld').value,new:$('pwNew').value});$('pwOld').value=$('pwNew').value='';$('setDlg').close();toast('비밀번호를 바꿨어요.')}catch(x){$('pwErr').textContent=x.message}};
-$('delForm').onsubmit=async e=>{e.preventDefault();$('delErr').textContent='';try{await api('/api/me/delete',{password:$('delPw').value});location.replace('/login')}catch(x){$('delErr').textContent=x.message}};
+$('pwForm').onsubmit=async e=>{e.preventDefault();$('pwErr').textContent='';try{await api('/api/me/password',{current:$('pwOld').value,new:$('pwNew').value});$('pwOld').value=$('pwNew').value='';$('setDlg').close();toast(K('비밀번호를 바꿨어요.','Password changed.'))}catch(x){$('pwErr').textContent=tr(x.message)}};
+$('delForm').onsubmit=async e=>{e.preventDefault();$('delErr').textContent='';try{await api('/api/me/delete',{password:$('delPw').value});location.replace('/login')}catch(x){$('delErr').textContent=tr(x.message)}};
 if('serviceWorker' in navigator)navigator.serviceWorker.register('/sw.js').catch(()=>{});
+mountLang($('lang'));translateDom();
 load().then(()=>{const q=new URLSearchParams(location.search).get('q');if(q)setTimeout(()=>send(q),300)}).catch(()=>{});
 </script></body></html>

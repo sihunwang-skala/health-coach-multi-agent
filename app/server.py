@@ -41,6 +41,10 @@ MED_KO = {  # (Korean name, what it is) shown next to each medicine on both scre
     "gliclazide": ("글리클라지드", "먹는 당뇨약 · 저혈당 주의"), "insulin glargine": ("글라진 인슐린", "지속형 인슐린"),
     "insulin aspart": ("아스파트 인슐린", "식사 인슐린"), "premixed insulin": ("혼합형 인슐린", "인슐린"),
     "amlodipine": ("암로디핀", "혈압약"), "lisinopril": ("리시노프릴", "혈압약")}
+MED_EN = {"metformin": "oral diabetes medicine", "glimepiride": "oral diabetes medicine, can cause low blood sugar",
+          "gliclazide": "oral diabetes medicine, can cause low blood sugar", "insulin glargine": "long-acting insulin",
+          "insulin aspart": "mealtime insulin", "premixed insulin": "premixed insulin", "amlodipine": "blood pressure medicine",
+          "lisinopril": "blood pressure medicine"}
 COND_KO = [("type 2 diabetes", "제2형 당뇨병"), ("hypertension", "고혈압"), ("kidney", "만성 신장병"), ("retinopathy", "당뇨병성 망막병증"),
            ("neuropathy", "말초신경병증(발 저림)"), ("heart", "심장 질환"), ("low muscle", "근육량 부족")]
 SEED_KO = {  # display only (the English profile text is what the agents read): the 10 synthetic people, free-text fields in Korean
@@ -163,7 +167,7 @@ def admin_login_page(request: Request):
 
 
 PWA_FILES = {"manifest.webmanifest": "application/manifest+json", "sw.js": "text/javascript", "icon.svg": "image/svg+xml",
-             "icon-192.png": "image/png", "icon-512.png": "image/png", "ds.css": "text/css", "ds.js": "text/javascript"}
+             "icon-192.png": "image/png", "icon-512.png": "image/png", "ds.css": "text/css", "ds.js": "text/javascript", "i18n.js": "text/javascript"}
 
 
 @app.get("/{name}", include_in_schema=False)
@@ -179,11 +183,11 @@ def _show(p: dict | None) -> dict | None:
     if not p:
         return None
     cond = [next((ko for key, ko in COND_KO if key in c.lower()), c) for c in p["conditions"]]
-    meds = [{"name": MED_KO.get(m, (m, ""))[0], "kind": MED_KO.get(m, (m, ""))[1]} for m in p["medications"]]
+    meds = [{"name": MED_KO.get(m, (m, ""))[0], "kind": MED_KO.get(m, (m, ""))[1], "name_en": m, "kind_en": MED_EN.get(m, "")} for m in p["medications"]]
     ko = dict(zip(("activity", "mobility", "goal", "diet"), SEED_KO.get(p.get("id"), ())))
     for k in ("activity", "mobility", "goal", "diet"):   # real sign-ups: free text is already what the person typed
         ko.setdefault(k, NOT_GIVEN if p.get(k) == "not given" else {"good": "양호", "poor balance": "균형이 불안", "uses a cane": "지팡이 사용", "weak legs": "다리 힘이 약함"}.get(p.get(k), p.get(k)))
-    return {**p, "ko": ko, "conditions_ko": cond, "medications": meds, "gender_ko": {"female": "여성", "male": "남성"}.get(p["gender"], p["gender"])}
+    return {**p, "ko": ko, "conditions_ko": cond, "conditions_en": p["conditions"], "medications": meds, "gender_ko": {"female": "여성", "male": "남성"}.get(p["gender"], p["gender"])}
 
 
 def _profiles() -> dict:
@@ -281,7 +285,8 @@ class DemoIn(BaseModel):
 @app.get("/api/demo/users", dependencies=[Depends(_demo_only)])
 def demo_users():
     """Login page, demo mode: the synthetic people (first name, age, one line) - never real sign-ups."""
-    return [{"id": i, "name": p["name"].split()[0], "age": p["age"], "line": ", ".join(c for c in p["conditions_ko"] if c != "제2형 당뇨병") or "제2형 당뇨병"}
+    return [{"id": i, "name": p["name"].split()[0], "age": p["age"], "line": ", ".join(c for c in p["conditions_ko"] if c != "제2형 당뇨병") or "제2형 당뇨병",
+             "line_en": ", ".join(c.capitalize() for c in p["conditions_en"] if c != "type 2 diabetes") or "Type 2 diabetes"}
             for i, p in _profiles().items() if i in SYNTHETIC]
 
 
@@ -439,13 +444,14 @@ async def chat_stream(body: ChatIn, user: dict = Depends(auth.current_user), dep
             answer_ready = round(time.time() - t, 2)   # the checked English answer exists; it is sent whole with `done`
             cites = build_citations(final.get("answer", ""), final.get("evidence", {}), {})
             shown = {"answer": final.get("answer", ""), "translated": False}
-            if lang == "ko":
+            if lang == "ko":   # English mode (lang = "en") shows the safety-checked English answer as is: no extra LLM call
                 try:
                     shown = await to_korean(deps, u, final.get("answer", ""))
                 except Exception:   # translation failed: the safety-checked English answer is still shown
                     pass
             log = {k: v for k, v in final.items() if k not in ("evidence", "answer")}
-            tracelog.log_event(user_id, message, {**log, "answer": shown["answer"], "meta": {"citations": cites["citations"], "route": final.get("route")}, "latency_s": round(time.time() - t, 2), "calls": u.calls, "tokens_in": u.tokens_in,
+            tracelog.log_event(user_id, message, {**log, "answer": shown["answer"], "meta": {"citations": cites["citations"], "route": final.get("route"), "en": {"answer": final.get("answer", "")},
+                                                                                     **({"ko": {"answer": shown["answer"]}} if shown["translated"] else {})}, "latency_s": round(time.time() - t, 2), "calls": u.calls, "tokens_in": u.tokens_in,
                                                   "tokens_out": u.tokens_out, "cost": round(u.cost(s.price_in, s.price_out, s.price_embed), 5)})
             ask = final.get("interrupt")
             if lang == "ko" and ask and fixed_ko(ask.get("question", "")):
