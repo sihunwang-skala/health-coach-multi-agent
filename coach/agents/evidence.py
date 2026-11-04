@@ -62,6 +62,16 @@ async def make_queries(state, config):
     return {"queries": list(dict.fromkeys([q, s1] + med + sb + cq + dq))}
 
 
+@timed("make_queries_lite")
+async def make_queries_lite(state, config):
+    """health_simple: one LLM call (stage 1 of the chain) instead of four - the question plus its paper-language phrase."""
+    q, dom = state["message"], state["domain"]
+    j = await llm_json(config, f"{dom}_query_stage1", [("user", STAGE1.format(topic=TOPIC[dom], profile="", question=q))])
+    subj, term = str(j.get("subject") or q).strip(), str(j.get("paper_term") or "").strip()
+    s1 = subj + (f" ({term})" if term and term.lower() not in subj.lower() else "")
+    return {"queries": list(dict.fromkeys([q, s1]))}
+
+
 @timed("retrieve_mcp")
 async def retrieve(state, config):
     d = deps(config)
@@ -115,9 +125,10 @@ async def verify_notes(state, config):
     return {"notes": notes, "dropped_notes": dropped}
 
 
-def build_evidence_agent():
+def build_evidence_agent(lite: bool = False):
     g = StateGraph(EvidenceState)
-    for name, fn in [("make_queries", make_queries), ("retrieve", retrieve), ("pick_notes", pick_notes), ("verify_notes", verify_notes)]:
+    for name, fn in [("make_queries", make_queries_lite if lite else make_queries), ("retrieve", retrieve), ("pick_notes", pick_notes),
+                     ("verify_notes", verify_notes)]:
         g.add_node(name, fn)
     g.add_edge(START, "make_queries")
     g.add_edge("make_queries", "retrieve")
@@ -128,6 +139,7 @@ def build_evidence_agent():
 
 
 _SUBGRAPH = build_evidence_agent()
+_LITE = build_evidence_agent(lite=True)
 
 
 def evidence_node(domain: str):
@@ -136,11 +148,21 @@ def evidence_node(domain: str):
     async def node(state, config):
         # a general question is searched without the user's conditions and medicines (diabetes PoC router: about_user)
         prof = state["profile"] if state.get("about_user", True) else ""
-        out = await _SUBGRAPH.ainvoke({"message": state["message"], "profile": prof, "domain": domain,
-                                       "timings": {}, "trace": []}, config)
+        inp = {"message": state["message"], "profile": prof, "domain": domain, "timings": {}, "trace": []}
+        extra, pre = {}, []
+        if state.get("path") == "health_simple":
+            out = await _LITE.ainvoke(inp, config)
+            if out.get("notes"):
+                extra = {"escalated": False}
+            else:  # no verified evidence from the limited search: escalate to the full (deep) chain
+                pre = [f"lite.{t}" for t in out.get("trace", [])] + ["escalate"]
+                out = await _SUBGRAPH.ainvoke({**inp, "timings": {}, "trace": []}, config)
+                extra = {"escalated": True, "path": "health_deep", "path_reason": "health_simple found no verified evidence"}
+        else:
+            out = await _SUBGRAPH.ainvoke(inp, config)
         keep = {k: out.get(k) for k in ("queries", "results", "picks", "notes", "dropped_notes")}
-        return {"evidence": {domain: keep}, "titles": out.get("titles", {}),
+        return {"evidence": {domain: keep}, "titles": out.get("titles", {}), **extra,
                 "timings": {f"{domain}.{k}": v for k, v in out.get("timings", {}).items()},
-                "trace": [f"{domain}_agent"] + [f"{domain}.{t}" for t in out.get("trace", [])]}
+                "trace": [f"{domain}_agent"] + [f"{domain}.{t}" for t in pre + out.get("trace", [])]}
     node.__name__ = f"{domain}_agent"
     return node

@@ -23,7 +23,7 @@ guard (emergency regex, no LLM) ─┬─ emergency_reply (119 text)
                                    → writer (LLM) → validate (dangerous-advice rules S1–S9) ─┬─ done
                                                                                              ├─ retry (max 1, 60 s budget) → writer
                                                                                              └─ remove_unsafe (+ rule text first)
-   med_change → fixed safety reply · log / my_data / chat → records agent · delete_record → interrupt() (human approval)
+   med_change → fixed safety reply, log / my_data / chat → records agent, delete_record → interrupt() (human approval)
 ```
 | Path | Role |
 |---|---|
@@ -48,8 +48,9 @@ uv venv --python 3.11 .venv && uv pip install --python .venv/bin/python -r requi
 # .env (git-ignored): OPENAI_API_KEY=...  (on this machine it already exists; never print or commit it)
 .venv/bin/python scripts/fetch_papers.py      # papers → data/papers (git-ignored); --local DIR reuses XML on disk
 .venv/bin/python scripts/build_index.py       # embeddings cached in cache/ (≈ $0.024 once)
-.venv/bin/uvicorn app.server:app --port 8000  # web UI http://localhost:8000 (index is preloaded at startup)
-.venv/bin/python -m pytest -q                 # 20 tests, free
+.venv/bin/uvicorn app.server:app --port 8000  # web UI http://localhost:8000 (index is preloaded at startup). Sign in at /login (users) or /admin/login (care team);
+# create accounts first: scripts/manage_accounts.py seed-demo  (docs/ACCOUNTS.md)
+.venv/bin/python -m pytest -q                 # 48 tests, free (auth, Korean safety rules, citations, router, graph)
 .venv/bin/python eval/run_eval.py [--only after|before] [--ids A,B]   # PAID; skips ids already in eval/results/*.json
 .venv/bin/python eval/score.py && .venv/bin/python eval/charts.py     # free
 .venv/bin/python scripts/record_demo.py [--only live_xxx]             # PAID (~$0.015 per run; --only = screenshots only)

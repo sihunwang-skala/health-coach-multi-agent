@@ -41,7 +41,42 @@ def profile_text(u: dict) -> str:
 def full_profiles() -> list[dict]:
     """Server-side only (user and admin screens): the stored profiles WITH names. Not an MCP tool, so no agent or LLM
     can read names."""
-    return [json.loads(p) for (p,) in _db().execute("SELECT profile FROM users ORDER BY id").fetchall()]
+    con = _db()
+    try:
+        return [json.loads(p) for (p,) in con.execute("SELECT profile FROM users ORDER BY id").fetchall()]
+    finally:
+        con.close()
+
+
+def get_full_profile(user_id: str) -> dict | None:
+    """Server-side only (not an MCP tool): one stored profile WITH the name, for the signed-in user's own screen."""
+    con = _db()
+    try:
+        row = con.execute("SELECT profile FROM users WHERE id = ?", (user_id,)).fetchone()
+    finally:
+        con.close()
+    return json.loads(row[0]) if row else None
+
+
+def create_user(user_id: str, profile: dict) -> None:
+    """Server-side only: store a new profile at sign-up (the account itself lives in app/auth.py)."""
+    con = _db()
+    con.execute("INSERT INTO users VALUES (?, ?, ?)", (user_id, profile["name"], json.dumps({**profile, "id": user_id}, ensure_ascii=False)))
+    con.commit()
+    con.close()
+
+
+def delete_user(user_id: str) -> None:
+    """Server-side only: account deletion removes the profile, the records and the monitoring log rows of this person."""
+    con = _db()
+    con.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    con.execute("DELETE FROM logs WHERE user_id = ?", (user_id,))
+    try:
+        con.execute("DELETE FROM events WHERE user_id = ?", (user_id,))
+    except sqlite3.OperationalError:   # the monitoring table is created by coach.tracelog on first use
+        pass
+    con.commit()
+    con.close()
 
 
 @mcp.tool

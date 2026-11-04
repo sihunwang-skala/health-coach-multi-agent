@@ -8,7 +8,7 @@
                                                                       │                                    └─ remove_unsafe -> END
                                                                       ├─ med_change -> med_change_reply -> END   (fixed text)
                                                                       ├─ log / my_data / chat -> records -> END
-                                                                      └─ delete_record -> confirm_delete (interrupt: HITL) -> END
+                                                                      └─ delete_record -> pick_delete_target -> confirm_delete (interrupt: choose, then confirm; HITL) -> END
 """
 from __future__ import annotations
 
@@ -16,7 +16,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from langgraph.graph import END, START, StateGraph
 
 from coach.agents.evidence import evidence_node
-from coach.agents.records import confirm_delete, records
+from coach.agents.records import confirm_delete, pick_delete_target, records
 from coach.agents.safety_agent import safety_agent
 from coach.agents.supervisor import emergency_reply, fixed_reply, guard, med_change_reply, supervisor
 from coach.agents.writer import after_validate, remove_unsafe, retry, validate, writer
@@ -38,6 +38,7 @@ def build_graph(checkpointer=None):
     g.add_node("retry", retry)
     g.add_node("remove_unsafe", remove_unsafe)
     g.add_node("records", records)
+    g.add_node("pick_delete_target", pick_delete_target)
     g.add_node("confirm_delete", confirm_delete)
 
     g.add_edge(START, "guard")
@@ -46,16 +47,17 @@ def build_graph(checkpointer=None):
     g.add_conditional_edges("supervisor", lambda s: {
         "exercise": ["exercise_agent", "safety_agent"], "diet": ["diet_agent", "safety_agent"],
         "diet_exercise": ["diet_agent", "exercise_agent", "safety_agent"],          # both research agents in parallel
-        "med_change": ["med_change_reply"], "delete_record": ["confirm_delete"],
+        "med_change": ["med_change_reply"], "delete_record": ["pick_delete_target"],
         "emergency": ["emergency_reply"],                                            # LLM backup for the code check
         "handoff": ["fixed_reply"], "other_user": ["fixed_reply"], "privacy_info": ["fixed_reply"],
-    }.get(s["route"], ["records"]), ["diet_agent", "exercise_agent", "safety_agent", "med_change_reply", "confirm_delete", "records",
+    }.get(s["route"], ["records"]), ["diet_agent", "exercise_agent", "safety_agent", "med_change_reply", "pick_delete_target", "records",
                                      "emergency_reply", "fixed_reply"])
     for n in ("diet_agent", "exercise_agent", "safety_agent"):   # same superstep -> the writer runs once, after all of them
         g.add_edge(n, "writer")
     g.add_edge("writer", "validate")
     g.add_conditional_edges("validate", after_validate, {"done": END, "retry": "retry", "remove": "remove_unsafe"})
     g.add_edge("retry", "writer")
+    g.add_edge("pick_delete_target", "confirm_delete")
     for n in ("remove_unsafe", "emergency_reply", "med_change_reply", "records", "confirm_delete", "fixed_reply"):
         g.add_edge(n, END)
     return g.compile(checkpointer=checkpointer or MemorySaver())

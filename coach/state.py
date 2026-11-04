@@ -15,6 +15,9 @@ class CoachState(TypedDict, total=False):
     profile: str
     route: str
     route_reason: str
+    path: str                            # health_simple / health_deep (health routes only)
+    path_reason: str
+    escalated: bool                      # health_simple found no verified evidence and re-ran as health_deep
     about_user: bool                     # supervisor: own question (True) or general question (False)
     queries: list[str]
     results: dict[str, list[dict]]       # query -> passages from the papers MCP server
@@ -28,6 +31,7 @@ class CoachState(TypedDict, total=False):
     removed: list[str]
     records: list[dict]
     pending_delete: dict
+    delete_options: list[dict]
     titles: Annotated[dict[str, str], merge]
     evidence: Annotated[dict[str, dict], merge]   # domain -> {queries, notes, picks, results, dropped_notes} (parallel agents)
     timings: Annotated[dict[str, float], merge]

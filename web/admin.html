@@ -1,110 +1,110 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Care-team Monitor</title>
+<title>의료진 콘솔</title><meta name="robots" content="noindex"><link rel="icon" href="/icon.svg" type="image/svg+xml">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<link rel="stylesheet" href="/ds.css">
 <style>
-:root{--bg:#f6f7f9;--card:#fff;--ink:#1d2430;--muted:#667085;--line:#e4e7ec;--accent:#2f6fed;--warn:#b42318;--warnbg:#fef3f2;--amber:#b54708;--ok:#067647;
- --c1:#2f6fed;--c2:#12b76a;--c3:#98a2b3;--c4:#f04438}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#111418;--card:#1a1f26;--ink:#e6e9ef;--muted:#98a2b3;--line:#2b323c;--accent:#6c9cff;--warn:#f97066;--warnbg:#2a1715;--amber:#fdb022;--ok:#47cd89;
- --c1:#6c9cff;--c2:#47cd89;--c3:#667085;--c4:#f97066}}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.5 -apple-system,system-ui,"Noto Sans KR",sans-serif}
-main{max-width:1200px;margin:0 auto;padding:16px;display:grid;gap:12px}
-header{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}header h1{font-size:20px;margin:0}header p{margin:0;color:var(--muted);font-size:12px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0}
-.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}@media(max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}}@media(max-width:520px){.kpis{grid-template-columns:repeat(2,1fr)}}
-.kpi b{display:block;font-size:22px}.kpi span{color:var(--muted);font-size:12px}.kpi.alert b{color:var(--warn)}
-.g2{display:grid;grid-template-columns:2fr 1fr;gap:12px}.g11{display:grid;grid-template-columns:1fr 1fr;gap:12px}@media(max-width:900px){.g2,.g11{grid-template-columns:1fr}}
-h2{font-size:14px;margin:0 0 8px}.meta{font-size:12px;color:var(--muted)}
-table{width:100%;border-collapse:collapse;font-size:13px}th,td{text-align:left;padding:6px;border-bottom:1px solid var(--line);vertical-align:top}th{color:var(--muted);font-weight:500}
-tr.pick{cursor:pointer}tr.pick:hover{background:var(--bg)}tr.sel{background:var(--bg)}
-.tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:99px;border:1px solid var(--line);white-space:nowrap}
-.tag.emergency{background:var(--warn);color:#fff;border-color:var(--warn)}.tag.handoff{color:var(--amber);border-color:var(--amber)}.tag.med_change,.tag.other_user{color:var(--accent);border-color:var(--accent)}
-.open{color:var(--warn);font-weight:600}.handled{color:var(--ok)}
-button,select{font:inherit;padding:4px 10px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
-.scroll{max-height:340px;overflow:auto}.wrap{overflow-x:auto}
-.msg{white-space:pre-wrap;font-size:13px}.q{color:var(--muted)}
-dl{display:grid;grid-template-columns:max-content 1fr;gap:2px 10px;margin:6px 0}dt{color:var(--muted)}dd{margin:0}
-canvas{max-height:240px}
-</style></head><body><main>
-<header><h1>Care-team Monitor</h1><p>Synthetic users and demo history. Names are shown only on this screen; the AI agents and the logs see user ids.</p>
-<a href="/" style="margin-left:auto;font-size:13px;padding:7px 10px;border:1px solid var(--line);border-radius:10px;color:var(--ink);text-decoration:none;background:var(--card)">← User screen</a></header>
+body{font-size:15px}
+.bar{position:sticky;top:0;z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.bar-in{max-width:1240px;margin:0 auto;padding:var(--s2) var(--s4);display:flex;align-items:center;gap:var(--s4);flex-wrap:wrap}
+.bar h1{font-size:var(--fs-lg)}.who{margin-left:auto;display:flex;align-items:center;gap:var(--s3)}
+.tabs{display:flex;gap:var(--s1);overflow-x:auto}.tabs a{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 var(--s4);border-radius:var(--r-pill);color:var(--ink-2);text-decoration:none;font-weight:600;white-space:nowrap}
+.tabs a[aria-current="page"]{background:var(--brand-soft);color:var(--ink)}.badge{background:var(--danger);color:var(--surface);border-radius:var(--r-pill);font-size:.75rem;padding:0 7px;min-width:20px;text-align:center}
+main{max-width:1240px;margin:0 auto;padding:var(--s4);display:grid;gap:var(--s4)}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:var(--s3)}@media(max-width:1000px){.kpis{grid-template-columns:repeat(3,1fr)}}@media(max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpi b{display:block;font-size:var(--fs-xl);line-height:1.2}.kpi span{color:var(--ink-2);font-size:var(--fs-sm)}.kpi.alert b{color:var(--danger)}
+.g2{display:grid;grid-template-columns:2fr 1fr;gap:var(--s4)}.g11{display:grid;grid-template-columns:1fr 1fr;gap:var(--s4)}@media(max-width:900px){.g2,.g11{grid-template-columns:1fr}}
+.card h2{margin-bottom:var(--s3)}.scroll{max-height:380px;overflow:auto}.wrap{overflow-x:auto}.msg{white-space:pre-wrap}.q{color:var(--ink-2)}
+.open{color:var(--danger);font-weight:700}.handled{color:var(--ok)}canvas{max-height:240px}
+.btn.sm{min-height:36px;padding:0 var(--s3);font-size:var(--fs-sm)}select.input.sm{min-height:36px;width:auto;padding:0 var(--s3)}
+dl.p{display:grid;grid-template-columns:max-content 1fr;gap:var(--s1) var(--s3);margin:0}dl.p dt{color:var(--ink-2)}dl.p dd{margin:0}
+.view[hidden]{display:none}
+.period{display:flex;align-items:center;gap:var(--s2);margin-bottom:var(--s3)}.period select{max-width:100%}
+</style></head><body>
+<header class="bar"><div class="bar-in"><h1>의료진 콘솔</h1>
+ <nav class="tabs" aria-label="화면"><a href="#overview" data-v="overview">개요</a><a href="#alerts" data-v="alerts">알림 <span class="badge" id="openBadge" hidden>0</span></a><a href="#people" data-v="people">이용자</a><a href="#audit" data-v="audit">열람 기록</a></nav>
+ <div class="who"><div class="lang" id="lang" role="group"></div><a class="small" href="/login">이용자 화면으로 가기</a><span class="small muted" id="staffName"></span><button class="btn secondary sm" id="out" type="button">로그아웃</button></div></div></header>
+<main>
 
-<section class="kpis" id="kpis"></section>
-
-<section class="g2">
- <div class="card"><h2>Messages per day (last 14 days)</h2><canvas id="perDay"></canvas></div>
- <div class="card"><h2>What people asked (route mix)</h2><canvas id="routes"></canvas></div>
+<section class="view" id="v-overview">
+ <div class="period"><label for="period">조회 기간</label><select class="input sm" id="period"></select></div>
+ <div class="kpis" id="kpis"></div>
+ <div class="g2" style="margin-top:var(--s4)"><div class="card"><h2>일별 메시지 수</h2><canvas id="perDay" role="img" aria-label="일별 메시지 수 막대 그래프"></canvas></div>
+  <div class="card"><h2>요청 유형별 건수</h2><canvas id="routes" role="img" aria-label="요청 유형별 건수 막대 그래프"></canvas></div></div>
+ <div class="g11" style="margin-top:var(--s4)"><div class="card"><h2>이용자별 메시지/알림</h2><canvas id="byUser" role="img" aria-label="이용자별 메시지와 알림 막대 그래프"></canvas></div>
+  <div class="card"><h2>일별 AI 비용</h2><canvas id="cost" role="img" aria-label="일별 AI 비용 선 그래프"></canvas></div></div>
 </section>
 
-<section class="card"><h2>Alerts — emergencies, call requests, medicine changes, other people's data</h2>
- <div class="row meta" style="margin-bottom:6px">Show <select id="af"><option value="open">open</option><option value="all">all</option></select></div>
- <div class="scroll wrap"><table id="alerts"></table></div></section>
+<section class="view card" id="v-alerts" hidden><h2>알림 (응급, 상담 요청, 약 변경 문의, 타인 정보 요청)</h2>
+ <div class="small muted" style="margin-bottom:var(--s3);display:flex;gap:var(--s2);align-items:center"><label for="af">처리 상태</label><select class="input sm" id="af"><option value="open">미처리</option><option value="all">전체</option></select></div>
+ <div class="scroll wrap" style="max-height:none"><table id="alerts"></table></div></section>
 
-<section class="g11">
- <div class="card"><h2>All users (click a row to open one person)</h2><div class="wrap"><table id="users"></table></div></div>
- <div class="card"><h2>Messages per person · cost per day</h2><canvas id="byUser"></canvas><canvas id="cost" style="margin-top:8px"></canvas></div>
+<section class="view" id="v-people" hidden>
+ <div class="card"><h2>이용자 목록</h2><div class="wrap"><table id="users"></table></div></div>
+ <div class="card" id="person" style="margin-top:var(--s4)"><h2>이용자 상세</h2><p class="muted">목록에서 이용자를 선택하세요.</p></div>
 </section>
 
-<section class="card" id="person"><h2>One person</h2><div class="meta">Choose a user above.</div></section>
+<section class="view card" id="v-audit" hidden><h2>열람 기록</h2><p class="small muted" style="margin-bottom:var(--s3)">이용자 정보를 열람하거나 알림을 처리한 내역이에요.</p><div class="wrap"><table id="auditT"></table></div></section>
 </main>
+<script src="/ds.js"></script><script src="/i18n.js"></script>
 <script>
-const ALERT={emergency:"Emergency",handoff:"Call request",med_change:"Medicine change",other_user:"Other person's data"};
-const ROUTE={...ALERT,diet:"Diet",exercise:"Exercise",diet_exercise:"Diet + exercise",log:"Save a record",my_data:"My data",delete_record:"Delete a record",chat:"Chat",privacy_info:"How my data is used"};
-const label=r=>ROUTE[r]||r;
-const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
-const esc=s=>String(s??'').replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
-const H={};try{const t=localStorage.getItem('coach_admin_token');if(t)H['X-Admin-Token']=t}catch(e){}
-const get=u=>fetch(u,{headers:H}).then(r=>r.json());
+const ALERT=K({emergency:"응급",handoff:"상담 요청",med_change:"약 변경 문의",other_user:"타인 정보 요청"},{emergency:"Emergency",handoff:"Call request",med_change:"Medicine change",other_user:"Request for another person's data"});
+const ROUTE={...ALERT,...K({diet:"식단",exercise:"운동",diet_exercise:"식단/운동",log:"기록 저장",my_data:"내 정보 조회",delete_record:"기록 삭제",chat:"일상 대화",privacy_info:"개인정보 문의"},{diet:"Diet",exercise:"Exercise",diet_exercise:"Diet + exercise",log:"Record saved",my_data:"My data lookup",delete_record:"Delete record",chat:"Casual chat",privacy_info:"Privacy question"})};
+const GROUP=K({'Diet / exercise advice':'식단/운동 상담','Records & my data':'기록/내 정보','Chat & service':'일상 대화/서비스 안내','Alerts':'알림'},{});
+const md=d=>{const [y,m,dd]=d.split('-');return K(`${y}.${m}.${dd}`,`${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]} ${+dd}, ${y}`)};
+const evText=(e,f)=>{let m=null;try{m=e.meta?JSON.parse(e.meta):null}catch(x){}return LANG==='ko'&&m&&m.ko&&m.ko[f]?m.ko[f]:(LANG==='en'&&m&&m.en&&m.en[f]?m.en[f]:e[f])};
+const cap=t=>t?t.charAt(0).toUpperCase()+t.slice(1):t;
+const label=r=>ROUTE[r]||r,css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+const get=u=>api(u,undefined,{signinUrl:'/admin/login'}),when=t=>esc((t||'').replace('T',' ').slice(0,16));
 let NAMES={},charts={},current=null;
-function chart(id,cfg){charts[id]?.destroy();Chart.defaults.color=css('--muted');Chart.defaults.borderColor=css('--line');charts[id]=new Chart(document.getElementById(id),cfg)}
+function chart(id,cfg){charts[id]?.destroy();Chart.defaults.color=css('--ink-2');Chart.defaults.borderColor=css('--line');charts[id]=new Chart($(id),cfg)}
 const tag=a=>`<span class="tag ${a}">${label(a)}</span>`;
-const when=t=>esc((t||'').replace('T',' ').slice(5,16));
-
+function view(){const v=(location.hash||'#overview').slice(1);document.querySelectorAll('.view').forEach(e=>e.hidden=e.id!=='v-'+v);
+ document.querySelectorAll('.tabs a').forEach(a=>a.dataset.v===v?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));if(v==='audit')audit();if(v==='overview')setTimeout(()=>Object.values(charts).forEach(c=>c.resize()),0)}
+addEventListener('hashchange',view);
+let END=null,PERIODS=null;
+async function periods(){
+ const w=await get('/api/admin/windows');const seen=new Set();const opts=[];
+ const lab=x=>`${md(x.start)} – ${md(x.end)} (${K(`메시지 ${x.messages}건`,`${x.messages} messages`)})`;
+ opts.push({end:w.busiest.end,text:lab(w.busiest)});seen.add(w.busiest.end);
+ w.blocks.concat([w.current]).forEach(x=>{if(!seen.has(x.end)){opts.push({end:x.end,text:lab(x)});seen.add(x.end)}});
+ $('period').innerHTML=opts.map(o=>`<option value="${o.end}">${esc(o.text)}</option>`).join('');END=opts[0].end;$('period').value=END}
 async function load(){
- const [s,users]=await Promise.all([get('/api/admin/summary'),get('/api/admin/users')]);
- users.forEach(u=>NAMES[u.id]=u.name);
- const k=[["Messages (14 days)",s.messages],["Active users",s.active_users+" / "+users.length],["Open alerts",s.open_alerts,"alert"],
-  ["Avg. advice answer time",(s.advice_latency_avg??'–')+" s"],["Safety rewrites / removed sentences",s.safety_retries+" / "+s.removed_sentences],["LLM cost (14 days)","$"+s.cost.toFixed(3)]];
- document.getElementById('kpis').innerHTML=k.map(([l,v,c])=>`<div class="card kpi ${c||''}"><b>${v}</b><span>${l}</span></div>`).join('');
- const cols=[css('--c1'),css('--c2'),css('--c3'),css('--c4')];
- chart('perDay',{type:'bar',data:{labels:s.days.map(d=>d.slice(5)),datasets:Object.entries(s.per_day).map(([g,v],i)=>({label:g,data:v,backgroundColor:cols[i]}))},
-  options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true,ticks:{precision:0}}},plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}}});
+ if(!END)await periods();
+ const [s,users]=await Promise.all([get('/api/admin/summary?end='+END),get('/api/admin/users')]);users.forEach(u=>NAMES[u.id]=u.name);
+ const k=[[K("총 메시지","Total messages"),s.messages],[K("활성 이용자","Active users"),s.active_users+" / "+users.length],[K("미처리 알림","Unhandled alerts"),s.open_alerts,"alert"],[K("건강 답변 평균 소요 시간","Avg. health answer time"),(s.advice_latency_avg??'–')+K(" 초"," s")],[K("안전 점검으로 고친 답변 / 삭제한 문장","Answers rewritten / sentences removed by the safety check"),s.safety_retries+" / "+s.removed_sentences],[K("AI 사용 비용","AI usage cost"),"$"+s.cost.toFixed(3)]];
+ $('kpis').innerHTML=k.map(([l,v,c])=>`<div class="card kpi ${c||''}"><b>${v}</b><span>${l}</span></div>`).join('');
+ $('openBadge').textContent=s.open_alerts;$('openBadge').hidden=!s.open_alerts;
+ const cols=[css('--chart-1'),css('--chart-2'),css('--chart-3'),css('--chart-4')];
+ chart('perDay',{type:'bar',data:{labels:s.days.map(d=>d.slice(5)),datasets:Object.entries(s.per_day).map(([g,v],i)=>({label:GROUP[g]||g,data:v,backgroundColor:cols[i]}))},options:{responsive:true,maintainAspectRatio:false,scales:{x:{stacked:true},y:{stacked:true,ticks:{precision:0}}},plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}}});
  const r=Object.entries(s.routes).sort((a,b)=>b[1]-a[1]);
- chart('routes',{type:'bar',data:{labels:r.map(x=>label(x[0])),datasets:[{data:r.map(x=>x[1]),backgroundColor:r.map(x=>ALERT[x[0]]?css('--c4'):css('--c1'))}]},
-  options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{precision:0}},y:{ticks:{autoSkip:false,font:{size:11}}}}}});
- chart('byUser',{type:'bar',data:{labels:users.map(u=>u.name.split(' ')[0]),datasets:[{label:'messages',data:users.map(u=>u.messages||0),backgroundColor:css('--c1')},
-  {label:'alerts',data:users.map(u=>u.alerts||0),backgroundColor:css('--c4')}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}},scales:{y:{ticks:{precision:0}}}}});
- chart('cost',{type:'line',data:{labels:s.days.map(d=>d.slice(5)),datasets:[{label:'LLM cost per day ($)',data:s.cost_per_day,borderColor:css('--c2'),tension:.3}]},
-  options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}}});
- document.getElementById('users').innerHTML=`<tr><th>Name</th><th>Age</th><th>Conditions</th><th>Msgs</th><th>Alerts</th><th>Last message</th></tr>`+
-  users.map(u=>`<tr class="pick ${u.id===current?'sel':''}" data-id="${u.id}"><td>${esc(u.name)}</td><td>${u.age}</td><td>${esc(u.conditions.filter(c=>c!=='type 2 diabetes').join(', ')||'—')}</td>
-  <td>${u.messages||0}</td><td>${u.open_alerts?`<span class="open">${u.open_alerts} open</span>`:(u.alerts||0)}</td><td class="meta">${when(u.last_ts)}</td></tr>`).join('');
- document.querySelectorAll('#users tr.pick').forEach(tr=>tr.onclick=()=>person(tr.dataset.id));
- alerts();
-}
+ chart('routes',{type:'bar',data:{labels:r.map(x=>label(x[0])),datasets:[{data:r.map(x=>x[1]),backgroundColor:r.map(x=>ALERT[x[0]]?cols[3]:cols[0])}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{precision:0}},y:{ticks:{autoSkip:false,font:{size:11}}}}}});
+ chart('byUser',{type:'bar',data:{labels:users.map(u=>u.name.split(' ')[0]),datasets:[{label:K('메시지','Messages'),data:users.map(u=>s.by_user[u.id]||0),backgroundColor:cols[0]},{label:K('알림','Alerts'),data:users.map(u=>s.alerts_by_user[u.id]||0),backgroundColor:cols[3]}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{boxWidth:10}}},scales:{y:{ticks:{precision:0}}}}});
+ chart('cost',{type:'line',data:{labels:s.days.map(d=>d.slice(5)),datasets:[{label:K('일별 AI 비용($)','Daily AI cost ($)'),data:s.cost_per_day,borderColor:cols[1],tension:.3}]},options:{responsive:true,maintainAspectRatio:false,scales:{y:{beginAtZero:true}},plugins:{legend:{position:'bottom',labels:{boxWidth:10}}}}});
+ const cond=u=>(LANG==='en'?u.conditions_en.filter(c=>c!=='type 2 diabetes').map(cap):u.conditions_ko.filter(c=>c!=='제2형 당뇨병')).join(', ')||'—';
+ $('users').innerHTML=`<tr><th>${K('이름','Name')}</th><th>${K('나이','Age')}</th><th>${K('질환','Conditions')}</th><th>${K('누적 메시지','Total messages')}</th><th>${K('알림','Alerts')}</th><th>${K('최근 이용','Last active')}</th></tr>`+users.map(u=>`<tr class="pick ${u.id===current?'sel':''}" data-id="${u.id}" tabindex="0" role="button" aria-label="${esc(u.name)} ${K('자세히 보기','details')}"><td>${esc(u.name)}</td><td>${u.age}</td><td>${esc(cond(u))}</td><td>${u.messages||0}</td><td>${u.open_alerts?`<span class="open">${K(`미처리 ${u.open_alerts}건`,`${u.open_alerts} unhandled`)}</span>`:(u.alerts||0)}</td><td class="muted">${when(u.last_ts)}</td></tr>`).join('');
+ document.querySelectorAll('#users tr.pick').forEach(tr=>{tr.onclick=()=>person(tr.dataset.id);tr.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();person(tr.dataset.id)}}});
+ alerts()}
 async function alerts(){
- const a=await get('/api/admin/alerts?status='+document.getElementById('af').value);
- document.getElementById('alerts').innerHTML=`<tr><th>When</th><th>Type</th><th>Person</th><th>Message</th><th>Status</th><th></th></tr>`+(a.length?a.map(x=>`<tr>
-  <td class="meta">${when(x.ts)}</td><td>${tag(x.alert)}</td><td><a href="#person" data-id="${x.user_id}" class="pl">${esc(NAMES[x.user_id]||x.user_id)}</a></td>
-  <td class="msg">${esc(x.message)}</td><td class="${x.alert_status}">${x.alert_status}</td>
-  <td>${x.alert_status==='open'?`<button data-ev="${x.id}">Mark handled</button>`:''}</td></tr>`).join(''):'<tr><td colspan="6" class="meta">No alerts</td></tr>');
- document.querySelectorAll('#alerts button').forEach(b=>b.onclick=async()=>{await fetch('/api/admin/alerts/'+b.dataset.ev,{method:'POST',headers:{...H,'Content-Type':'application/json'},body:'{"status":"handled"}'});load()});
- document.querySelectorAll('#alerts a.pl').forEach(a=>a.onclick=()=>person(a.dataset.id));
-}
+ const a=await get('/api/admin/alerts?status='+$('af').value);
+ $('alerts').innerHTML=`<tr><th>${K('일시','Date / time')}</th><th>${K('유형','Type')}</th><th>${K('이용자','User')}</th><th>${K('내용','Content')}</th><th>${K('상태','Status')}</th><th></th></tr>`+(a.length?a.map(x=>`<tr><td class="muted">${when(x.ts)}</td><td>${tag(x.alert)}</td><td><a href="#people" data-id="${x.user_id}" class="pl">${esc(NAMES[x.user_id]||x.user_id)}</a></td><td class="msg">${esc(evText(x,'message'))}</td><td class="${x.alert_status}">${x.alert_status==='open'?K('미처리','Unhandled'):K('처리 완료','Handled')}</td><td>${x.alert_status==='open'?`<button class="btn secondary sm" data-ev="${x.id}">${K('처리 완료로 변경','Mark as handled')}</button>`:''}</td></tr>`).join(''):`<tr><td colspan="6" class="muted">${K('알림이 없습니다','No alerts')}</td></tr>`);
+ document.querySelectorAll('#alerts button').forEach(b=>b.onclick=async()=>{await api('/api/admin/alerts/'+b.dataset.ev,{status:'handled'},{signinUrl:'/admin/login'});load()});
+ document.querySelectorAll('#alerts a.pl').forEach(a=>a.onclick=()=>setTimeout(()=>person(a.dataset.id),0))}
 async function person(id){
  current=id;document.querySelectorAll('#users tr.pick').forEach(tr=>tr.classList.toggle('sel',tr.dataset.id===id));
- const j=await get('/api/admin/users/'+id),p=j.profile;
+ const j=await get('/api/admin/users/'+id),p=j.profile,en=LANG==='en';
  const g=j.records.filter(r=>/blood sugar (\d+)/.test(r.text)).map(r=>({x:r.ts.slice(5,10),y:+r.text.match(/blood sugar (\d+)/)[1]})).reverse();
- document.getElementById('person').innerHTML=`<h2>${esc(p.name)} · ${p.age} · ${esc(p.gender)}</h2><div class="g11">
-  <div><dl><dt>Conditions</dt><dd>${esc(p.conditions.join(', '))}</dd><dt>Medicines</dt><dd>${p.medications.map(m=>`${esc(m.name)} <span class="meta">(${esc(m.kind)})</span>`).join('<br>')}</dd>
-  <dt>Activity</dt><dd>${esc(p.activity)}</dd><dt>Mobility</dt><dd>${esc(p.mobility)}</dd><dt>Eating</dt><dd>${esc(p.diet)}</dd><dt>Goal</dt><dd>${esc(p.goal)}</dd></dl>
-  <h2 style="margin-top:10px">Blood sugar from their records</h2><canvas id="glu"></canvas>
-  <h2 style="margin-top:10px">Records</h2><div class="scroll"><table>${j.records.map(r=>`<tr><td class="meta">${when(r.ts)}</td><td>${esc(r.text.replace('[demo] ',''))}</td></tr>`).join('')||'<tr><td class="meta">none</td></tr>'}</table></div></div>
-  <div><h2>Conversations (${j.events.length})</h2><div class="scroll" style="max-height:640px"><table>${j.events.map(e=>`<tr><td class="meta">${when(e.ts)}<br>${e.alert?tag(e.alert):esc(label(e.route))}
-   ${e.safety_rules?`<br><span class="meta">rules ${esc(e.safety_rules)}</span>`:''}</td><td><div class="msg q">${esc(e.message)}</div><details><summary class="meta">answer · ${e.latency_s??'–'} s · $${(e.cost||0).toFixed(4)}</summary><div class="msg">${esc(e.answer)}</div></details></td></tr>`).join('')}</table></div></div></div>`;
- chart('glu',{type:'line',data:{labels:g.map(x=>x.x),datasets:[{label:'mg/dL',data:g.map(x=>x.y),borderColor:css('--c1'),tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
- document.getElementById('person').scrollIntoView({behavior:'smooth'});
-}
-document.getElementById('af').onchange=alerts;
-load();setInterval(()=>{load();if(current)get('/api/admin/users/'+current)},30000);
+ const meds=p.medications.map(m=>en?`${esc(cap(m.name_en))} <span class="muted">(${esc(m.kind_en)})</span>`:`${esc(m.name)} <span class="muted">(${esc(m.kind)})</span>`).join('<br>');
+ const f=k=>esc(en?(p[k]==='not given'?'—':p[k]):p.ko[k]);
+ $('person').innerHTML=`<h2>${esc(p.name)} (${en?`${p.age}, ${cap(p.gender)}`:`${p.age}세, ${esc(p.gender_ko)}`})</h2><div class="g11"><div><dl class="p"><dt>${K('질환','Conditions')}</dt><dd>${esc((en?p.conditions_en.map(cap):p.conditions_ko).join(', '))}</dd><dt>${K('복용 약','Medicines')}</dt><dd>${meds}</dd><dt>${K('평소 활동','Activity')}</dt><dd>${f('activity')}</dd><dt>${K('거동 상태','Mobility')}</dt><dd>${f('mobility')}</dd><dt>${K('식습관','Eating habits')}</dt><dd>${f('diet')}</dd><dt>${K('목표','Goal')}</dt><dd>${f('goal')}</dd></dl>
+  <h3 style="margin-top:var(--s4)">${K('혈당 기록','Blood sugar log')}</h3><canvas id="glu"></canvas><h3 style="margin-top:var(--s4)">${K('기록','Records')}</h3><div class="scroll"><table>${j.records.map(r=>`<tr><td class="muted">${when(r.ts)}</td><td>${esc(en?r.text.replace('[demo] ',''):(r.text_ko||r.text.replace('[demo] ','')))}</td></tr>`).join('')||`<tr><td class="muted">${K('없음','None')}</td></tr>`}</table></div></div>
+  <div><h3>${K('대화 내역','Conversation history')} (${j.events.length})</h3><div class="scroll" style="max-height:640px"><table>${j.events.map(e=>`<tr><td class="muted">${when(e.ts)}<br>${e.alert?tag(e.alert):esc(label(e.route))}${e.safety_rules?`<br>${K('적용된 안전 규칙','Safety rules applied')} ${esc(e.safety_rules)}`:''}</td><td><div class="msg q">${esc(evText(e,'message'))}</div><details><summary class="muted">${K('답변','Answer')} (${e.latency_s??'–'}${K('초',' s')}, $${(e.cost||0).toFixed(4)})</summary><div class="msg">${esc(evText(e,'answer'))}</div></details></td></tr>`).join('')}</table></div></div></div>`;
+ chart('glu',{type:'line',data:{labels:g.map(x=>x.x),datasets:[{label:'mg/dL',data:g.map(x=>x.y),borderColor:css('--chart-1'),tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+ $('person').scrollIntoView({behavior:'smooth'})}
+async function audit(){const a=await get('/api/admin/audit');$('auditT').innerHTML=`<tr><th>${K('일시','Date / time')}</th><th>${K('담당자','Staff')}</th><th>${K('작업','Action')}</th><th>${K('대상','Target')}</th></tr>`+a.map(x=>`<tr><td class="muted">${when(x.ts)}</td><td>${esc(x.staff)}</td><td>${x.action==='sign in'?K('로그인','Signed in'):x.action==='sign in (demo)'?K('데모 로그인','Demo sign-in'):x.action==="opened a person's data"?K('이용자 정보 열람','Viewed user data'):x.action.startsWith('alert marked')?K('알림 처리','Alert handled'):esc(x.action)}</td><td>${esc(NAMES[x.target]||x.target)}</td></tr>`).join('')}
+$('af').onchange=alerts;$('period').onchange=()=>{END=$('period').value;load()};
+$('out').onclick=async()=>{try{await api('/api/staff/logout',{})}catch(e){}location.replace('/admin/login')};
+get('/api/staff/me').then(m=>$('staffName').textContent=m.name).catch(()=>{});
+mountLang($('lang'));translateDom();
+view();load();setInterval(()=>{if(document.visibilityState==='visible')load()},30000);
 </script></body></html>

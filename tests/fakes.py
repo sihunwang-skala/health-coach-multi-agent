@@ -6,6 +6,7 @@ from coach.deps import Container
 from coach.llm import FakeLLM
 
 PROFILE = {"u1": "age: 77; gender: male; conditions: type 2 diabetes; medications: insulin glargine, metformin; activity: walks; mobility: good; goal: fitter",
+           "u3": "age: 70; gender: female; conditions: type 2 diabetes; medications: metformin; activity: walks; mobility: good; goal: fitter",
            "u2": "age: 69; gender: male; conditions: type 2 diabetes, proliferative diabetic retinopathy; medications: metformin; activity: lifts; mobility: good; goal: sport"}
 PASSAGE = {"pid": 1, "pmcid": "PMC6546780", "title": "Resources to Guide Exercise Specialists Managing Adults with Diabetes", "section": "T2D",
            "text": "Hypoglycaemia during exercise, or for up to 12 h after exercise, is the main risk for individuals with type 2 diabetes taking insulin and/or sulfonylurea medication."}

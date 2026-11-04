@@ -11,6 +11,7 @@ One row per message, kept on our own server (SQLite, the same file as the user r
 """
 from __future__ import annotations
 
+import json
 import os
 import sqlite3
 from datetime import datetime, timedelta
@@ -28,6 +29,8 @@ SCHEMA = """CREATE TABLE IF NOT EXISTS events (
 def _db(path=None) -> sqlite3.Connection:
     con = sqlite3.connect(path or Settings().db_path)
     con.execute(SCHEMA)
+    if "meta" not in {r[1] for r in con.execute("PRAGMA table_info(events)")}:   # added 2026-11: citations for the chat history
+        con.execute("ALTER TABLE events ADD COLUMN meta TEXT")
     return con
 
 
@@ -38,10 +41,10 @@ def log_event(user_id: str, message: str, r: dict, source: str = "live", ts: str
     row = (ts or datetime.now().isoformat(timespec="seconds"), user_id, route, ",".join(r.get("domains") or []), message,
            r.get("answer", ""), ",".join(s.get("id", "") for s in r.get("safety_notes") or []), r.get("retries") or 0,
            len(r.get("removed") or []), r.get("latency_s"), r.get("calls"), (r.get("tokens_in") or 0) + (r.get("tokens_out") or 0),
-           r.get("cost"), alert, "open" if alert else None, source)
+           r.get("cost"), alert, "open" if alert else None, source, json.dumps(r["meta"], ensure_ascii=False) if r.get("meta") else None)
     con = _db(path)
     cur = con.execute("INSERT INTO events (ts, user_id, route, domains, message, answer, safety_rules, retries, removed, latency_s, "
-                      "calls, tokens, cost, alert, alert_status, source) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", row)
+                      "calls, tokens, cost, alert, alert_status, source, meta) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", row)
     con.commit()
     return cur.lastrowid
 
@@ -69,11 +72,42 @@ def set_alert_status(event_id: int, status: str, path=None) -> int:
     return n
 
 
-def summary(days: int = 14, path=None) -> dict:
-    """Numbers for the admin screen: per-day counts by route, route mix, cost / latency per day, open alerts."""
-    since = (datetime.now() - timedelta(days=days - 1)).date().isoformat()
-    ev = rows("SELECT * FROM events WHERE ts >= ? ORDER BY ts", (since,), path)
-    day_list = [(datetime.now().date() - timedelta(days=i)).isoformat() for i in range(days - 1, -1, -1)]
+def windows(days: int = 14, path=None) -> dict:
+    """The two-week periods the care-team screen can show. `busiest` is the period of `days` days with the most messages (ties: the
+    latest), `blocks` are consecutive periods counted back from the newest message, newest first, `current` is the period ending today."""
+    per_day: dict[str, int] = {}
+    for r in rows("SELECT substr(ts, 1, 10) AS d, COUNT(*) AS n FROM events GROUP BY d ORDER BY d", (), path):
+        per_day[r["d"]] = r["n"]
+    if not per_day:
+        today = datetime.now().date()
+        empty = {"start": (today - timedelta(days=days - 1)).isoformat(), "end": today.isoformat(), "messages": 0}
+        return {"busiest": empty, "current": empty, "blocks": []}
+    first, last = (datetime.fromisoformat(min(per_day)).date(), datetime.fromisoformat(max(per_day)).date())
+
+    def count(end):
+        return sum(per_day.get((end - timedelta(days=i)).isoformat(), 0) for i in range(days))
+
+    def span(end):
+        return {"start": (end - timedelta(days=days - 1)).isoformat(), "end": end.isoformat(), "messages": count(end)}
+
+    ends = [first + timedelta(days=i) for i in range((last - first).days + 1)]
+    best = max(ends, key=lambda e: (count(e), e))
+    blocks, end = [], last
+    while True:
+        blocks.append(span(end))
+        end -= timedelta(days=days)
+        if end < first:
+            break
+    return {"busiest": span(best), "current": span(datetime.now().date()), "blocks": blocks}
+
+
+def summary(days: int = 14, path=None, end: str | None = None) -> dict:
+    """Numbers for the admin screen: per-day counts by route, route mix, cost / latency per day, open alerts. `end` (YYYY-MM-DD) is the
+    last day of the period; default today."""
+    last = datetime.fromisoformat(end).date() if end else datetime.now().date()
+    since, until = (last - timedelta(days=days - 1)).isoformat(), (last + timedelta(days=1)).isoformat()
+    ev = rows("SELECT * FROM events WHERE ts >= ? AND ts < ? ORDER BY ts", (since, until), path)
+    day_list = [(last - timedelta(days=i)).isoformat() for i in range(days - 1, -1, -1)]
     groups = {"Diet / exercise advice": ("diet", "exercise", "diet_exercise"), "Records & my data": ("log", "my_data", "delete_record"),
               "Chat & service": ("chat", "privacy_info"), "Alerts": tuple(ALERT_ROUTES)}
     per_day = {g: [sum(1 for e in ev if e["ts"][:10] == d and e["route"] in rs) for d in day_list] for g, rs in groups.items()}
@@ -88,6 +122,7 @@ def summary(days: int = 14, path=None) -> dict:
             "safety_retries": sum(e["retries"] or 0 for e in ev), "removed_sentences": sum(e["removed"] or 0 for e in ev),
             "open_alerts": sum(1 for e in ev if e["alert_status"] == "open"),
             "by_user": {u: sum(1 for e in ev if e["user_id"] == u) for u in sorted({e["user_id"] for e in ev})},
+            "alerts_by_user": {u: sum(1 for e in ev if e["user_id"] == u and e["alert"]) for u in sorted({e["user_id"] for e in ev})},
             "rules": _count(",".join(e["safety_rules"] or "" for e in ev).split(","))}
 
 
