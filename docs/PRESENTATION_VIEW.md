@@ -2,7 +2,6 @@
 
 고령 사용자 접근성과 안전을 고려한 근거 기반 Multi-Agent 서비스 (Personalized Agentic RAG Diet and Activity Coach for Type 2 Diabetes)
 
-SKALA 4기 광주 3반 · G088 · 왕시훈
 [GitHub 저장소](https://github.com/sihunwang-skala/health-coach-multi-agent)
 
 > 공개 논문과 자체 DB의 개인 건강정보를 함께 활용해 개인 맞춤형 식단·운동 답변을 제공하고, Safety Guard와 운영자 모니터링으로 예외 상황까지 처리하는 서비스입니다.
