@@ -26,3 +26,7 @@ Create accounts: `scripts/manage_accounts.py seed-demo | create-staff USER "Name
 
 Not done (needs a real deployment): HTTPS and `Secure` cookies behind a proxy, shared rate-limit store for several servers, e-mail/phone password reset,
 two-factor sign-in for staff, a staff-account management screen, session list and per-device sign-out, a security review by someone else.
+
+## Care-team console notes
+The console shows fictional users and demo records. Names appear only on the console; the AI agents and the monitoring log see user IDs only.
+Opening a user's health information is written to the access log. The default period is the two weeks with the most messages (the demo data of 2026-10-09..22).

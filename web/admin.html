@@ -25,7 +25,6 @@ dl.p{display:grid;grid-template-columns:max-content 1fr;gap:var(--s1) var(--s3);
  <nav class="tabs" aria-label="화면"><a href="#overview" data-v="overview">개요</a><a href="#alerts" data-v="alerts">알림 <span class="badge" id="openBadge" hidden>0</span></a><a href="#people" data-v="people">이용자</a><a href="#audit" data-v="audit">열람 기록</a></nav>
  <div class="who"><div class="lang" id="lang" role="group"></div><a class="small" href="/login">← 이용자 화면</a><span class="small muted" id="staffName"></span><button class="btn secondary sm" id="out" type="button">로그아웃</button></div></div></header>
 <main>
-<p class="small muted">가상 이용자와 데모 기록이에요. 이름은 이 화면에만 보이고, AI와 로그에는 이용자 ID만 전달돼요. 이용자의 건강 정보를 열면 열람 기록이 남아요.</p>
 
 <section class="view" id="v-overview">
  <div class="period"><label for="period">기간</label><select class="input sm" id="period"></select></div>
@@ -67,8 +66,8 @@ let END=null,PERIODS=null;
 async function periods(){
  const w=await get('/api/admin/windows');const seen=new Set();const opts=[];
  const lab=(x,tag)=>`${tag?tag+' · ':''}${md(x.start)} – ${md(x.end)} · ${K(`메시지 ${x.messages}건`,`${x.messages} messages`)}`;
- opts.push({end:w.busiest.end,text:lab(w.busiest,K('가장 활발한 기간','Busiest period'))});seen.add(w.busiest.end);
- w.blocks.forEach((x,i)=>{if(!seen.has(x.end)){opts.push({end:x.end,text:lab(x,i===0?K('최근','Latest'):'')});seen.add(x.end)}});
+ opts.push({end:w.busiest.end,text:lab(w.busiest,'')});seen.add(w.busiest.end);
+ w.blocks.forEach((x,i)=>{if(!seen.has(x.end)){opts.push({end:x.end,text:lab(x,'')});seen.add(x.end)}});
  const today=new Date(Date.now()-new Date().getTimezoneOffset()*6e4).toISOString().slice(0,10);
  if(!seen.has(today)){const st=new Date(Date.parse(today)-13*864e5).toISOString().slice(0,10);opts.push({end:today,text:`${K('오늘 기준 2주','Last 2 weeks')} · ${md(st)} – ${md(today)}`})}
  $('period').innerHTML=opts.map(o=>`<option value="${o.end}">${esc(o.text)}</option>`).join('');END=opts[0].end;$('period').value=END}

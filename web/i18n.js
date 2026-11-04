@@ -31,7 +31,6 @@ const EN={
  '계정 삭제':'Delete account','계정, 건강 정보, 기록, 대화 내용이 모두 지워지고 되돌릴 수 없어요.':'Your account, health information, records and conversations are all erased. This cannot be undone.','비밀번호 확인':'Confirm password',
  /* care-team console */
  '의료진 콘솔':'Care-team console','화면':'Views','개요':'Overview','알림':'Alerts','이용자':'Users','열람 기록':'Access log','← 이용자 화면':'← User screen',
- '가상 이용자와 데모 기록이에요. 이름은 이 화면에만 보이고, AI와 로그에는 이용자 ID만 전달돼요. 이용자의 건강 정보를 열면 열람 기록이 남아요.':'Fictional users and demo records. Names appear only on this screen; the AI and the logs see user IDs only. Opening a user\'s health information is written to the access log.',
  '기간':'Period','하루 메시지 수':'Messages per day','하루 메시지 수 막대 그래프':'Bar chart of messages per day','어떤 요청이 많았나':'What people asked','요청 종류별 건수 막대 그래프':'Bar chart of requests by type',
  '이용자별 메시지·알림':'Messages and alerts per user','이용자별 메시지와 알림 막대 그래프':'Bar chart of messages and alerts per user','하루 AI 비용':'AI cost per day','하루 AI 비용 선 그래프':'Line chart of AI cost per day',
  '알림 — 응급, 상담 요청, 약 변경, 다른 사람 정보 요청':'Alerts: emergencies, call requests, medicine changes, requests for another person\'s data','보기':'Show','처리 전':'Open','전체':'All',
