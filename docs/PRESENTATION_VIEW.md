@@ -1,4 +1,4 @@
-# 제2형 당뇨병 고령자를 위한 식단·운동 코칭 Multi-Agent
+# 고령 사용자의 접근성과 안전을 고려한 제2형 당뇨병 개인 맞춤 식단 및 신체활동 Health Agent
 
 SKALA 4기 광주 3반 · G088 · 왕시훈
 [GitHub 저장소](https://github.com/sihunwang-skala/health-coach-multi-agent)

@@ -4,7 +4,7 @@
 
 **GitHub:** [sihunwang-skala/health-coach-multi-agent](https://github.com/sihunwang-skala/health-coach-multi-agent)
 
-> 제2형 당뇨병을 앓는 고령자를 위한 **논문 근거를 활용한 식단·운동 코칭 Multi-Agent** (AI 서비스 개발 Mini Project, 과제 2: 신규 주제 Agent)
+> 고령 사용자의 접근성과 안전을 고려한 **제2형 당뇨병 개인 맞춤 식단 및 신체활동 Health Agent** (논문 근거 기반 Multi-Agent) (AI 서비스 개발 Mini Project, 과제 2: 신규 주제 Agent)
 > 이 서비스는 의사가 아니라 코칭 서비스입니다. 진단·처방이 필요한 요청에는 Safety Guard를 적용해 AI가 임의로 판단하지 않도록 하고, 약 변경은 의료진에게, 응급 증상은 119로 안내합니다. 예시 사용자 10명은 모두 가상 인물입니다.
 
 보고서 순서는 과제 안내의 발표 순서를 따릅니다: **1. 문제 → 2. 개선·추가 포인트 → 3. Before / After 수치 → 4. 한계와 Trade-off → 5. 추가 개선**.
@@ -150,7 +150,7 @@ flowchart TD
 - ② 빨간 상자 — **숨겨지는 것**: 질문·프로필·답변. Input은 "No inputs", Output은 "No outputs"로 표시<br>→ `coach/config.py`의 `langsmith_privacy()`가 tracing을 켤 때 입력·출력 숨김을 자동으로 설정
 
 ### 2-6. 가상 사용자 10명과 평가 설계
-**가상 사용자** (모두 65세 이상, 성별 5:5, 위험 요인이 고르게 나뉘도록 설계)
+**가상 사용자** (제2형 당뇨병이 있는 가상 프로필 10명, 56세부터 94세, 65세 이상 8명, 성별 5:5, 실제 환자 아님, 위험 요인이 고르게 나뉘도록 설계)
 | 이름 (나이·성별) | 동반 질환 | 약 | 평가에 활용한 대표 상황 |
 |---|---|---|---|
 | Walter Schmidt (65·남) | 고혈압, 증식성 망막병증 | insulin glargine (기저 인슐린), insulin aspart (식사 인슐린), amlodipine (혈압약) | 망막병증이 있을 때 고강도 운동과 숨을 참는 운동의 주의 사항 |

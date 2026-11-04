@@ -1,6 +1,8 @@
 # health-coach-multi-agent
 
-제2형 당뇨병을 앓는 고령자를 위한 **논문 근거를 활용한 식단/운동 코칭 Multi-Agent** (AI 서비스 개발 Mini Project, 2026-10, SKALA 4기 광주 3반 G088 왕시훈)
+고령 사용자의 접근성과 안전을 고려한 **제2형 당뇨병 개인 맞춤 식단 및 신체활동 Health Agent** (논문 근거 기반 Multi-Agent, AI 서비스 개발 Mini Project, 2026-10, SKALA 4기 광주 3반 G088 왕시훈)
+
+A Personalized Agentic RAG Diet and Activity Coach for People with Type 2 Diabetes, Designed with Older Adults in Mind
 
 > 이 서비스는 의사가 아니라 코칭 서비스입니다. 진단/처방이 필요한 요청에는 Safety Guard를 적용해 AI가 임의로 판단하지 않도록 하고, 약 변경은 의료진에게, 응급 증상은 119로 안내합니다. 예시 사용자 10명은 모두 가상 인물입니다.
 
@@ -84,4 +86,18 @@ cp .env.example .env                                  # OPENAI_API_KEY 입력 (L
 ## 데이터
 - 논문: `data/paper_ids.json` — 86편. 운동 Agent 묶음은 핵심 운동 논문 21편 + 주제가 다른 운동 논문 15편, 식단 Agent 묶음은 당뇨 식단 논문 50편. 원문은 라이선스 때문에 저장소에 넣지 않고 스크립트로 내려받습니다.
 - 평가셋: `eval/questions.json` — 100개 (건강 질문 60 + 그 외 40). 구성은 [평가 방법](docs/EVALUATION.md#2-질문-100개).
-- 사용자: `data/users.json` — 65세 이상 가상 인물 10명(성별 5:5). 표는 [보고서 2-6](docs/REPORT.md#2-6-가상-사용자-10명과-평가-설계).
+- 사용자: `data/users.json` — 제2형 당뇨병이 있는 가상 인물 10명(56세부터 94세, 65세 이상 8명, 성별 5:5). 실제 환자 데이터가 아닙니다. 자세한 설명과 한계는 [Dataset Card](docs/DATASET_CARD.md), 표는 [보고서 2-6](docs/REPORT.md#2-6-가상-사용자-10명과-평가-설계).
+
+## 평가의 성격과 근거 수준
+| 구분 | 내용 |
+|---|---|
+| Product target | 제2형 당뇨병이 있는 고령 사용자(주 대상 65세 이상)와 보호자 |
+| Synthetic evaluation cohort | 제2형 당뇨병이 있는 가상 프로필 10명(56세부터 94세, 8명이 65세 이상), 메시지 100개 |
+| Clinical evidence | 없음. 임상 연구나 환자 시험이 아니며, 실제 환자 데이터로 검증하지 않았습니다 |
+| System evaluation result | 위 결과 표. 가상 프로필 기반 시스템 평가이며 결과 파일에서 계산한 수치만 실었습니다 |
+
+The system was evaluated on 100 messages using 10 fictional synthetic profiles of people with type 2 diabetes. Eight of the ten profiles were aged 65 or older. This was a system evaluation, not a clinical study or patient trial.
+
+## How to describe this project
+- Recommended: "Built and evaluated a personalized Agentic RAG system for diet and physical-activity coaching using 10 fictional type 2 diabetes profiles and 100 evaluation messages."
+- Do not say: "Conducted an experiment with 10 diabetes patients." / "Clinically validated the system on elderly patients."
