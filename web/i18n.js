@@ -30,7 +30,7 @@ const EN={
  '내 정보는 어떻게 쓰이나요?':'How is my information used?','AI에게는 이름이 전달되지 않아요. 답변을 만들 때는 나이, 질환, 복용 약 같은 건강 정보와 질문만 사용해요. 대화 내용은 서버에 90일간 보관된 뒤 삭제되고, 이 기기에는 저장되지 않아요.':'Your name is not sent to the AI. Only health information such as age, conditions and medicines, plus your question, is used to write an answer. Conversations are kept on this service\'s server for 90 days only, and nothing but the page files is stored on this device.',
  '계정 삭제':'Delete account','계정과 건강 정보, 기록, 대화 내용이 모두 삭제되며 되돌릴 수 없어요.':'Your account, health information, records and conversations are all erased. This cannot be undone.','비밀번호 확인':'Confirm password',
  /* care-team console */
- '의료진 콘솔':'Care-team console','화면':'Views','개요':'Overview','알림':'Alerts','이용자':'Users','열람 기록':'Access log','이용자 앱 열기':'Open user app',
+ '의료진 콘솔':'Care-team console','화면':'Views','개요':'Overview','알림':'Alerts','이용자':'Users','열람 기록':'Access log','이용자 화면으로 가기':'Go to user screen',
  '조회 기간':'Period','일별 메시지 수':'Daily messages','일별 메시지 수 막대 그래프':'Bar chart of daily messages','요청 유형별 건수':'Requests by type','요청 유형별 건수 막대 그래프':'Bar chart of requests by type',
  '이용자별 메시지/알림':'Messages and alerts per user','이용자별 메시지와 알림 막대 그래프':'Bar chart of messages and alerts per user','일별 AI 비용':'Daily AI cost','일별 AI 비용 선 그래프':'Line chart of daily AI cost',
  '알림 (응급, 상담 요청, 약 변경 문의, 타인 정보 요청)':'Alerts (emergencies, call requests, medicine-change questions, requests for another person\'s data)','처리 상태':'Status','미처리':'Unhandled','전체':'All',
