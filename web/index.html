@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>식단·운동 코치</title><meta name="theme-color" content="#1D4ED8"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/icon.svg" type="image/svg+xml">
+<title>식단/운동 코치</title><meta name="theme-color" content="#1D4ED8"><link rel="manifest" href="/manifest.webmanifest"><link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/icon-192.png"><link rel="stylesheet" href="/ds.css">
 <style>
 html,body{height:100%}body{overflow:hidden}
@@ -34,6 +34,9 @@ html,body{height:100%}body{overflow:hidden}
 .dots{display:inline-flex;gap:5px;padding:var(--s2) 0}.dots i{width:8px;height:8px;border-radius:50%;background:var(--ink-2);animation:bl 1.2s infinite}.dots i:nth-child(2){animation-delay:.2s}.dots i:nth-child(3){animation-delay:.4s}
 @keyframes bl{0%,80%,100%{opacity:.25}40%{opacity:1}}
 .call{display:inline-flex;align-self:flex-start}
+.confirm{border-color:var(--danger);gap:var(--s3)}.confirm .recbox{background:var(--surface-2);border:1px solid var(--line);border-radius:var(--r-sm);padding:var(--s2) var(--s3);white-space:pre-wrap}
+.confirm .opts{display:flex;flex-direction:column;gap:var(--s2)}.optbtn{min-height:var(--tap);text-align:left;padding:var(--s2) var(--s3);border:1px solid var(--line-strong);border-radius:var(--r-sm);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer}
+.optbtn:hover{background:var(--surface-2)}.cardrow{display:flex;gap:var(--s2);flex-wrap:wrap;align-items:center}
 /* empty state */
 .hello{text-align:center;padding:var(--s7) 0 var(--s4);display:flex;flex-direction:column;gap:var(--s2);align-items:center}
 .hello .avatar{width:56px;height:56px;font-size:1.3rem}.hello h2{font-size:var(--fs-2xl)}
@@ -77,7 +80,7 @@ dl.meta{display:grid;grid-template-columns:max-content 1fr;gap:2px var(--s3);mar
 </svg>
 <div class="shell">
  <aside class="side" id="side" aria-label="내 정보">
-  <div class="brandrow"><span class="mark" aria-hidden="true"><svg class="icon"><use href="#i-leaf"/></svg></span><b>식단·운동 코치</b>
+  <div class="brandrow"><span class="mark" aria-hidden="true"><svg class="icon"><use href="#i-leaf"/></svg></span><b>식단/운동 코치</b>
    <button class="icon-btn menu" id="navClose" type="button" aria-label="메뉴 닫기"><svg class="icon"><use href="#i-x"/></svg></button></div>
   <div class="side-in">
    <div class="me-card"><span class="avatar" id="av" aria-hidden="true"></span><div><b id="meName"></b><div class="small muted" id="meUser"></div></div></div>
@@ -106,9 +109,6 @@ dl.meta{display:grid;grid-template-columns:max-content 1fr;gap:2px var(--s3);mar
  <div style="display:flex;gap:var(--s2);align-items:start"><h2 id="ctitle" style="flex:1"></h2><button class="icon-btn" id="cclose" type="button" aria-label="닫기"><svg class="icon"><use href="#i-x"/></svg></button></div>
  <div id="cbody"></div></aside>
 
-<dialog id="approveDlg" aria-labelledby="adq"><h2 id="adq">기록을 삭제할까요?</h2><p id="adtext" style="margin-top:var(--s3);white-space:pre-wrap"></p>
- <p class="small muted" style="margin-top:var(--s2)">삭제하면 되돌릴 수 없어요. 확인하신 뒤에만 지워요.</p>
- <div class="row"><button class="btn secondary" id="adNo" type="button">취소</button><button class="btn danger-btn" id="adYes" type="button">삭제</button></div></dialog>
 
 <dialog id="setDlg" aria-labelledby="sth"><h2 id="sth">설정</h2>
  <div class="field" style="margin-top:var(--s4)"><span class="label">글자 크기</span><div style="display:flex;gap:var(--s2);align-items:center"><button class="btn secondary" id="fsDown" type="button" aria-label="글자 작게">가−</button><button class="btn secondary" id="fsUp" type="button" aria-label="글자 크게">가＋</button> <button class="btn ghost" id="fsReset" type="button">기본 크기</button><span class="muted small" id="fsNow"></span></div></div>
@@ -149,7 +149,7 @@ async function load(){ME=await api('/api/auth/me',undefined,{signinUrl:'/login'}
 function renderSide(){const p=ME.profile||{},n=ME.account.name;$('av').textContent=n.slice(0,1);$('meName').textContent=n;$('meUser').textContent='@'+ME.account.username;
  const g=(ME.records||[]).map(r=>r.text.match(/blood sugar (\d+)/i)||r.text.match(/혈당\D{0,4}(\d{2,3})/)).find(Boolean);
  const en=LANG==='en',none=K('없음','None');
- const rows=[[K('나이·성별','Age · sex'),en?`${p.age} · ${cap(p.gender)}`:`${p.age}세 · ${p.gender_ko||''}`],[K('질환','Conditions'),(en?(p.conditions_en||[]).map(cap):(p.conditions_ko||[])).join(', ')||'—'],
+ const rows=[[K('나이/성별','Age / sex'),en?`${p.age}, ${cap(p.gender)}`:`${p.age}세, ${p.gender_ko||''}`],[K('질환','Conditions'),(en?(p.conditions_en||[]).map(cap):(p.conditions_ko||[])).join(', ')||'—'],
   [K('복용 약','Medicines'),(p.medications||[]).map(m=>en?cap(m.name_en):m.name).filter(x=>x&&x!=='none'&&x!=='None').join(', ')||none],[K('최근 혈당 기록','Latest blood sugar'),g?g[1]+' mg/dL':K('기록 없음','No record')],
   [K('목표','Goal'),(en?(p.goal==='not given'?'':cap(p.goal)):(p.ko&&p.ko.goal))||'—']];
  $('facts').innerHTML=rows.map(([k,v])=>`<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join('');
@@ -159,7 +159,7 @@ const dayLabel=ts=>{const d=new Date(ts),t=new Date(),y=new Date(t-864e5),same=(
 function scrollEnd(){requestAnimationFrame(()=>scroller.scrollTo({top:scroller.scrollHeight}))}
 function put(html,cls=''){const d=document.createElement('div');d.className=cls;d.innerHTML=html;thread.appendChild(d);scrollEnd();return d}
 function renderThread(){thread.innerHTML='';hasMsgs=false;let last='';
- put(K('<b>이 서비스는 진료가 아닌 건강 코칭이에요.</b> 논문에서 찾은 일반적인 건강 정보와 생활 습관을 안내해 드려요. 약을 시작하거나 끊거나 바꾸실 때는 이 답변만 보고 정하지 마시고, 꼭 의사·간호사·약사와 먼저 상의해 주세요. <b>응급 상황이면 바로 119에 전화하세요.</b>','<b>This is a health-coaching service, not a doctor.</b> It gives only general information from research papers and lifestyle tips. Do not start, stop or change a medicine because of an answer here; talk to your doctor, nurse or pharmacist first. <b>In an emergency, call 119.</b>'),'notice');
+ put(K('<b>이 서비스는 진료가 아닌 건강 코칭이에요.</b> 논문에서 찾은 일반적인 건강 정보와 생활 습관을 안내해 드려요. 약을 시작하거나 끊거나 바꾸실 때는 이 답변만 보고 정하지 마시고, 꼭 의사, 간호사, 약사와 먼저 상의해 주세요. <b>응급 상황이면 바로 119에 전화하세요.</b>','<b>This is a health-coaching service, not a doctor.</b> It gives only general information from research papers and lifestyle tips. Do not start, stop or change a medicine because of an answer here; talk to your doctor, nurse or pharmacist first. <b>In an emergency, call 119.</b>'),'notice');
  (ME.history||[]).forEach(h=>{const day=dayLabel(h.ts);if(day!==last){put(esc(day),'date');last=day}
   if(!h.message.startsWith('(approval)'))user(histMsg(h));if((histAns(h)||'').trim())bot({answer:histAns(h),route:h.route,citations:(h.meta&&h.meta.citations)||[]})});
  if(!hasMsgs)hello();scrollEnd()}
@@ -176,7 +176,7 @@ function botHtml(j){const map=citeMap(j.citations),em=j.route==='emergency';
  const paras=body.split(/\n{2,}/).map(p=>`<p class="txt">${p}</p>`).join('');
  let h=em?`<div class="banner danger" role="alert"><b class="danger">${K('응급 상황일 수 있어요','This may be an emergency')}</b>${paras}</div><a class="btn danger-btn call" href="tel:119">${icon('phone')}${K('119에 전화하기','Call 119')}</a>`:paras;
  if(j.route==='handoff')h+=`<a class="btn call" href="tel:0000000000">${icon('phone')}${K('의료진 상담 전화 (데모 번호)','Call the care team (demo number)')}</a>`;
- if((j.citations||[]).length)h+=`<div class="srcs"><span class="small muted">${K('근거','References')}</span>${j.citations.map(c=>`<button class="chip" type="button" data-c="${c.citation_id}">${c.citation_id} · ${esc((c.title||c.document_id).slice(0,28))}${(c.title||'').length>28?'…':''}${c.kind==='safety_rule'?' · '+K('안전 규칙','safety rule'):''}</button>`).join('')}</div>`;
+ if((j.citations||[]).length)h+=`<div class="srcs"><span class="small muted">${K('근거','References')}</span>${j.citations.map(c=>`<button class="chip" type="button" data-c="${c.citation_id}">${c.citation_id}. ${esc((c.title||c.document_id).slice(0,28))}${(c.title||'').length>28?'…':''}${c.kind==='safety_rule'?' ('+K('안전 규칙','safety rule')+')':''}</button>`).join('')}</div>`;
  if(loose.length)h+=`<div class="srcs"><span class="small muted">${K('사용한 논문','Papers used')}</span>${loose.map(id=>`<a class="chip" href="https://pmc.ncbi.nlm.nih.gov/articles/${esc(id)}/" target="_blank" rel="noopener">${esc(id)} ↗</a>`).join('')}</div>`;
  if(LANG==='ko'&&!/[가-힣]/.test(j.answer||'')&&(j.answer||'').length>40)h+=`<div class="note">이 답변은 영어로만 제공돼요.</div>`;
  if(LANG==='en'&&/[가-힣]/.test(j.answer||''))h+=`<div class="note">This answer is only available in Korean.</div>`;
@@ -196,7 +196,7 @@ function highlighted(c){const t=c.source_text||'';if(!t)return `<p class="small 
 function openCite(j,id,from){const c=(j.citations||[]).find(x=>x.citation_id===id);if(!c)return;lastFocus=from;$('ctitle').textContent=`${c.citation_id}. ${c.title||c.document_id}`;
  const s=sentenceFor(j,c);
  const rule=c.kind==='safety_rule';
- $('cbody').innerHTML=`<dl class="meta">${c.authors_year?`<dt>${K('저자·연도','Authors, year')}</dt><dd>${esc(c.authors_year)}</dd>`:''}<dt>${K('문서 번호','Document ID')}</dt><dd>${esc(c.document_id)}</dd>${!rule&&c.section?`<dt>${K('논문 속 위치','Section')}</dt><dd>${esc(c.section)}</dd>`:''}</dl>
+ $('cbody').innerHTML=`<dl class="meta">${c.authors_year?`<dt>${K('저자/연도','Authors, year')}</dt><dd>${esc(c.authors_year)}</dd>`:''}<dt>${K('문서 번호','Document ID')}</dt><dd>${esc(c.document_id)}</dd>${!rule&&c.section?`<dt>${K('논문 속 위치','Section')}</dt><dd>${esc(c.section)}</dd>`:''}</dl>
  ${s?`<div class="csec"><h3>${K('이 근거를 인용한 문장','Sentence that cites this reference')}</h3><div class="ko">${esc(s)}</div></div>`:''}
  ${rule?`<div class="csec"><h3>${K('이 근거는 어디서 왔나요?','Where does this come from?')}</h3><p class="small">${K('검색으로 찾은 논문 발췌문이 아니라, 이 논문의 권고를 바탕으로 서비스가 정리해 둔 안전 규칙이에요. 내 질환이나 복용 약에 해당하는 규칙이 있을 때 함께 표시돼요.','This is not a retrieved excerpt. It comes from the service\'s safety rules, which restate a recommendation of this paper. A rule is added when it matches your conditions or medicines.')}</p></div>
  <div class="csec"><h3>${K('규칙 내용','The rule')}</h3>${(c.notes||[]).map(n=>`<p class="small" lang="en">${esc(n)}</p>`).join('')}</div>`
@@ -233,12 +233,32 @@ async function send(text){const m=(text||msg.value).trim();if(!m||busy)return;ms
     done=true;end();showDone(j)}}
   if(!done)fail(K('연결이 끊겼어요. 다시 시도해 주세요.','The connection was lost. Please try again.'))}
  catch(x){fail(navigator.onLine?K('죄송해요, 문제가 생겼어요.','Sorry, something went wrong.'):K('인터넷 연결을 확인해 주세요.','Please check your internet connection.'))}}
-function showDone(j){const em=j.route==='emergency';bot(j);
+function showDone(j){const em=j.route==='emergency';if(!(j.interrupt&&!(j.answer||'').trim()))bot(j);
  $('banner').innerHTML=em?`<div class="banner danger" role="alert"><b class="danger">${K('응급 상황일 수 있어요.','This may be an emergency.')}</b> ${K('지금 바로 119에 전화하세요. 혼자 계시면 보호자에게도 알려 주세요.','Call 119 now. If you are alone, tell your guardian too.')} <a class="btn danger-btn" style="margin-top:var(--s2)" href="tel:119">${K('119에 전화하기','Call 119')}</a></div>`:'';
- if(j.interrupt){pendingT=j.thread_id;$('adtext').textContent=j.interrupt.question||'';$('approveDlg').showModal()}
+ if(j.interrupt)askCard(j.interrupt,j.thread_id);
  api('/api/auth/me',undefined,{signinUrl:'/login'}).then(m=>{ME=m;renderSide()})}
-async function decide(yes){$('approveDlg').close();try{const j=await api('/approve',{thread_id:pendingT,approve:yes,lang:'ko'});bot({answer:j.answer,route:'chat',citations:[]});ME=await api('/api/auth/me');renderSide()}catch(x){toast(x.message)}}
-$('adYes').onclick=()=>decide(true);$('adNo').onclick=()=>decide(false);
+/* ---------- delete confirmation: an in-chat card, never a one-click action ---------- */
+const fmtTs=ts=>{const d=new Date(ts),p=n=>String(n).padStart(2,'0');return K(`${d.getMonth()+1}월 ${d.getDate()}일 ${p(d.getHours())}:${p(d.getMinutes())}`,`${MONTHS[d.getMonth()]} ${d.getDate()}, ${p(d.getHours())}:${p(d.getMinutes())}`)};
+const recLine=r=>{const mine=(ME.records||[]).find(x=>x.id===r.id),clean=r.text.replace('[demo] ','');return `${fmtTs(r.ts)}  ${LANG==='ko'?((mine&&mine.text_ko)||clean):clean}`};
+function askCard(ask,tid){
+ const choose=ask.action==='choose_record',no=K('취소','Cancel');
+ const body=choose
+  ?`<b>${K('어떤 기록을 삭제할까요?','Which record do you want to delete?')}</b><div class="opts">${(ask.options||[]).map(r=>`<button class="optbtn" type="button" data-id="${r.id}">${esc(recLine(r))}</button>`).join('')}</div><div class="cardrow"><button class="btn secondary" type="button" data-no>${no}</button></div>`
+  :`<b>${K('이 기록을 삭제할까요?','Delete this record?')}</b><div class="recbox">${esc(recLine(ask.record))}</div><p class="small muted">${K('삭제한 기록은 되돌릴 수 없어요. 아래의 삭제하기 버튼을 눌러야만 삭제돼요.','A deleted record cannot be restored. It is deleted only when you press the Delete button below.')}</p><div class="cardrow"><button class="btn secondary" type="button" data-no>${no}</button><button class="btn danger-btn" type="button" data-yes>${K('삭제하기','Delete')}</button></div>`;
+ const d=put(`<span class="avatar">${icon('shield')}</span><div class="bot confirm" role="group" aria-label="${K('삭제 확인','Delete confirmation')}">${body}</div>`,'row'),box=d.querySelector('.confirm');
+ const answer=(yes,choice)=>decide(box,tid,yes,choice);
+ box.querySelector('[data-no]').onclick=()=>answer(false);
+ const y=box.querySelector('[data-yes]');if(y)y.onclick=()=>answer(true);
+ box.querySelectorAll('.optbtn').forEach(b=>b.onclick=()=>answer(true,+b.dataset.id));
+ box.querySelector('[data-no]').focus();   /* the safe choice has the focus; Enter or Esc never deletes */
+}
+async function decide(box,tid,yes,choice){
+ box.querySelectorAll('button').forEach(b=>b.disabled=true);
+ const row=box.querySelector('.cardrow');if(row)row.innerHTML=`<span class="small muted">${yes?K('확인했어요.','Confirmed.'):K('취소했어요.','Cancelled.')}</span>`;
+ try{const j=await api('/approve',{thread_id:tid,approve:yes,choice:choice===undefined?null:choice,lang:LANG});
+  if(j.interrupt)askCard(j.interrupt,j.thread_id);else bot({answer:j.answer,route:'chat',citations:[]});
+  ME=await api('/api/auth/me');renderSide()}
+ catch(x){if(row)row.innerHTML=`<span class="small danger" role="alert">${esc(tr(x.message))}</span>`}}
 $('nurse').onclick=()=>send(K('간호사와 상담하고 싶어요.','I want to talk to a nurse.'));
 /* ---------- settings, sign out ---------- */
 const fsLabel=()=>$('fsNow').textContent=K(`지금 ${FS}px`,`Now ${FS}px`);

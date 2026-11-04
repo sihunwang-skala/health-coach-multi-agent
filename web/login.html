@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>로그인 · 식단·운동 코치</title><meta name="theme-color" content="#1D4ED8"><link rel="icon" href="/icon.svg" type="image/svg+xml">
+<title>식단/운동 코치 로그인</title><meta name="theme-color" content="#1D4ED8"><link rel="icon" href="/icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="/ds.css">
 <style>
 body{min-height:100vh;display:grid;place-items:center;padding:var(--s5) var(--s4)}
@@ -26,7 +26,7 @@ form{display:flex;flex-direction:column;gap:var(--s4)}
 <div class="lang lang-corner" id="lang" role="group"></div>
 <main class="wrap">
  <header class="brand"><div class="mark" aria-hidden="true"><svg class="icon"><use href="#i-leaf"/></svg></div>
-  <h1 style="font-size:var(--fs-2xl)">식단·운동 코치</h1><p class="muted">내 건강 상태에 맞춰 식사와 운동을 함께 살펴봐 드려요.</p></header>
+  <h1 style="font-size:var(--fs-2xl)">식단/운동 코치</h1><p class="muted">내 건강 상태에 맞춰 식사와 운동을 함께 살펴봐 드려요.</p></header>
 
  <section class="card panel" aria-label="로그인과 가입">
   <div class="tabs" role="tablist"><button role="tab" id="tabIn" aria-selected="true" aria-controls="formIn">로그인</button><button role="tab" id="tabUp" aria-selected="false" aria-controls="formUp">가입하기</button></div>
@@ -58,7 +58,7 @@ form{display:flex;flex-direction:column;gap:var(--s4)}
      <input class="input" id="upOther" maxlength="60" placeholder="목록에 없는 약이 있으면 적어 주세요" aria-label="그 밖의 약"></div>
     <div class="field"><label for="upMob">걷기와 균형</label><select class="input" id="upMob"><option value="good">불편함 없음</option><option value="balance">균형이 불안해요</option><option value="cane">지팡이나 보행기를 써요</option><option value="legs">다리 힘이 약해요</option></select></div>
     <div class="field"><label for="upGoal">건강 목표 <span class="muted">(선택)</span></label><input class="input" id="upGoal" maxlength="100" placeholder="예: 식후 혈당 낮추기"></div>
-    <div class="field"><label for="upAct">평소 운동·활동 <span class="muted">(선택)</span></label><input class="input" id="upAct" maxlength="100" placeholder="예: 저녁마다 공원 걷기"></div>
+    <div class="field"><label for="upAct">평소 운동/활동 <span class="muted">(선택)</span></label><input class="input" id="upAct" maxlength="100" placeholder="예: 저녁마다 공원 걷기"></div>
     <div class="field"><label for="upDiet">평소 식습관 <span class="muted">(선택)</span></label><input class="input" id="upDiet" maxlength="100" placeholder="예: 아침을 자주 거름"></div>
    </div>
 
@@ -93,7 +93,7 @@ $('formIn').onsubmit=async e=>{e.preventDefault();$('inErr').textContent='';$('i
  try{await api('/api/auth/login',{username:$('inUser').value,password:$('inPw').value});location.replace('/')}
  catch(x){$('inErr').textContent=x.message;$('inPw').value='';$('inBtn').disabled=false}};
 fetch('/api/demo/users').then(r=>r.ok?r.json():null).then(l=>{if(!l)return;$('demo').hidden=false;
- $('people').innerHTML=l.map(u=>`<button type="button" data-id="${u.id}"><b>${esc(u.name)} · ${K(u.age+'세',u.age+' y')}</b><small>${esc(K(u.line,u.line_en))}</small></button>`).join('');
+ $('people').innerHTML=l.map(u=>`<button type="button" data-id="${u.id}"><b>${esc(u.name)}, ${K(u.age+'세',u.age+' y')}</b><small>${esc(K(u.line,u.line_en))}</small></button>`).join('');
  $('people').onclick=async e=>{const b=e.target.closest('button');if(!b)return;b.disabled=true;try{await api('/api/demo/enter',{user_id:b.dataset.id});location.replace('/')}catch(x){toast(x.message);b.disabled=false}}}).catch(()=>{});
 let step=1;mountLang($('lang'));translateDom();const NAMES=K(['계정 만들기','내 건강 정보','동의하고 시작하기'],['Create account','Your health information','Agree and start']);
 function show(n){step=n;[1,2,3].forEach(i=>{const s=$('s'+i);s.hidden=i!==n;s.style.display=i===n?'flex':'none'});$('stepNo').textContent=n;$('stepName').textContent=NAMES[n-1];

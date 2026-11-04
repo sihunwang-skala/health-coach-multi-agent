@@ -23,7 +23,7 @@ guard (emergency regex, no LLM) ─┬─ emergency_reply (119 text)
                                    → writer (LLM) → validate (dangerous-advice rules S1–S9) ─┬─ done
                                                                                              ├─ retry (max 1, 60 s budget) → writer
                                                                                              └─ remove_unsafe (+ rule text first)
-   med_change → fixed safety reply · log / my_data / chat → records agent · delete_record → interrupt() (human approval)
+   med_change → fixed safety reply, log / my_data / chat → records agent, delete_record → interrupt() (human approval)
 ```
 | Path | Role |
 |---|---|

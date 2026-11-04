@@ -1,4 +1,4 @@
-# DESIGN.md — 식단·운동 코치 design system v1 (2026-11-04)
+# DESIGN.md — 식단/운동 코치 design system v1 (2026-11-04)
 
 Source of truth for values: `web/ds.css` (tokens + components), `web/ds.js` (helpers). Pages add layout only.
 Status: implemented and checked in a real browser (see "Checked"); the reference measurements are labelled **measured** or **assumed**.
@@ -27,13 +27,13 @@ The first draft used a warm paper background and a green accent; it was dropped 
 - **Motion:** 150 ms colour/transform only; typing dots; all disabled under `prefers-reduced-motion`.
 
 ## 3. Components (one design per role)
-Button (`.btn` + `secondary | ghost | danger-btn`, `.icon-btn`) · Field (`.field`, `.input`, `.hint`, `.error`) · Card · Chip (toggle with `aria-pressed`) ·
-Tag (alert kinds) · Avatar · Banner (`danger | info | warn`) · Dialog / bottom sheet · Toast · Table (care team) · Skeleton.
+Button (`.btn` + `secondary | ghost | danger-btn`, `.icon-btn`), Field (`.field`, `.input`, `.hint`, `.error`), Card, Chip (toggle with `aria-pressed`) /
+Tag (alert kinds), Avatar, Banner (`danger | info | warn`), Dialog / bottom sheet, Toast, Table (care team), Skeleton.
 Chat-only: user bubble, assistant text block, evidence chips and `cite` number buttons, typing indicator, composer, date separator.
 Rules: emergency is the only red surface; every control has a visible 3 px focus ring; no new colour or size outside the tokens.
 
 ## 4. Information architecture
-- `/login` (log in / sign up in 3 steps: account → health profile → consent; in demo mode also “가상 사용자로 체험하기” cards) · `/` chat with sidebar (profile summary, records, settings, log out) ·
+- `/login` (log in / sign up in 3 steps: account → health profile → consent; in demo mode also “가상 사용자로 체험하기” cards), `/` chat with sidebar (profile summary, records, settings, log out) /
   `/admin/login` → `/admin` (overview, alerts, people, access log). Two separate sign-ins and roles.
 - Always visible in chat: “응급 119” and an “의료진과 이야기하기” button. A banner repeats the 119 call on an emergency answer.
 - Evidence: numbered buttons inside the answer + chips under it → panel with the supporting sentence, the paper excerpt (supporting sentences highlighted) and the PMC link.

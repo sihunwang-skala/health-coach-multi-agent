@@ -23,7 +23,7 @@ dl.p{display:grid;grid-template-columns:max-content 1fr;gap:var(--s1) var(--s3);
 </style></head><body>
 <header class="bar"><div class="bar-in"><h1>의료진 콘솔</h1>
  <nav class="tabs" aria-label="화면"><a href="#overview" data-v="overview">개요</a><a href="#alerts" data-v="alerts">알림 <span class="badge" id="openBadge" hidden>0</span></a><a href="#people" data-v="people">이용자</a><a href="#audit" data-v="audit">열람 기록</a></nav>
- <div class="who"><div class="lang" id="lang" role="group"></div><a class="small" href="/login">이용자 화면으로</a><span class="small muted" id="staffName"></span><button class="btn secondary sm" id="out" type="button">로그아웃</button></div></div></header>
+ <div class="who"><div class="lang" id="lang" role="group"></div><a class="small" href="/login">이용자 앱 열기</a><span class="small muted" id="staffName"></span><button class="btn secondary sm" id="out" type="button">로그아웃</button></div></div></header>
 <main>
 
 <section class="view" id="v-overview">
@@ -31,11 +31,11 @@ dl.p{display:grid;grid-template-columns:max-content 1fr;gap:var(--s1) var(--s3);
  <div class="kpis" id="kpis"></div>
  <div class="g2" style="margin-top:var(--s4)"><div class="card"><h2>일별 메시지 수</h2><canvas id="perDay" role="img" aria-label="일별 메시지 수 막대 그래프"></canvas></div>
   <div class="card"><h2>요청 유형별 건수</h2><canvas id="routes" role="img" aria-label="요청 유형별 건수 막대 그래프"></canvas></div></div>
- <div class="g11" style="margin-top:var(--s4)"><div class="card"><h2>이용자별 메시지·알림</h2><canvas id="byUser" role="img" aria-label="이용자별 메시지와 알림 막대 그래프"></canvas></div>
+ <div class="g11" style="margin-top:var(--s4)"><div class="card"><h2>이용자별 메시지/알림</h2><canvas id="byUser" role="img" aria-label="이용자별 메시지와 알림 막대 그래프"></canvas></div>
   <div class="card"><h2>일별 AI 비용</h2><canvas id="cost" role="img" aria-label="일별 AI 비용 선 그래프"></canvas></div></div>
 </section>
 
-<section class="view card" id="v-alerts" hidden><h2>알림 (응급·상담 요청·약 변경 문의·타인 정보 요청)</h2>
+<section class="view card" id="v-alerts" hidden><h2>알림 (응급, 상담 요청, 약 변경 문의, 타인 정보 요청)</h2>
  <div class="small muted" style="margin-bottom:var(--s3);display:flex;gap:var(--s2);align-items:center"><label for="af">처리 상태</label><select class="input sm" id="af"><option value="open">미처리</option><option value="all">전체</option></select></div>
  <div class="scroll wrap" style="max-height:none"><table id="alerts"></table></div></section>
 
@@ -49,8 +49,8 @@ dl.p{display:grid;grid-template-columns:max-content 1fr;gap:var(--s1) var(--s3);
 <script src="/ds.js"></script><script src="/i18n.js"></script>
 <script>
 const ALERT=K({emergency:"응급",handoff:"상담 요청",med_change:"약 변경 문의",other_user:"타인 정보 요청"},{emergency:"Emergency",handoff:"Call request",med_change:"Medicine change",other_user:"Request for another person's data"});
-const ROUTE={...ALERT,...K({diet:"식단",exercise:"운동",diet_exercise:"식단·운동",log:"기록 저장",my_data:"내 정보 조회",delete_record:"기록 삭제",chat:"일상 대화",privacy_info:"개인정보 문의"},{diet:"Diet",exercise:"Exercise",diet_exercise:"Diet + exercise",log:"Record saved",my_data:"My data lookup",delete_record:"Delete record",chat:"Casual chat",privacy_info:"Privacy question"})};
-const GROUP=K({'Diet / exercise advice':'식단·운동 상담','Records & my data':'기록·내 정보','Chat & service':'일상 대화·서비스 안내','Alerts':'알림'},{});
+const ROUTE={...ALERT,...K({diet:"식단",exercise:"운동",diet_exercise:"식단/운동",log:"기록 저장",my_data:"내 정보 조회",delete_record:"기록 삭제",chat:"일상 대화",privacy_info:"개인정보 문의"},{diet:"Diet",exercise:"Exercise",diet_exercise:"Diet + exercise",log:"Record saved",my_data:"My data lookup",delete_record:"Delete record",chat:"Casual chat",privacy_info:"Privacy question"})};
+const GROUP=K({'Diet / exercise advice':'식단/운동 상담','Records & my data':'기록/내 정보','Chat & service':'일상 대화/서비스 안내','Alerts':'알림'},{});
 const md=d=>{const [y,m,dd]=d.split('-');return K(`${y}.${m}.${dd}`,`${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1]} ${+dd}, ${y}`)};
 const evText=(e,f)=>{let m=null;try{m=e.meta?JSON.parse(e.meta):null}catch(x){}return LANG==='ko'&&m&&m.ko&&m.ko[f]?m.ko[f]:(LANG==='en'&&m&&m.en&&m.en[f]?m.en[f]:e[f])};
 const cap=t=>t?t.charAt(0).toUpperCase()+t.slice(1):t;
@@ -65,14 +65,14 @@ addEventListener('hashchange',view);
 let END=null,PERIODS=null;
 async function periods(){
  const w=await get('/api/admin/windows');const seen=new Set();const opts=[];
- const lab=x=>`${md(x.start)} – ${md(x.end)} · ${K(`메시지 ${x.messages}건`,`${x.messages} messages`)}`;
+ const lab=x=>`${md(x.start)} – ${md(x.end)} (${K(`메시지 ${x.messages}건`,`${x.messages} messages`)})`;
  opts.push({end:w.busiest.end,text:lab(w.busiest)});seen.add(w.busiest.end);
  w.blocks.concat([w.current]).forEach(x=>{if(!seen.has(x.end)){opts.push({end:x.end,text:lab(x)});seen.add(x.end)}});
  $('period').innerHTML=opts.map(o=>`<option value="${o.end}">${esc(o.text)}</option>`).join('');END=opts[0].end;$('period').value=END}
 async function load(){
  if(!END)await periods();
  const [s,users]=await Promise.all([get('/api/admin/summary?end='+END),get('/api/admin/users')]);users.forEach(u=>NAMES[u.id]=u.name);
- const k=[[K("총 메시지","Total messages"),s.messages],[K("활성 이용자","Active users"),s.active_users+" / "+users.length],[K("미처리 알림","Unhandled alerts"),s.open_alerts,"alert"],[K("건강 답변 평균 소요 시간","Avg. health answer time"),(s.advice_latency_avg??'–')+K(" 초"," s")],[K("안전 검사 재작성 / 삭제 문장","Safety rewrites / removed sentences"),s.safety_retries+" / "+s.removed_sentences],[K("AI 사용 비용","AI usage cost"),"$"+s.cost.toFixed(3)]];
+ const k=[[K("총 메시지","Total messages"),s.messages],[K("활성 이용자","Active users"),s.active_users+" / "+users.length],[K("미처리 알림","Unhandled alerts"),s.open_alerts,"alert"],[K("건강 답변 평균 소요 시간","Avg. health answer time"),(s.advice_latency_avg??'–')+K(" 초"," s")],[K("안전 점검으로 고친 답변 / 삭제한 문장","Answers rewritten / sentences removed by the safety check"),s.safety_retries+" / "+s.removed_sentences],[K("AI 사용 비용","AI usage cost"),"$"+s.cost.toFixed(3)]];
  $('kpis').innerHTML=k.map(([l,v,c])=>`<div class="card kpi ${c||''}"><b>${v}</b><span>${l}</span></div>`).join('');
  $('openBadge').textContent=s.open_alerts;$('openBadge').hidden=!s.open_alerts;
  const cols=[css('--chart-1'),css('--chart-2'),css('--chart-3'),css('--chart-4')];
@@ -96,9 +96,9 @@ async function person(id){
  const g=j.records.filter(r=>/blood sugar (\d+)/.test(r.text)).map(r=>({x:r.ts.slice(5,10),y:+r.text.match(/blood sugar (\d+)/)[1]})).reverse();
  const meds=p.medications.map(m=>en?`${esc(cap(m.name_en))} <span class="muted">(${esc(m.kind_en)})</span>`:`${esc(m.name)} <span class="muted">(${esc(m.kind)})</span>`).join('<br>');
  const f=k=>esc(en?(p[k]==='not given'?'—':p[k]):p.ko[k]);
- $('person').innerHTML=`<h2>${esc(p.name)} · ${en?`${p.age} · ${cap(p.gender)}`:`${p.age}세 · ${esc(p.gender_ko)}`}</h2><div class="g11"><div><dl class="p"><dt>${K('질환','Conditions')}</dt><dd>${esc((en?p.conditions_en.map(cap):p.conditions_ko).join(', '))}</dd><dt>${K('복용 약','Medicines')}</dt><dd>${meds}</dd><dt>${K('평소 활동','Activity')}</dt><dd>${f('activity')}</dd><dt>${K('거동 상태','Mobility')}</dt><dd>${f('mobility')}</dd><dt>${K('식습관','Eating habits')}</dt><dd>${f('diet')}</dd><dt>${K('목표','Goal')}</dt><dd>${f('goal')}</dd></dl>
+ $('person').innerHTML=`<h2>${esc(p.name)} (${en?`${p.age}, ${cap(p.gender)}`:`${p.age}세, ${esc(p.gender_ko)}`})</h2><div class="g11"><div><dl class="p"><dt>${K('질환','Conditions')}</dt><dd>${esc((en?p.conditions_en.map(cap):p.conditions_ko).join(', '))}</dd><dt>${K('복용 약','Medicines')}</dt><dd>${meds}</dd><dt>${K('평소 활동','Activity')}</dt><dd>${f('activity')}</dd><dt>${K('거동 상태','Mobility')}</dt><dd>${f('mobility')}</dd><dt>${K('식습관','Eating habits')}</dt><dd>${f('diet')}</dd><dt>${K('목표','Goal')}</dt><dd>${f('goal')}</dd></dl>
   <h3 style="margin-top:var(--s4)">${K('혈당 기록','Blood sugar log')}</h3><canvas id="glu"></canvas><h3 style="margin-top:var(--s4)">${K('기록','Records')}</h3><div class="scroll"><table>${j.records.map(r=>`<tr><td class="muted">${when(r.ts)}</td><td>${esc(en?r.text.replace('[demo] ',''):(r.text_ko||r.text.replace('[demo] ','')))}</td></tr>`).join('')||`<tr><td class="muted">${K('없음','None')}</td></tr>`}</table></div></div>
-  <div><h3>${K('대화 내역','Conversation history')} (${j.events.length})</h3><div class="scroll" style="max-height:640px"><table>${j.events.map(e=>`<tr><td class="muted">${when(e.ts)}<br>${e.alert?tag(e.alert):esc(label(e.route))}${e.safety_rules?`<br>${K('적용된 안전 규칙','Safety rules applied')} ${esc(e.safety_rules)}`:''}</td><td><div class="msg q">${esc(evText(e,'message'))}</div><details><summary class="muted">${K('답변','Answer')} · ${e.latency_s??'–'}${K('초',' s')} · $${(e.cost||0).toFixed(4)}</summary><div class="msg">${esc(evText(e,'answer'))}</div></details></td></tr>`).join('')}</table></div></div></div>`;
+  <div><h3>${K('대화 내역','Conversation history')} (${j.events.length})</h3><div class="scroll" style="max-height:640px"><table>${j.events.map(e=>`<tr><td class="muted">${when(e.ts)}<br>${e.alert?tag(e.alert):esc(label(e.route))}${e.safety_rules?`<br>${K('적용된 안전 규칙','Safety rules applied')} ${esc(e.safety_rules)}`:''}</td><td><div class="msg q">${esc(evText(e,'message'))}</div><details><summary class="muted">${K('답변','Answer')} (${e.latency_s??'–'}${K('초',' s')}, $${(e.cost||0).toFixed(4)})</summary><div class="msg">${esc(evText(e,'answer'))}</div></details></td></tr>`).join('')}</table></div></div></div>`;
  chart('glu',{type:'line',data:{labels:g.map(x=>x.x),datasets:[{label:'mg/dL',data:g.map(x=>x.y),borderColor:css('--chart-1'),tension:.3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
  $('person').scrollIntoView({behavior:'smooth'})}
 async function audit(){const a=await get('/api/admin/audit');$('auditT').innerHTML=`<tr><th>${K('일시','Date / time')}</th><th>${K('담당자','Staff')}</th><th>${K('작업','Action')}</th><th>${K('대상','Target')}</th></tr>`+a.map(x=>`<tr><td class="muted">${when(x.ts)}</td><td>${esc(x.staff)}</td><td>${x.action==='sign in'?K('로그인','Signed in'):x.action==='sign in (demo)'?K('데모 로그인','Demo sign-in'):x.action==="opened a person's data"?K('이용자 정보 열람','Viewed user data'):x.action.startsWith('alert marked')?K('알림 처리','Alert handled'):esc(x.action)}</td><td>${esc(NAMES[x.target]||x.target)}</td></tr>`).join('')}

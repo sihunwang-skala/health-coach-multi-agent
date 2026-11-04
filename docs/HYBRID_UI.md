@@ -9,13 +9,13 @@
 | 실제 구현 (코드) | 한국어 응급 표현, 한국어 고정 답변, 번역 1단계, 인용 contract, `health_simple`/`health_deep`, SSE `route`/`error`, 한국어 PWA 화면 | 구현 + 단위 테스트 26개(무료) 통과 |
 | 실제 실행 화면 | `docs/ui/screenshots/` (Chrome으로 실제 페이지를 캡처) | 답변 화면은 **기록된 평가 답변을 다시 보여 준 것**(`/replay`), 응급 화면은 실제 코드 경로 |
 | 번역 이미지 | 이전 ChatGPT 작업의 한국어 번역 이미지 | 이 저장소에 없음. 실제 실행 화면이 아님 |
-| 미검증 | 한국어 질문의 검색 품질, 번역 품질, `health_simple`의 답변 품질·비용·시간 | **API key 인증 실패(401)로 실행하지 못함** (§6) |
+| 미검증 | 한국어 질문의 검색 품질, 번역 품질, `health_simple`의 답변 품질/비용/시간 | **API key 인증 실패(401)로 실행하지 못함** (§6) |
 
 ## 2. 구조 선택: 정적 HTML 유지
 - 선택: `web/index.html`을 다시 쓰되 빌드 단계 없는 정적 HTML + FastAPI 제공을 유지. React/Vite로 바꾸지 않았습니다.
 - 이유: 화면이 한 페이지 + 관리자 한 페이지이고, 상태가 대화 목록과 패널 정도입니다. 빌드 도구를 넣으면 실행 방법(`uvicorn` 한 줄)과 공개 저장소의 단순함이 깨집니다.
 - 대가: 컴포넌트 재사용과 타입 검사가 없습니다. 화면이 3개 이상으로 늘면 그때 Vite로 옮기는 것이 맞습니다.
-- 반응형 PWA 하나로 desktop/tablet/mobile을 처리합니다. Capacitor wrapper는 **만들지 않았습니다**(PWA 설치 조건을 확인한 뒤의 단계이고, 시간·검증이 필요해 다음 우선순위로 넘김).
+- 반응형 PWA 하나로 desktop/tablet/mobile을 처리합니다. Capacitor wrapper는 **만들지 않았습니다**(PWA 설치 조건을 확인한 뒤의 단계이고, 시간/검증이 필요해 다음 우선순위로 넘김).
 
 ## 3. 인용 contract (`coach/citations.py`)
 `/chat/stream`의 `done` event에 `statements`, `citations`를 **추가**했습니다. 기존 `sources`(PMC id 목록)는 그대로 있어 이전 화면과 호환됩니다.
@@ -34,10 +34,10 @@
 ## 4. 건강 질문 경량/심층 경로
 - `COACH_HEALTH_LITE=1`일 때만 켜집니다. **기본은 꺼짐**이라 평가된 서비스와 동작이 같습니다.
 - 결정 순서: (1) 응급 코드 검사와 supervisor 경로는 그대로 먼저 적용 (2) 건강 route(diet/exercise/diet_exercise)에서 `health_path()`:
-  **저장된 프로필에 안전 규칙이 걸리면(인슐린, 망막병증, 신장질환 등) → deep**(사용자가 병을 직접 쓰지 않아도 적용) / 식단+운동 → deep / 본인 질문(`about_user`) → deep / 약·저혈당·합병증·음주 단어 포함 → deep / 그 외 → simple. **질문 길이는 쓰지 않습니다.**
+  **저장된 프로필에 안전 규칙이 걸리면(인슐린, 망막병증, 신장질환 등) → deep**(사용자가 병을 직접 쓰지 않아도 적용) / 식단+운동 → deep / 본인 질문(`about_user`) → deep / 약/저혈당/합병증/음주 단어 포함 → deep / 그 외 → simple. **질문 길이는 쓰지 않습니다.**
 - `health_simple`: 검색어 만들기를 LLM 1번(4번 대신)으로 줄이고, 나머지(검색, 근거 선택, 근거 확인, 작성, 위험 조언 검사)는 deep과 같습니다. 근거 없는 일반 답변은 허용하지 않습니다.
 - escalation: 검증된 근거 메모가 하나도 없으면 같은 질문을 deep 경로로 다시 실행하고 `escalated=true`로 표시합니다(trace에 `escalate`).
-- **검증 범위**: 단위 테스트로 "simple이 deep보다 LLM 호출이 적다", "근거 없으면 escalate", "본인 질문은 simple을 타지 않는다"를 확인했습니다. 실제 질문에서의 답변 품질·시간·비용은 **측정하지 못했습니다**. 하나뿐인 simple 질문의 검색어(4개 → 2개)가 줄어 근거 적중률이 떨어질 수 있어, 측정 전에는 기본값을 켜지 않습니다.
+- **검증 범위**: 단위 테스트로 "simple이 deep보다 LLM 호출이 적다", "근거 없으면 escalate", "본인 질문은 simple을 타지 않는다"를 확인했습니다. 실제 질문에서의 답변 품질/시간/비용은 **측정하지 못했습니다**. 하나뿐인 simple 질문의 검색어(4개 → 2개)가 줄어 근거 적중률이 떨어질 수 있어, 측정 전에는 기본값을 켜지 않습니다.
 
 ## 5. SSE event (`GET /chat/stream?user_id=&message=&lang=ko|en`)
 | event | 내용 |
@@ -53,13 +53,13 @@
 ## 6. 한국어 처리와 알려진 한계
 - 응급 표현: 한국어 패턴을 코드에 추가(가슴 조임, 숨 막힘, 기절, 정신 혼미, 떨림+어지러움, 혈당 10~53). 단위 테스트 + 화면에서 확인(LLM 호출 0).
 - 고정 답변(응급, 약 변경, 상담, 다른 사람 정보, 개인정보, 삭제 확인)은 **검토한 한국어 문구**를 씁니다(LLM 없음).
-- LLM 답변: 영어로 검색·작성·위험 조언 검사(S1–S9)를 끝낸 뒤 번역 1번(`translate_ko`). 번역에서 `[PMC…]` 표시가 빠지거나 바뀌면 영어 답변을 그대로 보여 줍니다. **번역된 한국어 문장은 S1–S9 규칙(영어)으로 다시 검사하지 않습니다.**
+- LLM 답변: 영어로 검색/작성/위험 조언 검사(S1–S9)를 끝낸 뒤 번역 1번(`translate_ko`). 번역에서 `[PMC…]` 표시가 빠지거나 바뀌면 영어 답변을 그대로 보여 줍니다. **번역된 한국어 문장은 S1–S9 규칙(영어)으로 다시 검사하지 않습니다.**
 - 한국어로 입력한 질문은 원문 그대로도 검색어 1개로 쓰입니다(영어 논문에 대한 의미 검색). 한국어 질문의 검색 품질은 측정하지 못했습니다.
 - **API key 인증 실패**: 이 컴퓨터의 환경변수 key와 `.env` key 모두 `OpenAIAuthenticationError`(401). 그래서 이번 작업에서 실제 LLM 호출, 한국어 답변 번역, `health_simple` 실측, 100문항 regression을 실행하지 못했습니다. 새 key를 `.env`에 넣은 뒤 `eval/run_hybrid_sample.py --run`(약 $0.08 이하)으로 먼저 확인하세요.
 
-## 7. 테스트 (모두 무료, 네트워크·key 불필요)
+## 7. 테스트 (모두 무료, 네트워크/key 불필요)
 - `pytest`: 26개 통과 (기존 18 + `tests/test_hybrid.py` 8). README의 "20개"는 실제 18개였음.
-- PWA: Chrome(Playwright)에서 service worker active, 캐시 항목은 화면 파일 4개(`/`, 아이콘 2, manifest)뿐, API·chat·admin은 캐시되지 않음. 설치 가능성 검사의 유일한 오류는 `in-incognito`(headless 새 profile 때문), manifest 오류 없음. 실제 "설치" 버튼 동작은 확인하지 않았습니다.
+- PWA: Chrome(Playwright)에서 service worker active, 캐시 항목은 화면 파일 4개(`/`, 아이콘 2, manifest)뿐, API/chat/admin은 캐시되지 않음. 설치 가능성 검사의 유일한 오류는 `in-incognito`(headless 새 profile 때문), manifest 오류 없음. 실제 "설치" 버튼 동작은 확인하지 않았습니다.
 - 접근성: axe-core(wcag2a, wcag2aa) 자동 검사 위반 0건(사용자 3개 viewport + 관리자). 자동 검사는 일부만 잡으므로 스크린 리더로 직접 확인하지 않았습니다.
 - 반응형: 360 / 768 / 1280px에서 가로 스크롤 없음. 근거 패널은 900px 이하에서 bottom sheet.
 - 삭제 승인 dialog: 화면 상태만 확인(샘플 질문을 넣어 열어 봄). 실제 삭제 흐름(supervisor → `interrupt()` → 승인)은 기존 단위 테스트가 확인하지만 LLM이 필요한 end-to-end는 실행하지 못했습니다.

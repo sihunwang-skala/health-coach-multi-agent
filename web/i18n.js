@@ -5,14 +5,14 @@ const K=(ko,en)=>LANG==='en'?en:ko;
 document.documentElement.lang=LANG;
 const EN={
  /* sign-in */
- '로그인 · 식단·운동 코치':'Sign in · Diet & Exercise Coach','식단·운동 코치':'Diet & Exercise Coach','내 건강 상태에 맞춰 식사와 운동을 함께 살펴봐 드려요.':'Meals and exercise, checked against your own health.',
+ '식단/운동 코치 로그인':'Diet & Exercise Coach sign in','식단/운동 코치':'Diet & Exercise Coach','내 건강 상태에 맞춰 식사와 운동을 함께 살펴봐 드려요.':'Meals and exercise, checked against your own health.',
  '로그인과 가입':'Sign in and sign up','로그인':'Sign in','가입하기':'Sign up','아이디':'Username','비밀번호':'Password','계정 만들기':'Create account','표시 이름':'Display name',
  '예: 길동':'e.g. Alex','AI에게는 이름을 보내지 않아요.':'Your name is never sent to the AI.','영문 소문자, 숫자, 밑줄(_) 4~20자':'4–20 characters: lowercase letters, numbers, underscore (_)',
  '8자 이상, 문자와 숫자를 함께 사용해 주세요.':'At least 8 characters, with letters and numbers.','답변을 내 상황에 맞게 드리는 데 사용해요. 나중에 언제든 바꿀 수 있어요.':'Used to tailor answers to you. You can change it later.',
  '나이':'Age','성별':'Sex','여성':'Female','남성':'Male','당뇨병 외에 앓고 있는 질환 (해당하는 것 모두 선택)':'Other conditions besides diabetes (select all that apply)','복용 중인 약 (인슐린 포함)':'Medicines you take (including insulin)',
  '목록에 없는 약이 있으면 적어 주세요':'Add any medicine that is not in the list','그 밖의 약':'Other medicines','걷기와 균형':'Walking and balance','불편함 없음':'No difficulty',
  '균형이 불안해요':'Unsteady balance','지팡이나 보행기를 써요':'I use a cane or walker','다리 힘이 약해요':'My legs are weak','건강 목표':'Health goal','(선택)':'(optional)',
- '예: 식후 혈당 낮추기':'e.g. lower blood sugar after meals','평소 운동·활동':'Usual exercise and activity','예: 저녁마다 공원 걷기':'e.g. walking in the park every evening','평소 식습관':'Usual eating habits','예: 아침을 자주 거름':'e.g. often skip breakfast',
+ '예: 식후 혈당 낮추기':'e.g. lower blood sugar after meals','평소 운동/활동':'Usual exercise and activity','예: 저녁마다 공원 걷기':'e.g. walking in the park every evening','평소 식습관':'Usual eating habits','예: 아침을 자주 거름':'e.g. often skip breakfast',
  '이 서비스는 의사를 대신하지 않아요.':'This service does not replace a doctor.','논문에서 찾은 일반적인 건강 정보와 생활 습관을 안내해 드려요. 약을 시작하거나 끊거나 바꾸실 때는 꼭 의료진과 먼저 상의해 주세요.':'It gives only general information from research papers and lifestyle suggestions. Always talk to your care team before starting, stopping or changing a medicine.',
  '응급 상황이면 바로 119에 전화하세요.':'In an emergency, call 119 right away.','내 건강 정보를 저장하고, 이름을 제외한 건강 정보를 AI 답변에 활용하는 데 동의합니다. (필수)':'I agree that my health information is stored and that my health information without my name is used for AI answers. (required)',
  '설정에서 언제든 계정과 기록을 삭제할 수 있어요.':'You can delete your account and records any time in Settings.','이전':'Back','다음':'Next','가상 사용자로 체험하기':'Try it as a demo user',
@@ -30,12 +30,13 @@ const EN={
  '내 정보는 어떻게 쓰이나요?':'How is my information used?','AI에게는 이름이 전달되지 않아요. 답변을 만들 때는 나이, 질환, 복용 약 같은 건강 정보와 질문만 사용해요. 대화 내용은 서버에 90일간 보관된 뒤 삭제되고, 이 기기에는 저장되지 않아요.':'Your name is not sent to the AI. Only health information such as age, conditions and medicines, plus your question, is used to write an answer. Conversations are kept on this service\'s server for 90 days only, and nothing but the page files is stored on this device.',
  '계정 삭제':'Delete account','계정과 건강 정보, 기록, 대화 내용이 모두 삭제되며 되돌릴 수 없어요.':'Your account, health information, records and conversations are all erased. This cannot be undone.','비밀번호 확인':'Confirm password',
  /* care-team console */
- '의료진 콘솔':'Care-team console','화면':'Views','개요':'Overview','알림':'Alerts','이용자':'Users','열람 기록':'Access log','이용자 화면으로':'Back to user screen',
+ '의료진 콘솔':'Care-team console','화면':'Views','개요':'Overview','알림':'Alerts','이용자':'Users','열람 기록':'Access log','이용자 앱 열기':'Open user app',
  '조회 기간':'Period','일별 메시지 수':'Daily messages','일별 메시지 수 막대 그래프':'Bar chart of daily messages','요청 유형별 건수':'Requests by type','요청 유형별 건수 막대 그래프':'Bar chart of requests by type',
- '이용자별 메시지·알림':'Messages and alerts per user','이용자별 메시지와 알림 막대 그래프':'Bar chart of messages and alerts per user','일별 AI 비용':'Daily AI cost','일별 AI 비용 선 그래프':'Line chart of daily AI cost',
- '알림 (응급·상담 요청·약 변경 문의·타인 정보 요청)':'Alerts (emergencies, call requests, medicine-change questions, requests for another person\'s data)','처리 상태':'Status','미처리':'Unhandled','전체':'All',
+ '이용자별 메시지/알림':'Messages and alerts per user','이용자별 메시지와 알림 막대 그래프':'Bar chart of messages and alerts per user','일별 AI 비용':'Daily AI cost','일별 AI 비용 선 그래프':'Line chart of daily AI cost',
+ '알림 (응급, 상담 요청, 약 변경 문의, 타인 정보 요청)':'Alerts (emergencies, call requests, medicine-change questions, requests for another person\'s data)','처리 상태':'Status','미처리':'Unhandled','전체':'All',
  '이용자 목록':'User list','이용자 상세':'User details','목록에서 이용자를 선택하세요.':'Select a user from the list.','이용자 정보를 열람하거나 알림을 처리한 내역이에요.':'Who opened user information or handled alerts, and when.',
  /* messages from the server */
+ '확인 요청이 만료됐거나 이미 처리됐어요. 처음부터 다시 요청해 주세요.':'This confirmation has expired or was already handled. Please make the request again.',
  '아이디 또는 비밀번호가 맞지 않아요.':'The username or password is incorrect.','로그인에 여러 번 실패했어요. 10분 후에 다시 시도해 주세요.':'Too many failed attempts. Please try again in 10 minutes.','이미 사용 중인 아이디예요.':'That username is already taken.',
  '비밀번호는 8자 이상이어야 해요.':'The password must be at least 8 characters.','비밀번호에 문자와 숫자를 함께 사용해 주세요.':'Please use both letters and numbers in the password.','개인정보와 건강정보 이용에 동의해 주세요.':'Please agree to the use of your personal and health information.',
  '성별을 선택해 주세요.':'Please select your sex.','로그인이 필요해요.':'Please sign in.','의료진 로그인이 필요해요.':'Care-team sign-in is required.','허용되지 않은 요청이에요.':'This request is not allowed.','현재 비밀번호가 맞지 않아요.':'The current password is incorrect.',

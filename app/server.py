@@ -38,8 +38,8 @@ from app import auth  # noqa: E402
 from mcp_servers.user_server import create_user, delete_user, full_profiles, get_full_profile  # noqa: E402
 
 MED_KO = {  # (Korean name, what it is) shown next to each medicine on both screens (display only; the LLM sees the plain English profile)
-    "metformin": ("메트포르민", "먹는 당뇨약"), "glimepiride": ("글리메피리드", "먹는 당뇨약 · 저혈당 주의"),
-    "gliclazide": ("글리클라지드", "먹는 당뇨약 · 저혈당 주의"), "insulin glargine": ("글라진 인슐린", "지속형 인슐린"),
+    "metformin": ("메트포르민", "먹는 당뇨약"), "glimepiride": ("글리메피리드", "먹는 당뇨약, 저혈당 주의"),
+    "gliclazide": ("글리클라지드", "먹는 당뇨약, 저혈당 주의"), "insulin glargine": ("글라진 인슐린", "지속형 인슐린"),
     "insulin aspart": ("아스파트 인슐린", "식사 인슐린"), "premixed insulin": ("혼합형 인슐린", "인슐린"),
     "amlodipine": ("암로디핀", "혈압약"), "lisinopril": ("리시노프릴", "혈압약")}
 MED_EN = {"metformin": "oral diabetes medicine", "glimepiride": "oral diabetes medicine, can cause low blood sugar",
@@ -92,6 +92,23 @@ DEMO = os.environ.get("COACH_DEMO", "1") == "1"
 SYNTHETIC = {u["id"] for u in json.loads((ROOT / "data" / "users.json").read_text())}
 
 STATE: dict = {}
+PENDING: dict[str, dict] = {}     # thread_id -> {"user": id, "kind": "choose" | "confirm", "expires": t}: open confirmations, one use each
+PENDING_TTL = 600
+
+
+def _register_pending(thread_id: str, user_id: str, ask: dict | None) -> None:
+    """A confirmation the user still has to answer. It is bound to this person, valid once and for ten minutes."""
+    now = time.time()
+    for k in [k for k, v in PENDING.items() if v["expires"] < now]:
+        PENDING.pop(k, None)
+    if ask:
+        PENDING[thread_id] = {"user": user_id, "kind": "choose" if ask.get("action") == "choose_record" else "confirm", "expires": now + PENDING_TTL}
+
+
+def _ask_text(ask: dict, lang: str) -> str:
+    """Text stored in the history for a confirmation (the page draws the interactive card itself)."""
+    q = ask.get("question", "")
+    return (fixed_ko(q) or q) if lang == "ko" else q
 
 
 @asynccontextmanager
@@ -123,6 +140,7 @@ class ChatIn(BaseModel):
 class ApproveIn(BaseModel):
     thread_id: str
     approve: bool
+    choice: int | None = None     # the record the user picked when the app asked "which record?"
     lang: str = "ko"
 
 
@@ -419,6 +437,7 @@ def replay(item_id: str, system: str = "after"):
 @app.post("/chat", dependencies=[Depends(_same_origin)])
 async def chat(body: ChatIn, user: dict = Depends(auth.current_user), deps: Container = Depends(get_deps)):
     r = await run_after(STATE["graph"], deps, user["user_id"], body.message)
+    _register_pending(r["thread_id"], user["user_id"], r.get("interrupt"))
     tracelog.log_event(user["user_id"], body.message, r)
     if body.lang == "ko":
         r = {**r, "answer_en": r["answer"], **(await to_korean(deps, Usage(), r["answer"]))}
@@ -427,9 +446,19 @@ async def chat(body: ChatIn, user: dict = Depends(auth.current_user), deps: Cont
 
 @app.post("/approve", dependencies=[Depends(_same_origin)])
 async def approve(body: ApproveIn, user: dict = Depends(auth.current_user), deps: Container = Depends(get_deps)):
-    r = await run_after(STATE["graph"], deps, user["user_id"], "", thread_id=body.thread_id,
-                        resume="yes" if body.approve else "no")
-    tracelog.log_event(user["user_id"], "(approval) " + ("yes" if body.approve else "no"), r)
+    """Answer an open confirmation. Only the person it was asked of can answer it, once, within ten minutes; a pick is only accepted for a
+    "which record?" question and a yes only for a "delete this record?" question."""
+    pend = PENDING.pop(body.thread_id, None)
+    if not pend or pend["user"] != user["user_id"] or pend["expires"] < time.time():
+        raise HTTPException(410, "확인 요청이 만료됐거나 이미 처리됐어요. 처음부터 다시 요청해 주세요.")
+    if pend["kind"] == "choose":
+        resume = body.choice if body.approve and body.choice is not None else None
+    else:
+        resume = "yes" if body.approve else "no"
+    r = await run_after(STATE["graph"], deps, user["user_id"], "", thread_id=body.thread_id, resume=resume)
+    _register_pending(body.thread_id, user["user_id"], r.get("interrupt"))
+    what = f"choice {body.choice}" if pend["kind"] == "choose" and body.approve else ("yes" if body.approve else "no")
+    tracelog.log_event(user["user_id"], "(approval) " + what, r)
     if body.lang == "ko":
         r = {**r, "answer_en": r["answer"], **(await to_korean(deps, Usage(), r["answer"]))}
     return r
@@ -475,11 +504,14 @@ async def chat_stream(body: ChatIn, user: dict = Depends(auth.current_user), dep
                     shown = await to_korean(deps, u, final.get("answer", ""))
                 except Exception:   # translation failed: the safety-checked English answer is still shown
                     pass
+            ask = final.get("interrupt")
+            _register_pending(tid, user_id, ask)
+            if ask and not shown["answer"]:
+                shown = {"answer": _ask_text(ask, lang), "translated": lang == "ko"}
             log = {k: v for k, v in final.items() if k not in ("evidence", "answer")}
             tracelog.log_event(user_id, message, {**log, "answer": shown["answer"], "meta": {"citations": cites["citations"], "route": final.get("route"), "en": {"answer": final.get("answer", "")},
                                                                                      **({"ko": {"answer": shown["answer"]}} if shown["translated"] else {})}, "latency_s": round(time.time() - t, 2), "calls": u.calls, "tokens_in": u.tokens_in,
                                                   "tokens_out": u.tokens_out, "cost": round(u.cost(s.price_in, s.price_out, s.price_embed), 5)})
-            ask = final.get("interrupt")
             if lang == "ko" and ask and fixed_ko(ask.get("question", "")):
                 ask = {**ask, "question": fixed_ko(ask["question"])}
             yield "data: " + json.dumps({"done": True, "answer": shown["answer"], "answer_en": final.get("answer", ""),

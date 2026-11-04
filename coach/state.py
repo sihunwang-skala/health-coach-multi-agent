@@ -31,6 +31,7 @@ class CoachState(TypedDict, total=False):
     removed: list[str]
     records: list[dict]
     pending_delete: dict
+    delete_options: list[dict]
     titles: Annotated[dict[str, str], merge]
     evidence: Annotated[dict[str, dict], merge]   # domain -> {queries, notes, picks, results, dropped_notes} (parallel agents)
     timings: Annotated[dict[str, float], merge]
