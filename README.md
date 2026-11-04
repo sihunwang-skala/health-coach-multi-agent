@@ -16,8 +16,10 @@
 
 ### 프로젝트 문서
 
-- [결과 보고서](docs/REPORT.md), [발표 화면](docs/PRESENTATION_VIEW.md), [5분 발표 스크립트](docs/PRESENTATION_SCRIPT.md)
-- [전체 평가 표](eval/results/metrics_tables.md), [평가 방법](docs/EVALUATION.md), [Dataset Card](docs/DATASET_CARD.md)
+- [결과 보고서](docs/REPORT.md)
+- [전체 평가 표](eval/results/metrics_tables.md)
+- [평가 방법](docs/EVALUATION.md)
+- [Dataset Card](docs/DATASET_CARD.md)
 
 ## 서비스 화면
 
