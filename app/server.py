@@ -323,8 +323,8 @@ class DemoIn(BaseModel):
 @app.get("/api/demo/users", dependencies=[Depends(_demo_only)])
 def demo_users():
     """Login page, demo mode: the synthetic people (first name, age, one line) - never real sign-ups."""
-    return [{"id": i, "name": p["name"].split()[0], "age": p["age"], "line": ", ".join(c for c in p["conditions_ko"] if c != "제2형 당뇨병") or "제2형 당뇨병",
-             "line_en": ", ".join(c.capitalize() for c in p["conditions_en"] if c != "type 2 diabetes") or "Type 2 diabetes"}
+    return [{"id": i, "name": p["name"].split()[0], "age": p["age"], "line": ", ".join(p["conditions_ko"]),
+             "line_en": ", ".join(c.capitalize() for c in p["conditions_en"])}
             for i, p in _profiles().items() if i in SYNTHETIC]
 
 
