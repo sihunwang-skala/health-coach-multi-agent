@@ -1,4 +1,5 @@
 """Sign-in, sessions, role separation, lockout, CSRF, account deletion (temporary database, no network, no LLM)."""
+import time
 import types
 
 import pytest
@@ -152,3 +153,22 @@ def test_demo_mode_off_closes_every_demo_door(client, monkeypatch):
     assert client.get("/api/demo/users").status_code == 404
     assert client.post("/api/demo/enter", json={"user_id": "u01"}).status_code == 404
     assert client.post("/api/demo/staff").status_code == 404
+
+
+def test_care_team_session_ends_after_idle_time_and_is_a_browser_session_cookie(client):
+    r = login(client, "staff_t", "Staffpass12", staff=True)
+    assert "max-age" not in r.headers["set-cookie"].lower() and "expires" not in r.headers["set-cookie"].lower()   # gone when the browser closes
+    assert client.get("/api/staff/me").status_code == 200
+    auth.run("UPDATE sessions SET expires = ? WHERE role = 'staff'", (time.time() - 1,))                          # 30 idle minutes later
+    assert client.get("/api/staff/me").status_code == 401
+    assert client.get("/admin", follow_redirects=False).headers["location"] == "/admin/login"
+
+
+def test_using_the_console_keeps_the_care_team_session_alive_but_not_past_eight_hours(client):
+    login(client, "staff_t", "Staffpass12", staff=True)
+    auth.run("UPDATE sessions SET expires = ? WHERE role = 'staff'", (time.time() + 60,))
+    assert client.get("/api/staff/me").status_code == 200
+    assert auth.run("SELECT expires FROM sessions WHERE role = 'staff'", one=True)["expires"] > time.time() + 1000      # slid forward
+    auth.run("UPDATE sessions SET created = ?, expires = ? WHERE role = 'staff'", (time.time() - auth.TTL["staff"] - 5, time.time() + 600))
+    client.get("/api/staff/me")
+    assert client.get("/api/staff/me").status_code == 401                                                           # absolute limit

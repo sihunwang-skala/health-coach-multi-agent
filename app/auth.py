@@ -1,8 +1,8 @@
 """Accounts, sign-in and sessions (user screen and care-team console are separate roles).
 
 - Passwords: scrypt (standard library), per-password salt. Never stored or logged in plain text.
-- Sessions: a random token in an HttpOnly cookie; only its SHA-256 is stored. User sessions last 14 days, care-team sessions
-  8 hours. Two cookies (`coach_session`, `coach_staff`) so one browser can hold both, but each API checks only its own role.
+- Sessions: a random token in an HttpOnly cookie; only its SHA-256 is stored. User sessions last 14 days. Care-team sessions end
+  after 30 minutes without use (8 hours at most) and the cookie is a browser-session cookie, so closing the browser signs out. Two cookies (`coach_session`, `coach_staff`) so one browser can hold both, but each API checks only its own role.
 - Brute force: 5 failed sign-ins per (username, address) in 10 minutes lock that pair for the rest of the window.
 - CSRF: cookies are SameSite=Lax and every state-changing request must carry the page's own Origin (see `same_origin`).
 - Audit: every time a care-team member opens a person's data or changes an alert, a row is written (`audit`).
@@ -24,7 +24,8 @@ from coach.config import Settings
 
 DB_PATH = Settings().db_path
 USER_COOKIE, STAFF_COOKIE = "coach_session", "coach_staff"
-TTL = {"user": 14 * 24 * 3600, "staff": 8 * 3600}
+TTL = {"user": 14 * 24 * 3600, "staff": 8 * 3600}     # longest a session can last
+IDLE = {"staff": 30 * 60}                              # care-team sessions also end after 30 minutes without use
 COOKIE = {"user": USER_COOKIE, "staff": STAFF_COOKIE}
 SCHEMA = [
     """CREATE TABLE IF NOT EXISTS accounts (id INTEGER PRIMARY KEY AUTOINCREMENT, username TEXT UNIQUE, pw_hash TEXT, role TEXT,
@@ -134,9 +135,9 @@ def start_session(request: Request, response: Response, account_id: int, role: s
     token = secrets.token_urlsafe(32)
     now = time.time()
     run("DELETE FROM sessions WHERE expires < ?", (now,))
-    run("INSERT INTO sessions VALUES (?,?,?,?,?)", (hashlib.sha256(token.encode()).hexdigest(), account_id, role, now, now + TTL[role]))
+    run("INSERT INTO sessions VALUES (?,?,?,?,?)", (hashlib.sha256(token.encode()).hexdigest(), account_id, role, now, now + min(TTL[role], IDLE.get(role, TTL[role]))))
     secure = request.url.scheme == "https" or os.environ.get("COACH_COOKIE_SECURE") == "1"
-    response.set_cookie(COOKIE[role], token, max_age=TTL[role], httponly=True, samesite="lax", secure=secure, path="/")
+    response.set_cookie(COOKIE[role], token, max_age=TTL[role] if role == "user" else None, httponly=True, samesite="lax", secure=secure, path="/")
 
 
 def end_session(request: Request, response: Response, role: str) -> None:
@@ -150,9 +151,14 @@ def session_account(request: Request, role: str) -> dict | None:
     token = request.cookies.get(COOKIE[role])
     if not token:
         return None
-    return run("SELECT a.* FROM sessions s JOIN accounts a ON a.id = s.account_id WHERE s.token_hash = ? AND s.role = ? "
-               "AND s.expires > ? AND a.disabled = 0 AND a.role = ?",
-               (hashlib.sha256(token.encode()).hexdigest(), role, time.time(), role), one=True)
+    th, now = hashlib.sha256(token.encode()).hexdigest(), time.time()
+    row = run("SELECT a.*, s.created AS s_created FROM sessions s JOIN accounts a ON a.id = s.account_id WHERE s.token_hash = ? AND s.role = ? "
+              "AND s.expires > ? AND a.disabled = 0 AND a.role = ?", (th, role, now, role), one=True)
+    if row and role in IDLE:   # sliding idle timeout, never past the absolute limit
+        run("UPDATE sessions SET expires = ? WHERE token_hash = ?", (min(now + IDLE[role], row["s_created"] + TTL[role]), th))
+    if row:
+        row.pop("s_created", None)
+    return row
 
 
 def current_user(request: Request) -> dict:
