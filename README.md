@@ -12,6 +12,23 @@ AI 서비스 개발 Mini Project, 2026-10, SKALA 4기 광주 3반 G088 왕시훈
 
 **결과 보고서: [docs/REPORT.md](docs/REPORT.md)**, [발표 화면](docs/PRESENTATION_VIEW.md), [5분 발표 스크립트](docs/PRESENTATION_SCRIPT.md), 전체 평가 표: [eval/results/metrics_tables.md](eval/results/metrics_tables.md), 평가 방법: [docs/EVALUATION.md](docs/EVALUATION.md)
 
+## 서비스 화면
+실제 서비스처럼 로그인이 있는 채팅 앱과, 별도 로그인이 필요한 의료진 콘솔입니다. 가상 사용자의 저장된 데모 기록 화면이며 실시간 답변이 아닙니다.
+
+**채팅과 논문 근거**: 답변 속 번호를 누르면 인용한 문장과 논문 원문이 열립니다.
+
+<img src="docs/ui/screenshots/2026-11/chat_ko_desktop_1280_evidence.png" alt="chat with evidence panel" width="900">
+
+**의료진 콘솔**: 기간(2주 단위)별 사용량, 알림, 이용자별 현황.
+
+<img src="docs/ui/screenshots/2026-11/admin_overview_ko_1280.png" alt="care-team console overview" width="900">
+
+| 로그인 | 모바일 채팅 | 큰 글자(24px) | 영어 화면 |
+|---|---|---|---|
+| <img src="docs/ui/screenshots/2026-11/login_ko_1280.png" width="220"> | <img src="docs/ui/screenshots/2026-11/chat_ko_mobile_390_history.png" width="220"> | <img src="docs/ui/screenshots/2026-11/chat_ko_mobile_390_text_size_24.png" width="220"> | <img src="docs/ui/screenshots/2026-11/chat_en_mobile_390_history.png" width="220"> |
+
+의료진 콘솔의 이용자 상세(혈당 그래프, 기록, 대화 내역)와 나머지 화면은 [화면 모음](docs/ui/SCREENSHOTS.md)에 있습니다. 디자인 규칙은 [DESIGN.md](docs/ui/DESIGN.md), 계정과 보안은 [ACCOUNTS.md](docs/ACCOUNTS.md)입니다.
+
 ## 결과 — 두 가지 평가로 확인한 Before / After (GPT-6 Luna)
 Baseline(Before) = Standard Paper-Search RAG, Ablation = Health Agentic RAG, Single-Agent + Health Agentic RAG, Proposed(After) = Multi-Agent + Health Agentic RAG
 ![four systems](docs/img/result_health_four_systems.png)
@@ -56,8 +73,8 @@ Baseline(Before) = Standard Paper-Search RAG, Ablation = Health Agentic RAG, Sin
 - **위험 조언 검사** (코드 S1–S9): 1회 재작성(60초 상한), 그래도 위험하면 문장 삭제 후 안전 문장 삽입.
 - **Records Agent**: 기록 저장/조회, 삭제는 사용자 승인 후 실행.
 - **HITL (사람이 판단하는 지점) 두 곳**: ① 사용자 — 기록 삭제 전 승인(LangGraph `interrupt()`), ② 운영자 — 응급/상담 요청 알림을 관리자 화면에서 확인하고 처리 완료로 표시.
-- **사용자 화면**: 채팅 중심, Agent 진행 단계 실시간 표시, 출처 논문, 119/상담 전화 버튼, 내 정보/기록은 펼칠 때만.
-- **관리자 화면**: 전체 사용자, 응급/상담 요청 알림(처리 표시), 사용자별 대화/기록/혈당 그래프, 날짜별 사용량/비용 그래프.
+- **이용자 화면**: 로그인 후 채팅 중심, Agent 진행 단계 실시간 표시, 출처 논문, 119/상담 전화 버튼, 내 정보/기록은 펼칠 때만.
+- **의료진 콘솔**(별도 로그인): 전체 이용자, 응급/상담 요청 알림(처리 표시), 사용자별 대화/기록/혈당 그래프, 날짜별 사용량/비용 그래프.
 - **개인정보**: 이름은 AI에 보내지 않음, LangSmith에는 입력/출력 숨김, 대화 내용은 자체 모니터링 로그(90일)에만.
 
 ### Agentic RAG 처리 흐름
@@ -70,6 +87,19 @@ Baseline(Before) = Standard Paper-Search RAG, Ablation = Health Agentic RAG, Sin
 - **근거가 없을 때**: 추측해서 답하지 않고, 자료가 없어 답변하기 어렵다고 안내합니다.
 
 구조: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md), 안전/개인정보/데이터 흐름: [docs/SAFETY_PRIVACY.md](docs/SAFETY_PRIVACY.md)
+
+## 화면에서 확장한 부분
+**확장한 기능**
+- 이용자 로그인과 회원가입, 가상 사용자 원클릭 체험(`COACH_DEMO=1`), 의료진 전용 로그인(브라우저를 닫으면 종료, 30분 미사용 시 자동 로그아웃).
+- 채팅 기록 보관, 답변 속 논문 번호를 눌러 보는 근거 패널(인용 문장과 논문 원문), 한국어/영어 전환, 글자 크기 12px부터 26px.
+- 기록 삭제 요청은 채팅 안에서 삭제할 기록을 정확히 보여 주고, 사용자가 확인해야 삭제합니다(한 번만 쓸 수 있고 10분 안에 만료, 본인 것만 승인).
+- 의료진 콘솔: 개요, 알림, 이용자, 열람 기록. 기간은 2주 단위로 고르며 기본값은 메시지가 가장 많았던 기간입니다.
+
+**번역에 대한 안내**
+- 영어 답변은 LLM API가 만든 원본입니다. 한국어 문장은 사용자 편의를 위해 번역한 것입니다.
+- 화면에 보이는 가상 사용자의 데모 기록(질문과 답변)의 한국어는 Claude Sonnet 5.5가 번역했고, 번역 문장은 `data/demo_translations_ko.json`에 있습니다. 숫자와 논문 번호 표시가 원문과 같은지 검사했습니다.
+- 논문 제목, 논문 원문, 근거 메모는 영어 그대로 보여 줍니다. 그 외 화면 문구는 선택한 언어를 따릅니다.
+- 한국어 번역은 평가 점수에 쓰이지 않았습니다. 평가는 영어 원본 답변으로 했습니다.
 
 ## 기술 구성
 LangGraph (supervisor + compiled subgraph, 동시 실행, 조건부 edge, interrupt/checkpointer), LangChain LCEL (ChatOpenAI invoke/batch), LangSmith (입력/출력 숨김), MCP (fastmcp 서버 2개: 논문 검색 / 사용자 프로필/기록), RAG (하이브리드 검색, 대상 필터, 메모 검증), FastAPI + SSE, 의존성 주입 (`coach/deps.py`), 모듈화, automated tests (test double: FakeLLM + in-memory mock MCP 서버, 네트워크/API 키 없이 실행)
@@ -86,35 +116,6 @@ cp .env.example .env                                  # OPENAI_API_KEY 입력 (L
 .venv/bin/python -m pytest -q                         # 단위 테스트 (API 키 불필요)
 ```
 평가 다시 실행: [docs/EVALUATION.md §8](docs/EVALUATION.md#8-다시-계산하기)
-
-## 화면 (UI)
-실제 서비스처럼 로그인이 있는 채팅 앱과 별도의 의료진 콘솔입니다. 디자인 규칙은 [DESIGN.md](docs/ui/DESIGN.md), 계정과 보안은 [ACCOUNTS.md](docs/ACCOUNTS.md)에 있습니다.
-
-| 이용자 로그인 | 채팅과 논문 근거 | 의료진 콘솔 |
-|---|---|---|
-| ![login](docs/ui/screenshots/2026-11/login_ko_1280.png) | ![chat](docs/ui/screenshots/2026-11/chat_ko_desktop_1280_evidence.png) | ![admin](docs/ui/screenshots/2026-11/admin_overview_ko_1280.png) |
-
-| 모바일 채팅 | 영어 화면 | 큰 글자(24px) |
-|---|---|---|
-| ![mobile](docs/ui/screenshots/2026-11/chat_ko_mobile_390_history.png) | ![en](docs/ui/screenshots/2026-11/chat_en_desktop_1280_history.png) | ![fs](docs/ui/screenshots/2026-11/chat_ko_mobile_390_text_size_24.png) |
-
-| 의료진 콘솔: 이용자 목록 | 이용자 상세 (혈당 그래프, 기록, 대화 내역) |
-|---|---|
-| ![list](docs/ui/screenshots/2026-11/admin_people_list_ko_1280.png) | ![detail](docs/ui/screenshots/2026-11/admin_person_detail_ko_1280.png) |
-
-공개 화면 사진은 [docs/ui/screenshots/2026-11/](docs/ui/screenshots/2026-11/)에 있습니다(로그인, 의료진 콘솔 알림/이용자 탭, 한국어/영어, 모바일). 사진은 가상 사용자의 저장된 데모 기록을 보여 주며 실시간 답변이 아닙니다.
-
-**확장한 기능**
-- 이용자 로그인과 회원가입, 가상 사용자 원클릭 체험(`COACH_DEMO=1`), 의료진 전용 로그인(브라우저를 닫으면 종료, 30분 미사용 시 자동 로그아웃).
-- 채팅 기록 보관, 답변 속 논문 번호를 눌러 보는 근거 패널(인용 문장과 논문 원문), 한국어/영어 전환, 글자 크기 12px부터 26px.
-- 기록 삭제 요청은 채팅 안에서 삭제할 기록을 정확히 보여 주고, 사용자가 확인해야 삭제합니다(한 번만 쓸 수 있고 10분 안에 만료, 본인 것만 승인).
-- 의료진 콘솔: 개요, 알림, 이용자, 열람 기록. 기간은 2주 단위로 고르며 기본값은 메시지가 가장 많았던 기간입니다.
-
-**번역에 대한 안내**
-- 영어 답변은 LLM API가 만든 원본입니다. 한국어 문장은 사용자 편의를 위해 번역한 것입니다.
-- 화면에 보이는 가상 사용자의 데모 기록(질문과 답변)의 한국어는 Claude Sonnet 5.5가 번역했고, 번역 문장은 `data/demo_translations_ko.json`에 있습니다. 숫자와 논문 번호 표시가 원문과 같은지 검사했습니다.
-- 논문 제목, 논문 원문, 근거 메모는 영어 그대로 보여 줍니다. 그 외 화면 문구는 선택한 언어를 따릅니다.
-- 한국어 번역은 평가 점수에 쓰이지 않았습니다. 평가는 영어 원본 답변으로 했습니다.
 
 ## 데이터
 - 논문: `data/paper_ids.json` — 86편. 운동 Agent 묶음은 핵심 운동 논문 21편 + 주제가 다른 운동 논문 15편, 식단 Agent 묶음은 당뇨 식단 논문 50편. 원문은 라이선스 때문에 저장소에 넣지 않고 스크립트로 내려받습니다.

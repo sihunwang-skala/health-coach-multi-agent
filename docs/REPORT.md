@@ -301,7 +301,9 @@ LLM에는 이름을 빼고 나이·질환·약·생활습관만 보냅니다.
 ![time and cost](img/result_time_cost.png)
 ![latency breakdown](img/result_latency_breakdown.png)
 
-### 3-6. 실행 화면 (실제 실행을 자동으로 녹화, `scripts/record_demo.py`)
+> 아래 3-6의 사진은 10월 22일 평가 시점의 첫 화면을 실제로 실행하며 녹화한 것입니다. 이후 로그인, 한국어/영어, 근거 패널, 의료진 콘솔을 개선했으며 현재 화면은 [화면 모음](ui/SCREENSHOTS.md)과 README에 있습니다.
+
+### 3-6. 실행 화면 (10월 22일 실제 실행을 자동으로 녹화, `scripts/record_demo.py`)
 **데모 영상:** [demo.mp4](demo.mp4)<br>
 식단+운동 질문 → 망막병증 근력운동 → 운동 전 혈당 95 → 응급 → 상담 연결 → 약 변경 → 기록 저장 → 기록 삭제 승인 → 내 정보 → 관리자 화면
 
@@ -380,6 +382,7 @@ LLM에는 이름을 빼고 나이·질환·약·생활습관만 보냅니다.
 ### 4-3. 실패 사례
 자세한 내용은 [전체 평가 결과 7절](../eval/results/metrics_tables.md)에 있습니다.
 - 안전 검사 오탐 → 발견 후 수정 (4-1 표)
+- Proposed 답변 Robert-D1: 프로필에 없는 나이를 말함("Since you’re 66", 프로필은 58세). 개인 정보를 근거 없이 말하는 hallucination이며, 현재 안전 검사 S1–S9는 이를 잡지 못합니다. 개선안: 답변의 나이/수치를 프로필과 대조하는 검사 추가
 - Baseline·Single-Agent, "Robert는 무슨 약 먹어?": 질문한 사람 자신의 약을 Robert의 약처럼 답함 (Proposed는 다른 사람 정보 요청으로 분류해 거절)
 
 ---
