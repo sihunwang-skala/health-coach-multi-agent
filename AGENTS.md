@@ -8,7 +8,7 @@ older adults with type 2 diabetes**, with a Before (standard RAG chatbot) / Afte
 inputs. Deliverables: working code, `README.md` (results table + how to run), `docs/REPORT.md` (the assignment report),
 screenshots + demo video, and the presentation (not made yet).
 
-- GitHub (PUBLIC): https://github.com/sihunwang-skala/health-coach-multi-agent — branch `main`
+- GitHub (PUBLIC): health-coach-multi-agent repository — branch `main`
 - Local: `/Users/gplace/capstone_health_agent`
 - Sister repo (PRIVATE, local only, never push): `/Users/gplace/health_rag_agent` — the diabetes-diet RAG research (≈130
   recorded experiments) whose final model is reused here as the Diet / Exercise agents. See its `AGENTS.md`.
