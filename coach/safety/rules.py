@@ -20,7 +20,8 @@ EMERGENCY = re.compile(
     r"(sweat\w*|shak\w*|tremb\w*).{0,40}(dizz\w*|confus\w*|blurred|faint\w*)|blood sugar.{0,15}\b([1-4]\d|5[0-3])\b(?! ?mmol)|"
     r"\b(2\.\d|[01]\.\d) ?mmol|가슴 통증|의식|쓰러|경련|식은땀|"
     # Korean wording (Korean-first UI, 2026-10-31): chest, breathing, fainting, confusion, speech, a very low reading
-    r"가슴.{0,4}(아파|아프|조이|조여|답답|눌리)|숨.{0,3}(안 ?쉬어|막혀|막히|가빠|차서 말)|호흡 ?곤란|기절|실신|정신.{0,3}(없|혼미|흐려|잃)|"
+    r"(가슴|심장).{0,10}(아파|아프|조이|조여|답답|눌리|쥐어|터질)|숨.{0,6}(안 ?쉬어|막혀|막히|가빠|차서 말|(힘들|어려))|호흡 ?곤란|기절|실신|정신.{0,3}(없|혼미|흐려|잃)|"
+    r"(눈앞|앞).{0,4}(캄캄|깜깜|안 ?보여)|시야가.{0,4}(흐려|캄캄|깜깜)|얼굴.{0,8}(처[져졌]|마비)|한쪽.{0,6}(마비|힘이 ?없|저려)|쓰러질 ?(것|거)|"
     r"말이.{0,3}(어눌|안 ?나와)|떨(리|려).{0,20}(어지|흐려)|혈당.{0,10}(?<!\d)([1-4]\d|5[0-3])(?!\d)(?! ?mmol)")
 EMERGENCY_REPLY = ("This may be an emergency. Stop exercising now and sit or lie down. If you can swallow and this could be a low "
                    "blood sugar, take 15 g of fast-acting sugar (juice, glucose tablets) and recheck in 15 minutes. If you have "

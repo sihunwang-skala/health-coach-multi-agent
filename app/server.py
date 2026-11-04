@@ -1,23 +1,27 @@
 """FastAPI service.
-Screens: GET / (user screen: my information + chat), GET /admin (care-team screen: monitoring, alerts, one person).
-Chat: POST /chat (one answer), GET /chat/stream (SSE: each agent step as it finishes), POST /approve (human-in-the-loop
-decision for a pending record deletion). Every handled message is written to our own monitoring log (coach/tracelog.py).
-Data: GET /api/me/{user_id}, GET /api/admin/summary, GET /api/admin/users, GET /api/admin/users/{user_id},
-GET /api/admin/alerts, POST /api/admin/alerts/{event_id}. GET /health.
+Two roles, two sign-ins (app/auth.py): users sign in at /login, care-team staff at /admin/login. Nobody can pick a user id any more:
+every user API takes the person from the session cookie.
+Screens: GET / (chat), GET /login, GET /admin (care-team console), GET /admin/login.
+Auth: POST /api/auth/signup|login|logout, GET /api/auth/me, POST /api/me/password|delete; POST /api/staff/login|logout, GET /api/staff/me.
+Chat: POST /chat/stream (SSE: each agent step as it finishes; a POST so the pipeline cannot be started by a link), POST /chat,
+POST /approve (human-in-the-loop decision for a pending record deletion). Every handled message is written to our own
+monitoring log (coach/tracelog.py).
+Care team: GET /api/admin/summary|users|users/{id}|alerts|audit, POST /api/admin/alerts/{event_id}. GET /health.
     .venv/bin/uvicorn app.server:app --port 8000
 """
 from __future__ import annotations
 
 import json
+import secrets
 import sys
 import time
 import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
 
-from fastapi import Depends, FastAPI, Header, HTTPException
-from fastapi.responses import FileResponse, StreamingResponse
-from pydantic import BaseModel
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
+from fastapi.responses import FileResponse, RedirectResponse, StreamingResponse
+from pydantic import BaseModel, Field
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
@@ -28,13 +32,22 @@ from coach.runner import run_after  # noqa: E402
 from coach import tracelog  # noqa: E402
 from coach.citations import build as build_citations  # noqa: E402
 from coach.i18n import fixed_ko, to_korean  # noqa: E402
-from mcp_servers.user_server import full_profiles  # noqa: E402
+from app import auth  # noqa: E402
+from mcp_servers.user_server import create_user, delete_user, full_profiles, get_full_profile  # noqa: E402
 
-MED_CLASS = {  # shown next to each medicine on both screens (display only; the LLM sees the plain profile)
-    "metformin": "oral diabetes medicine", "glimepiride": "oral diabetes medicine, can cause low blood sugar",
-    "gliclazide": "oral diabetes medicine, can cause low blood sugar", "insulin glargine": "long-acting insulin",
-    "insulin aspart": "mealtime insulin", "premixed insulin": "premixed insulin", "amlodipine": "blood pressure medicine",
-    "lisinopril": "blood pressure medicine"}
+MED_KO = {  # (Korean name, what it is) shown next to each medicine on both screens (display only; the LLM sees the plain English profile)
+    "metformin": ("메트포르민", "먹는 당뇨약"), "glimepiride": ("글리메피리드", "먹는 당뇨약 · 저혈당 주의"),
+    "gliclazide": ("글리클라지드", "먹는 당뇨약 · 저혈당 주의"), "insulin glargine": ("글라진 인슐린", "지속형 인슐린"),
+    "insulin aspart": ("아스파트 인슐린", "식사 인슐린"), "premixed insulin": ("혼합형 인슐린", "인슐린"),
+    "amlodipine": ("암로디핀", "혈압약"), "lisinopril": ("리시노프릴", "혈압약")}
+COND_KO = [("type 2 diabetes", "제2형 당뇨병"), ("hypertension", "고혈압"), ("kidney", "만성 신장병"), ("retinopathy", "당뇨병성 망막병증"),
+           ("neuropathy", "말초신경병증(발 저림)"), ("heart", "심장 질환"), ("low muscle", "근육량 부족")]
+# sign-up choices: key sent by the page -> English token the safety rules and agents read
+SIGNUP_COND = {"hypertension": "hypertension", "kidney": "chronic kidney disease", "retinopathy": "diabetic retinopathy",
+               "neuropathy": "peripheral neuropathy (numb feet)", "heart": "heart disease", "muscle": "low muscle mass"}
+SIGNUP_MED = {"metformin": "metformin", "glimepiride": "glimepiride", "gliclazide": "gliclazide", "glargine": "insulin glargine",
+              "aspart": "insulin aspart", "premixed": "premixed insulin", "amlodipine": "amlodipine", "lisinopril": "lisinopril"}
+SIGNUP_MOB = {"good": "good", "balance": "poor balance", "cane": "uses a cane", "legs": "weak legs"}
 
 STATE: dict = {}
 
@@ -59,16 +72,42 @@ def get_deps() -> Container:
 
 
 class ChatIn(BaseModel):
-    user_id: str = "u01"
-    message: str
-    lang: str = "en"
+    message: str = Field(min_length=1, max_length=1000)
+    lang: str = "ko"
 
 
 class ApproveIn(BaseModel):
-    user_id: str
     thread_id: str
     approve: bool
-    lang: str = "en"
+    lang: str = "ko"
+
+
+class LoginIn(BaseModel):
+    username: str = Field(max_length=40)
+    password: str = Field(max_length=200)
+
+
+class SignupIn(LoginIn):
+    name: str = Field(min_length=1, max_length=20)
+    age: int = Field(ge=18, le=110)
+    gender: str
+    conditions: list[str] = []
+    medications: list[str] = []
+    other_medications: str = Field("", max_length=60)
+    mobility: str = "good"
+    activity: str = Field("", max_length=100)
+    diet: str = Field("", max_length=100)
+    goal: str = Field("", max_length=100)
+    consent: bool = False
+
+
+class PasswordIn(BaseModel):
+    current: str = Field(max_length=200)
+    new: str = Field(max_length=200)
+
+
+class DeleteIn(BaseModel):
+    password: str = Field(max_length=200)
 
 
 @app.get("/health")
@@ -76,61 +115,161 @@ def health():
     return {"ok": True}
 
 
+NO_STORE = {"Cache-Control": "no-store"}
+
+
+def _page(name: str) -> FileResponse:
+    return FileResponse(ROOT / "web" / name, headers=NO_STORE)
+
+
 @app.get("/")
-def web():
-    return FileResponse(ROOT / "web" / "index.html")
+def web(request: Request):
+    return _page("index.html") if auth.session_account(request, "user") else RedirectResponse("/login", 303)
+
+
+@app.get("/login")
+def login_page(request: Request):
+    return RedirectResponse("/", 303) if auth.session_account(request, "user") else _page("login.html")
 
 
 @app.get("/admin")
-def admin_web():
-    return FileResponse(ROOT / "web" / "admin.html")
+def admin_web(request: Request):
+    return _page("admin.html") if auth.session_account(request, "staff") else RedirectResponse("/admin/login", 303)
+
+
+@app.get("/admin/login")
+def admin_login_page(request: Request):
+    return RedirectResponse("/admin", 303) if auth.session_account(request, "staff") else _page("admin-login.html")
 
 
 PWA_FILES = {"manifest.webmanifest": "application/manifest+json", "sw.js": "text/javascript", "icon.svg": "image/svg+xml",
-             "icon-192.png": "image/png", "icon-512.png": "image/png"}
+             "icon-192.png": "image/png", "icon-512.png": "image/png", "ds.css": "text/css", "ds.js": "text/javascript"}
 
 
 @app.get("/{name}", include_in_schema=False)
 def pwa_file(name: str):
-    """PWA shell files (manifest, service worker, icons). Only this fixed list is served."""
+    """Static shell files (design-system CSS/JS, manifest, service worker, icons). Only this fixed list is served."""
     if name not in PWA_FILES:
         raise HTTPException(404)
     return FileResponse(ROOT / "web" / name, media_type=PWA_FILES[name], headers={"Cache-Control": "no-cache"})
 
 
+def _show(p: dict | None) -> dict | None:
+    """A stored profile as the screens show it: Korean labels for conditions and medicines."""
+    if not p:
+        return None
+    cond = [next((ko for key, ko in COND_KO if key in c.lower()), c) for c in p["conditions"]]
+    meds = [{"name": MED_KO.get(m, (m, ""))[0], "kind": MED_KO.get(m, (m, ""))[1]} for m in p["medications"]]
+    return {**p, "conditions_ko": cond, "medications": meds, "gender_ko": {"female": "여성", "male": "남성"}.get(p["gender"], p["gender"])}
+
+
 def _profiles() -> dict:
-    return {p["id"]: {**p, "medications": [{"name": m, "kind": MED_CLASS.get(m, "")} for m in p["medications"]]}
-            for p in full_profiles()}
+    return {p["id"]: _show(p) for p in full_profiles()}
 
 
-def staff_only(x_admin_token: str | None = Header(default=None)):
-    """Demo guard for the care-team API: when COACH_ADMIN_TOKEN is set, the request must carry it."""
-    import os
-    want = os.environ.get("COACH_ADMIN_TOKEN")
-    if want and x_admin_token != want:
-        raise HTTPException(401, "care-team token required")
+def _history(user_id: str, limit: int = 40) -> list[dict]:
+    rows = tracelog.rows("SELECT ts, route, message, answer, meta FROM events WHERE user_id = ? ORDER BY id DESC LIMIT ?", (user_id, limit))
+    for r in rows:
+        r["meta"] = json.loads(r["meta"]) if r.get("meta") else None
+    return rows[::-1]
 
 
-@app.get("/api/users")
-def user_list():
-    """For the demo sign-in menu: id and first name only."""
-    return [{"id": i, "name": p["name"].split()[0]} for i, p in _profiles().items()]
+def _same_origin(request: Request):
+    auth.same_origin(request)
 
 
-@app.get("/api/me/{user_id}")
-async def me(user_id: str, deps: Container = Depends(get_deps)):
-    """User screen: my own profile and my records (a real service would take the id from the login session)."""
-    recs = await deps.users("list_records", user_id=user_id, limit=20)
-    chats = tracelog.rows("SELECT ts, route, message, answer FROM events WHERE user_id = ? ORDER BY ts DESC LIMIT 10", (user_id,))
-    return {"profile": _profiles().get(user_id), "records": recs["records"], "chats": chats}
+@app.post("/api/auth/signup", dependencies=[Depends(_same_origin)])
+def signup(body: SignupIn, request: Request, response: Response):
+    import re
+    name = body.username.strip().lower()
+    if not re.fullmatch(r"[a-z0-9_]{4,20}", name):
+        raise HTTPException(422, "아이디는 영문 소문자, 숫자, 밑줄(_)로 4~20자예요.")
+    if (msg := auth.check_password_rules(body.password)):
+        raise HTTPException(422, msg)
+    if not body.consent:
+        raise HTTPException(422, "개인정보와 건강정보 이용에 동의해 주세요.")
+    if body.gender not in ("female", "male"):
+        raise HTTPException(422, "성별을 선택해 주세요.")
+    clean = lambda t: re.sub(r"[;\n\r]+", ", ", t).strip()   # the profile is sent as "field: value; field: value"
+    meds = [SIGNUP_MED[m] for m in body.medications if m in SIGNUP_MED] + ([clean(body.other_medications)] if body.other_medications.strip() else [])
+    uid = "w" + secrets.token_hex(4)
+    profile = {"name": body.name.strip(), "age": body.age, "gender": body.gender,
+               "conditions": ["type 2 diabetes"] + [SIGNUP_COND[c] for c in body.conditions if c in SIGNUP_COND],
+               "medications": meds or ["none"], "activity": clean(body.activity) or "not given", "mobility": SIGNUP_MOB.get(body.mobility, "good"),
+               "goal": clean(body.goal) or "not given", "diet": clean(body.diet) or "not given"}
+    aid = auth.create_account(name, body.password, "user", profile["name"], uid)   # fails with 409 before any profile exists
+    create_user(uid, profile)
+    auth.start_session(request, response, aid, "user")
+    return {"ok": True}
 
 
-@app.get("/api/admin/summary", dependencies=[Depends(staff_only)])
+@app.post("/api/auth/login", dependencies=[Depends(_same_origin)])
+def user_login(body: LoginIn, request: Request, response: Response):
+    a = auth.login(request, response, body.username, body.password, "user")
+    return {"ok": True, "name": a["display_name"]}
+
+
+@app.post("/api/auth/logout", dependencies=[Depends(_same_origin)])
+def user_logout(request: Request, response: Response):
+    auth.end_session(request, response, "user")
+    return {"ok": True}
+
+
+@app.get("/api/auth/me")
+async def me(user: dict = Depends(auth.current_user), deps: Container = Depends(get_deps)):
+    """The signed-in person's own profile, records and chat history (the id comes from the session, never from the page)."""
+    uid = user["user_id"]
+    recs = await deps.users("list_records", user_id=uid, limit=20)
+    return {"account": {"username": user["username"], "name": user["display_name"]}, "profile": _show(get_full_profile(uid)),
+            "records": recs["records"], "history": _history(uid)}
+
+
+@app.post("/api/me/password", dependencies=[Depends(_same_origin)])
+def change_password(body: PasswordIn, request: Request, response: Response, user: dict = Depends(auth.current_user)):
+    if not auth.verify_password(body.current, user["pw_hash"]):
+        raise HTTPException(403, "현재 비밀번호가 맞지 않아요.")
+    if (msg := auth.check_password_rules(body.new)):
+        raise HTTPException(422, msg)
+    auth.set_password(user["id"], body.new)
+    auth.start_session(request, response, user["id"], "user")   # keep this device signed in
+    return {"ok": True}
+
+
+@app.post("/api/me/delete", dependencies=[Depends(_same_origin)])
+def delete_me(body: DeleteIn, request: Request, response: Response, user: dict = Depends(auth.current_user)):
+    """Account deletion: the account, the profile, the records and the monitoring-log rows of this person are removed."""
+    if not auth.verify_password(body.password, user["pw_hash"]):
+        raise HTTPException(403, "비밀번호가 맞지 않아요.")
+    delete_user(user["user_id"])
+    auth.delete_account(user["id"])
+    response.delete_cookie(auth.USER_COOKIE, path="/")
+    return {"ok": True}
+
+
+@app.post("/api/staff/login", dependencies=[Depends(_same_origin)])
+def staff_login(body: LoginIn, request: Request, response: Response):
+    a = auth.login(request, response, body.username, body.password, "staff")
+    auth.audit(a["username"], "sign in")
+    return {"ok": True, "name": a["display_name"]}
+
+
+@app.post("/api/staff/logout", dependencies=[Depends(_same_origin)])
+def staff_logout(request: Request, response: Response):
+    auth.end_session(request, response, "staff")
+    return {"ok": True}
+
+
+@app.get("/api/staff/me")
+def staff_me(staff: dict = Depends(auth.current_staff)):
+    return {"username": staff["username"], "name": staff["display_name"]}
+
+
+@app.get("/api/admin/summary", dependencies=[Depends(auth.current_staff)])
 def admin_summary(days: int = 14):
     return tracelog.summary(days)
 
 
-@app.get("/api/admin/users", dependencies=[Depends(staff_only)])
+@app.get("/api/admin/users", dependencies=[Depends(auth.current_staff)])
 def admin_users():
     stats = {r["user_id"]: r for r in tracelog.rows(
         "SELECT user_id, COUNT(*) AS messages, MAX(ts) AS last_ts, SUM(cost) AS cost, "
@@ -139,14 +278,15 @@ def admin_users():
     return [{**p, **{k: v for k, v in stats.get(i, {}).items() if k != "user_id"}} for i, p in _profiles().items()]
 
 
-@app.get("/api/admin/users/{user_id}", dependencies=[Depends(staff_only)])
-async def admin_user(user_id: str, deps: Container = Depends(get_deps)):
+@app.get("/api/admin/users/{user_id}", dependencies=[Depends(auth.current_staff)])
+async def admin_user(user_id: str, deps: Container = Depends(get_deps), staff: dict = Depends(auth.current_staff)):
+    auth.audit(staff["username"], "opened a person's data", user_id)   # every look at personal health data is logged
     recs = await deps.users("list_records", user_id=user_id, limit=50)
     ev = tracelog.rows("SELECT * FROM events WHERE user_id = ? ORDER BY ts DESC LIMIT 100", (user_id,))
     return {"profile": _profiles().get(user_id), "records": recs["records"], "events": ev}
 
 
-@app.get("/api/admin/alerts", dependencies=[Depends(staff_only)])
+@app.get("/api/admin/alerts", dependencies=[Depends(auth.current_staff)])
 def admin_alerts(status: str = "all"):
     q = "SELECT id, ts, user_id, alert, alert_status, message, answer FROM events WHERE alert IS NOT NULL"
     q += "" if status == "all" else " AND alert_status = ?"
@@ -157,12 +297,18 @@ class AlertIn(BaseModel):
     status: str = "handled"
 
 
-@app.post("/api/admin/alerts/{event_id}", dependencies=[Depends(staff_only)])
-def admin_alert_status(event_id: int, body: AlertIn):
+@app.post("/api/admin/alerts/{event_id}", dependencies=[Depends(_same_origin)])
+def admin_alert_status(event_id: int, body: AlertIn, staff: dict = Depends(auth.current_staff)):
+    auth.audit(staff["username"], f"alert marked {body.status}", str(event_id))
     return {"updated": tracelog.set_alert_status(event_id, body.status)}
 
 
-@app.get("/replay/{item_id}")
+@app.get("/api/admin/audit", dependencies=[Depends(auth.current_staff)])
+def admin_audit():
+    return auth.audit_rows()
+
+
+@app.get("/replay/{item_id}", dependencies=[Depends(auth.current_staff)])
 def replay(item_id: str, system: str = "after"):
     """A recorded evaluation run (eval/results), shown in the web page without calling the LLM again."""
     rows = json.loads((ROOT / "eval" / "results" / f"{system}.json").read_text())
@@ -175,30 +321,32 @@ def replay(item_id: str, system: str = "after"):
     return r
 
 
-@app.post("/chat")
-async def chat(body: ChatIn, deps: Container = Depends(get_deps)):
-    r = await run_after(STATE["graph"], deps, body.user_id, body.message)
-    tracelog.log_event(body.user_id, body.message, r)
+@app.post("/chat", dependencies=[Depends(_same_origin)])
+async def chat(body: ChatIn, user: dict = Depends(auth.current_user), deps: Container = Depends(get_deps)):
+    r = await run_after(STATE["graph"], deps, user["user_id"], body.message)
+    tracelog.log_event(user["user_id"], body.message, r)
     if body.lang == "ko":
         r = {**r, "answer_en": r["answer"], **(await to_korean(deps, Usage(), r["answer"]))}
     return r
 
 
-@app.post("/approve")
-async def approve(body: ApproveIn, deps: Container = Depends(get_deps)):
-    r = await run_after(STATE["graph"], deps, body.user_id, "", thread_id=body.thread_id,
+@app.post("/approve", dependencies=[Depends(_same_origin)])
+async def approve(body: ApproveIn, user: dict = Depends(auth.current_user), deps: Container = Depends(get_deps)):
+    r = await run_after(STATE["graph"], deps, user["user_id"], "", thread_id=body.thread_id,
                         resume="yes" if body.approve else "no")
-    tracelog.log_event(body.user_id, "(approval) " + ("yes" if body.approve else "no"), r)
+    tracelog.log_event(user["user_id"], "(approval) " + ("yes" if body.approve else "no"), r)
     if body.lang == "ko":
         r = {**r, "answer_en": r["answer"], **(await to_korean(deps, Usage(), r["answer"]))}
     return r
 
 
-@app.get("/chat/stream")
-async def chat_stream(user_id: str, message: str, lang: str = "en", deps: Container = Depends(get_deps)):
+@app.post("/chat/stream", dependencies=[Depends(_same_origin)])
+async def chat_stream(body: ChatIn, user: dict = Depends(auth.current_user), deps: Container = Depends(get_deps)):
     """SSE. Events: {"event":"route"} once the route is known; {"step":...} per finished node; {"done":true,...} with the whole
     checked answer (NOT token streaming); {"event":"error"} if the run fails (the browser does not auto-retry: a retry would
     run the whole paid pipeline again)."""
+    user_id, message, lang = user["user_id"], body.message, body.lang
+
     async def events():
         u, tid, t = Usage(), str(uuid.uuid4()), time.time()
         cfg = {"configurable": {"deps": deps, "usage": u, "thread_id": tid}, "recursion_limit": 30}
@@ -232,8 +380,8 @@ async def chat_stream(user_id: str, message: str, lang: str = "en", deps: Contai
                     shown = await to_korean(deps, u, final.get("answer", ""))
                 except Exception:   # translation failed: the safety-checked English answer is still shown
                     pass
-            log = {k: v for k, v in final.items() if k != "evidence"}
-            tracelog.log_event(user_id, message, {**log, "latency_s": round(time.time() - t, 2), "calls": u.calls, "tokens_in": u.tokens_in,
+            log = {k: v for k, v in final.items() if k not in ("evidence", "answer")}
+            tracelog.log_event(user_id, message, {**log, "answer": shown["answer"], "meta": {"citations": cites["citations"], "route": final.get("route")}, "latency_s": round(time.time() - t, 2), "calls": u.calls, "tokens_in": u.tokens_in,
                                                   "tokens_out": u.tokens_out, "cost": round(u.cost(s.price_in, s.price_out, s.price_embed), 5)})
             ask = final.get("interrupt")
             if lang == "ko" and ask and fixed_ko(ask.get("question", "")):

@@ -1,10 +1,20 @@
 {
- "user_mobile_360": [],
- "user_mobile_360_hscroll": false,
- "user_tablet_768": [],
- "user_tablet_768_hscroll": false,
- "user_desktop_1280": [],
- "user_desktop_1280_hscroll": false,
- "admin_desktop_1280": [],
- "admin_1280_hscroll": false
+ "admin_login": [],
+ "admin_login_hscroll": false,
+ "admin_overview_1280": [],
+ "admin_overview_1280_hscroll": false,
+ "login_mobile_390": [],
+ "login_mobile_390_hscroll": false,
+ "chat_mobile_390_empty": [],
+ "chat_mobile_390_empty_hscroll": false,
+ "chat_mobile_390_evidence": [],
+ "chat_mobile_390_evidence_hscroll": false,
+ "chat_tablet_768_empty": [],
+ "chat_tablet_768_empty_hscroll": false,
+ "chat_tablet_768_evidence": [],
+ "chat_tablet_768_evidence_hscroll": false,
+ "chat_desktop_1280_empty": [],
+ "chat_desktop_1280_empty_hscroll": false,
+ "chat_desktop_1280_evidence": [],
+ "chat_desktop_1280_evidence_hscroll": false
 }

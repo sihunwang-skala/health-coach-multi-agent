@@ -19,10 +19,16 @@ def run(c):
 
 def test_korean_emergency_wording_is_caught_before_any_llm():
     deps, _ = container()
-    for m in ("산책 후 가슴이 조이고 숨이 막혀요", "혈당이 45 나왔어요", "손이 떨리고 어지러워요"):
+    for m in ("산책 후 가슴이 조이고 숨이 막혀요", "혈당이 45 나왔어요", "손이 떨리고 어지러워요", "가슴이 너무 아파요", "숨쉬기가 힘들어요",
+              "눈앞이 캄캄해요", "얼굴 한쪽이 처졌어요", "쓰러질 것 같아요"):
         r = run(run_after(build_graph(), deps, "u1", m))
         assert r["route"] == "emergency" and r["calls"] == 0
     assert not rules.is_emergency("혈당이 145예요") and not rules.is_emergency("저녁 먹고 걸어도 돼요?")
+
+
+def test_korean_ordinary_questions_are_not_emergencies():
+    for m in ("가슴 운동을 해도 되나요?", "저혈당이 뭔가요?", "심장에 좋은 운동은 뭐예요?", "숨쉬기 운동이 도움이 되나요?", "오늘 혈당이 120이에요"):
+        assert not rules.is_emergency(m), m
 
 
 def test_every_fixed_reply_has_korean_text():

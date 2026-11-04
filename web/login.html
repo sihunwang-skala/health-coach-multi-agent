@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>로그인 · 식단·운동 코치</title><meta name="theme-color" content="#1F6F5C"><link rel="icon" href="/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/ds.css">
+<style>
+body{min-height:100vh;display:grid;place-items:center;padding:var(--s5) var(--s4)}
+.wrap{width:100%;max-width:460px;display:flex;flex-direction:column;gap:var(--s5)}
+.brand{display:flex;flex-direction:column;align-items:center;gap:var(--s3);text-align:center}
+.brand .mark{width:56px;height:56px;border-radius:18px;background:var(--brand);color:var(--brand-ink);display:grid;place-items:center}
+.brand .mark .icon{width:30px;height:30px}
+.panel{padding:var(--s5);display:flex;flex-direction:column;gap:var(--s4)}
+.tabs{display:grid;grid-template-columns:1fr 1fr;background:var(--surface-2);border-radius:var(--r-pill);padding:4px}
+.tabs button{min-height:44px;border:0;border-radius:var(--r-pill);background:transparent;color:var(--ink-2);font:inherit;font-weight:600;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:var(--sh-1)}
+form{display:flex;flex-direction:column;gap:var(--s4)}
+.chips{display:flex;flex-wrap:wrap;gap:var(--s2)}
+.steps{display:flex;gap:var(--s2);align-items:center;color:var(--ink-2);font-size:var(--fs-sm)}.steps b{color:var(--ink)}
+.check{display:flex;gap:var(--s3);align-items:flex-start}.check input{width:24px;height:24px;margin-top:2px;accent-color:var(--brand);flex:none}
+.foot{text-align:center}
+</style></head><body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-leaf" viewBox="0 0 24 24"><path d="M5 19c0-8 5-14 15-14 0 10-6 15-14 15"/><path d="M5 19c3-5 6-8 10-10"/></symbol></svg>
+<main class="wrap">
+ <header class="brand"><div class="mark" aria-hidden="true"><svg class="icon"><use href="#i-leaf"/></svg></div>
+  <h1 style="font-size:var(--fs-2xl)">식단·운동 코치</h1><p class="muted">내 몸 상태에 맞춰 식사와 운동을 같이 살펴봐요.</p></header>
+
+ <section class="card panel" aria-label="로그인과 가입">
+  <div class="tabs" role="tablist"><button role="tab" id="tabIn" aria-selected="true" aria-controls="formIn">로그인</button><button role="tab" id="tabUp" aria-selected="false" aria-controls="formUp">가입하기</button></div>
+
+  <form id="formIn" autocomplete="on" novalidate>
+   <div class="field"><label for="inUser">아이디</label><input class="input" id="inUser" name="username" autocomplete="username" autocapitalize="none" required></div>
+   <div class="field"><label for="inPw">비밀번호</label><input class="input" id="inPw" name="password" type="password" autocomplete="current-password" required></div>
+   <p class="error" id="inErr" role="alert"></p>
+   <button class="btn block" type="submit" id="inBtn">로그인</button>
+  </form>
+
+  <form id="formUp" autocomplete="off" novalidate hidden>
+   <div class="steps" aria-live="polite"><b id="stepNo">1</b>/3 <span id="stepName">계정 만들기</span></div>
+
+   <div id="s1" class="step" style="display:flex;flex-direction:column;gap:var(--s4)">
+    <div class="field"><label for="upName">앱에서 부를 이름</label><input class="input" id="upName" maxlength="20" autocomplete="name" placeholder="예: 길동">
+     <span class="hint">AI에게는 이름을 보내지 않아요.</span></div>
+    <div class="field"><label for="upUser">아이디</label><input class="input" id="upUser" maxlength="20" autocomplete="username" autocapitalize="none" aria-describedby="upUserH"><span class="hint" id="upUserH">영문 소문자, 숫자, 밑줄(_) 4~20자</span></div>
+    <div class="field"><label for="upPw">비밀번호</label><input class="input" id="upPw" type="password" autocomplete="new-password" aria-describedby="upPwH"><span class="hint" id="upPwH">8자 이상, 문자와 숫자를 함께 넣어 주세요.</span></div>
+   </div>
+
+   <div id="s2" class="step" style="display:none;flex-direction:column;gap:var(--s4)" hidden>
+    <p class="muted small">답변을 내 상황에 맞추는 데 써요. 나중에 바꿀 수 있어요.</p>
+    <div class="field"><label for="upAge">나이</label><input class="input" id="upAge" type="number" min="18" max="110" inputmode="numeric"></div>
+    <div class="field"><span class="label" id="gl">성별</span><div class="chips" role="group" aria-labelledby="gl" id="gender">
+     <button type="button" class="chip" data-v="female" aria-pressed="false">여성</button><button type="button" class="chip" data-v="male" aria-pressed="false">남성</button></div></div>
+    <div class="field"><span class="label" id="cl">당뇨 말고 함께 있는 질환 (해당하는 것 모두)</span><div class="chips" role="group" aria-labelledby="cl" id="conds"></div></div>
+    <div class="field"><span class="label" id="ml">먹거나 맞는 약</span><div class="chips" role="group" aria-labelledby="ml" id="meds"></div>
+     <input class="input" id="upOther" maxlength="60" placeholder="목록에 없는 약이 있으면 적어 주세요" aria-label="그 밖의 약"></div>
+    <div class="field"><label for="upMob">걷기와 균형</label><select class="input" id="upMob"><option value="good">불편하지 않아요</option><option value="balance">균형이 불안해요</option><option value="cane">지팡이나 보행기를 써요</option><option value="legs">다리 힘이 약해요</option></select></div>
+    <div class="field"><label for="upGoal">바라는 점 <span class="muted">(선택)</span></label><input class="input" id="upGoal" maxlength="100" placeholder="예: 식후 혈당 낮추기"></div>
+    <div class="field"><label for="upAct">평소 활동 <span class="muted">(선택)</span></label><input class="input" id="upAct" maxlength="100" placeholder="예: 저녁마다 공원 걷기"></div>
+    <div class="field"><label for="upDiet">평소 식사 <span class="muted">(선택)</span></label><input class="input" id="upDiet" maxlength="100" placeholder="예: 아침을 자주 거름"></div>
+   </div>
+
+   <div id="s3" class="step" style="display:none;flex-direction:column;gap:var(--s4)" hidden>
+    <div class="banner info"><b>이 서비스는 의사를 대신하지 않아요.</b> 논문에서 찾은 일반 정보와 생활 습관 제안만 드려요. 약을 시작하거나 끊거나 바꾸는 일은 꼭 의료진과 상의해 주세요. <b>응급이면 바로 119에 전화하세요.</b></div>
+    <label class="check"><input type="checkbox" id="upConsent"><span>내 건강 정보를 저장하고, 이름을 뺀 건강 정보를 AI 답변에 쓰는 데 동의해요. (필수) <span class="hint" style="display:block">설정에서 언제든 계정과 기록을 삭제할 수 있어요.</span></span></label>
+   </div>
+
+   <p class="error" id="upErr" role="alert"></p>
+   <div style="display:flex;gap:var(--s2)"><button class="btn secondary" type="button" id="back" hidden>이전</button><button class="btn" type="submit" id="next" style="flex:1">다음</button></div>
+  </form>
+ </section>
+ <p class="foot small muted">건강 정보는 이 서비스의 서버에만 저장돼요.</p>
+</main>
+<script src="/ds.js"></script>
+<script>
+applyTextSize();
+const COND=[['hypertension','고혈압'],['kidney','만성 신장병'],['retinopathy','당뇨병성 망막병증'],['neuropathy','발 저림(신경병증)'],['heart','심장 질환'],['muscle','근육량 부족']];
+const MED=[['metformin','메트포르민'],['glimepiride','글리메피리드'],['gliclazide','글리클라지드'],['glargine','지속형 인슐린(글라진)'],['aspart','식사 인슐린(아스파트)'],['premixed','혼합형 인슐린'],['amlodipine','암로디핀(혈압약)'],['lisinopril','리시노프릴(혈압약)']];
+const chipBox=(id,list)=>{$(id).innerHTML=list.map(([k,l])=>`<button type="button" class="chip" data-v="${k}" aria-pressed="false">${l}</button>`).join('')};
+chipBox('conds',COND);chipBox('meds',MED);
+document.addEventListener('click',e=>{const c=e.target.closest('.chip');if(!c)return;const single=c.parentElement.id==='gender';
+ if(single)c.parentElement.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed','false'));
+ c.setAttribute('aria-pressed',single?'true':String(c.getAttribute('aria-pressed')!=='true'))});
+const picked=id=>[...$(id).querySelectorAll('[aria-pressed="true"]')].map(x=>x.dataset.v);
+function tab(up){$('tabIn').setAttribute('aria-selected',!up);$('tabUp').setAttribute('aria-selected',up);$('formIn').hidden=up;$('formUp').hidden=!up;(up?$('upName'):$('inUser')).focus()}
+$('tabIn').onclick=()=>tab(false);$('tabUp').onclick=()=>tab(true);if(location.hash==='#signup')tab(true);
+$('formIn').onsubmit=async e=>{e.preventDefault();$('inErr').textContent='';$('inBtn').disabled=true;
+ try{await api('/api/auth/login',{username:$('inUser').value,password:$('inPw').value});location.href='/'}
+ catch(x){$('inErr').textContent=x.message;$('inPw').value='';$('inBtn').disabled=false}};
+let step=1;const NAMES=['계정 만들기','내 건강 정보','동의하고 시작하기'];
+function show(n){step=n;[1,2,3].forEach(i=>{const s=$('s'+i);s.hidden=i!==n;s.style.display=i===n?'flex':'none'});$('stepNo').textContent=n;$('stepName').textContent=NAMES[n-1];
+ $('back').hidden=n===1;$('next').textContent=n===3?'가입하고 시작하기':'다음';$('upErr').textContent='';window.scrollTo(0,0)}
+function check(n){
+ if(n===1){if(!$('upName').value.trim())return'앱에서 부를 이름을 적어 주세요.';if(!/^[a-z0-9_]{4,20}$/.test($('upUser').value.trim().toLowerCase()))return'아이디는 영문 소문자, 숫자, 밑줄(_) 4~20자예요.';
+  const p=$('upPw').value;if(p.length<8||/^\d+$/.test(p)||/^[A-Za-z]+$/.test(p))return'비밀번호는 8자 이상, 문자와 숫자를 함께 넣어 주세요.'}
+ if(n===2){const a=+$('upAge').value;if(!(a>=18&&a<=110))return'나이를 18~110 사이로 적어 주세요.';if(!picked('gender').length)return'성별을 골라 주세요.'}
+ if(n===3&&!$('upConsent').checked)return'계속하려면 동의가 필요해요.';return''}
+$('back').onclick=()=>show(step-1);
+$('formUp').onsubmit=async e=>{e.preventDefault();const m=check(step);if(m){$('upErr').textContent=m;return}
+ if(step<3)return show(step+1);
+ $('next').disabled=true;
+ try{await api('/api/auth/signup',{username:$('upUser').value,password:$('upPw').value,name:$('upName').value,age:+$('upAge').value,gender:picked('gender')[0],conditions:picked('conds'),
+  medications:picked('meds'),other_medications:$('upOther').value,mobility:$('upMob').value,activity:$('upAct').value,diet:$('upDiet').value,goal:$('upGoal').value,consent:true});location.href='/'}
+ catch(x){$('upErr').textContent=x.message;$('next').disabled=false;if(x.status===409||x.status===422&&/아이디|비밀번호/.test(x.message))show(1)}};
+</script></body></html>

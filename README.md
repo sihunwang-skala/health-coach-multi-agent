@@ -75,7 +75,8 @@ cp .env.example .env                                  # OPENAI_API_KEY 입력 (L
 .venv/bin/python scripts/fetch_papers.py              # 논문 86편 내려받기 (PMC 오픈액세스, 저장소에는 원문 없음)
 .venv/bin/python scripts/build_index.py               # chunking + embedding (약 $0.02, 1회)
 .venv/bin/python scripts/seed_demo_monitoring.py --users   # (선택) 관리자 화면 데모 데이터
-.venv/bin/uvicorn app.server:app --port 8000          # 사용자 화면 http://localhost:8000, 관리자 화면 /admin
+.venv/bin/python scripts/manage_accounts.py seed-demo   # 처음 한 번: 가상 사용자 10명 + 의료진 계정 (비밀번호는 data/demo_accounts.txt, git 제외)
+.venv/bin/uvicorn app.server:app --port 8000          # 사용자 http://localhost:8000 (로그인 /login, 가입 가능), 의료진 /admin/login
 .venv/bin/python -m pytest -q                         # 단위 테스트 (API 키 불필요)
 ```
 평가 다시 실행: [docs/EVALUATION.md §8](docs/EVALUATION.md#8-다시-계산하기)

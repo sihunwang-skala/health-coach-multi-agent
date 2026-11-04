@@ -11,6 +11,7 @@ One row per message, kept on our own server (SQLite, the same file as the user r
 """
 from __future__ import annotations
 
+import json
 import os
 import sqlite3
 from datetime import datetime, timedelta
@@ -28,6 +29,8 @@ SCHEMA = """CREATE TABLE IF NOT EXISTS events (
 def _db(path=None) -> sqlite3.Connection:
     con = sqlite3.connect(path or Settings().db_path)
     con.execute(SCHEMA)
+    if "meta" not in {r[1] for r in con.execute("PRAGMA table_info(events)")}:   # added 2026-11: citations for the chat history
+        con.execute("ALTER TABLE events ADD COLUMN meta TEXT")
     return con
 
 
@@ -38,10 +41,10 @@ def log_event(user_id: str, message: str, r: dict, source: str = "live", ts: str
     row = (ts or datetime.now().isoformat(timespec="seconds"), user_id, route, ",".join(r.get("domains") or []), message,
            r.get("answer", ""), ",".join(s.get("id", "") for s in r.get("safety_notes") or []), r.get("retries") or 0,
            len(r.get("removed") or []), r.get("latency_s"), r.get("calls"), (r.get("tokens_in") or 0) + (r.get("tokens_out") or 0),
-           r.get("cost"), alert, "open" if alert else None, source)
+           r.get("cost"), alert, "open" if alert else None, source, json.dumps(r["meta"], ensure_ascii=False) if r.get("meta") else None)
     con = _db(path)
     cur = con.execute("INSERT INTO events (ts, user_id, route, domains, message, answer, safety_rules, retries, removed, latency_s, "
-                      "calls, tokens, cost, alert, alert_status, source) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", row)
+                      "calls, tokens, cost, alert, alert_status, source, meta) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", row)
     con.commit()
     return cur.lastrowid
 
