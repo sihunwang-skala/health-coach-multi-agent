@@ -1,7 +1,5 @@
 # 결과 보고서 — health-coach-multi-agent
 
-**SKALA 4기 광주 3반 · G088 · 왕시훈**
-
 **GitHub:** [sihunwang-skala/health-coach-multi-agent](https://github.com/sihunwang-skala/health-coach-multi-agent)
 
 > **제2형 당뇨병 개인 맞춤 식단 및 신체활동 Agentic RAG Coach**, 고령 사용자 접근성과 안전을 고려한 근거 기반 Multi-Agent 서비스 (Personalized Agentic RAG Diet and Activity Coach for Type 2 Diabetes) (AI 서비스 개발 Mini Project, 과제 2: 신규 주제 Agent)
