@@ -226,6 +226,6 @@ cp .env.example .env                                  # OPENAI_API_KEY 입력 (L
 이 프로젝트는 2024년 UIUC Information Experience and Accessibility Lab에서 참여한 고령자 대상 GenAI health coaching 연구 경험을 바탕으로, 제2형 당뇨병 식단 및 신체활동 코칭으로 주제를 넓히고, Agentic RAG와 deterministic safety rules 등 최신 기술을 적용해 추가 구현한 프로젝트입니다.
 
 - [UIUC Information Experience and Accessibility Lab](https://infoaccesslab.web.illinois.edu/)
-- [IEA Lab 구성원 및 이전 참여자](https://infoaccesslab.web.illinois.edu/people/)
+- [IEA Lab 구성원](https://infoaccesslab.web.illinois.edu/people/)
 - [Utilizing Generative AI in mHealth apps for Older Adults](https://infoaccesslab.web.illinois.edu/research-projects/)
 - 후속 연구: [Creating Opportunities: Co-designing an mHealth App with Older Adults](https://arxiv.org/abs/2512.14641)
