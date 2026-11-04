@@ -6,32 +6,54 @@
 
 *Personalized Agentic RAG Diet and Activity Coach for Type 2 Diabetes*
 
-AI 서비스 개발 Mini Project, 2026-10, SKALA 4기 광주 3반 G088 왕시훈
+2024년 UIUC Information Experience and Accessibility Lab의 고령자 대상 GenAI health coaching 연구 경험에서 출발해, 식단, 신체활동, 안전, 서비스 UI까지 확장한 개인 프로젝트입니다.
 
-> 이 서비스는 의사가 아니라 코칭 서비스입니다. 진단/처방이 필요한 요청에는 Safety Guard를 적용해 AI가 임의로 판단하지 않도록 하고, 약 변경은 의료진에게, 응급 증상은 119로 안내합니다. 예시 사용자 10명은 모두 가상 인물입니다.
+| 대상 | 핵심 기술 | 평가 범위 |
+|---|---|---|
+| 제2형 당뇨병이 있는 고령 사용자 | Personalized Agentic RAG, Multi-Agent, deterministic safety rules | 가상 프로필 10명, 메시지 100개 |
 
-**결과 보고서: [docs/REPORT.md](docs/REPORT.md)**, [발표 화면](docs/PRESENTATION_VIEW.md), [5분 발표 스크립트](docs/PRESENTATION_SCRIPT.md), 전체 평가 표: [eval/results/metrics_tables.md](eval/results/metrics_tables.md), 평가 방법: [docs/EVALUATION.md](docs/EVALUATION.md)
+> 이 서비스는 의사가 아니라 코칭 서비스입니다. 진단이나 처방이 필요한 요청에는 Safety Guard를 적용해 AI가 임의로 판단하지 않도록 하고, 약 변경은 의료진에게, 응급 증상은 119로 안내합니다. 예시 사용자 10명은 모두 가상 인물입니다.
+
+### 프로젝트 문서
+
+- [결과 보고서](docs/REPORT.md), [발표 화면](docs/PRESENTATION_VIEW.md), [5분 발표 스크립트](docs/PRESENTATION_SCRIPT.md)
+- [전체 평가 표](eval/results/metrics_tables.md), [평가 방법](docs/EVALUATION.md), [Dataset Card](docs/DATASET_CARD.md)
 
 ## 서비스 화면
-실제 서비스처럼 로그인이 있는 채팅 앱과, 별도 로그인이 필요한 의료진 콘솔입니다. 가상 사용자의 저장된 데모 기록 화면이며 실시간 답변이 아닙니다.
 
-**채팅과 논문 근거**: 답변 속 번호를 누르면 인용한 문장과 논문 원문이 열립니다.
+실제 서비스처럼 로그인이 있는 이용자 앱과 별도 로그인이 필요한 의료진 콘솔로 구성했습니다. 아래 화면은 가상 사용자의 저장된 데모 기록이며 실시간 답변이 아닙니다.
 
-<img src="docs/ui/screenshots/2026-11/chat_ko_desktop_1280_evidence.png" alt="chat with evidence panel" width="900">
+### 이용자 채팅과 근거 확인
 
-**의료진 콘솔**: 기간(2주 단위)별 사용량, 알림, 이용자별 현황.
+답변 속 번호를 누르면 인용 문장과 논문 원문을 같은 화면에서 확인할 수 있습니다.
 
-<img src="docs/ui/screenshots/2026-11/admin_overview_ko_1280.png" alt="care-team console overview" width="900">
+<p align="center">
+  <img src="docs/ui/screenshots/2026-11/chat_ko_desktop_1280_evidence.png" alt="답변과 논문 근거를 함께 보여 주는 이용자 채팅 화면" width="960">
+</p>
 
-| 로그인 | 모바일 채팅 | 큰 글자(24px) | 영어 화면 |
-|---|---|---|---|
-| <img src="docs/ui/screenshots/2026-11/login_ko_1280.png" width="220"> | <img src="docs/ui/screenshots/2026-11/chat_ko_mobile_390_history.png" width="220"> | <img src="docs/ui/screenshots/2026-11/chat_ko_mobile_390_text_size_24.png" width="220"> | <img src="docs/ui/screenshots/2026-11/chat_en_mobile_390_history.png" width="220"> |
+### 데스크톱 진입 및 의료진 콘솔
 
-의료진 콘솔의 이용자 상세(혈당 그래프, 기록, 대화 내역)와 나머지 화면은 [화면 모음](docs/ui/SCREENSHOTS.md)에 있습니다. 디자인 규칙은 [DESIGN.md](docs/ui/DESIGN.md), 계정과 보안은 [ACCOUNTS.md](docs/ACCOUNTS.md)입니다.
+| 이용자 로그인 | 의료진 콘솔 |
+|:---:|:---:|
+| <img src="docs/ui/screenshots/2026-11/login_ko_1280.png" alt="이용자 로그인 화면" width="480"> | <img src="docs/ui/screenshots/2026-11/admin_overview_ko_1280.png" alt="의료진 콘솔 개요 화면" width="480"> |
 
-## 결과 — 두 가지 평가로 확인한 Before / After (GPT-6 Luna)
-Baseline(Before) = Standard Paper-Search RAG, Ablation = Health Agentic RAG, Single-Agent + Health Agentic RAG, Proposed(After) = Multi-Agent + Health Agentic RAG
-![four systems](docs/img/result_health_four_systems.png)
+의료진 콘솔에서는 2주 단위 사용량과 알림, 이용자별 상태를 확인할 수 있습니다.
+
+### 모바일 및 접근성
+
+| 한국어 모바일 | 큰 글자 24px | 영어 모바일 |
+|:---:|:---:|:---:|
+| <img src="docs/ui/screenshots/2026-11/chat_ko_mobile_390_history.png" alt="한국어 모바일 채팅 화면" width="240"> | <img src="docs/ui/screenshots/2026-11/chat_ko_mobile_390_text_size_24.png" alt="24px 큰 글자 모바일 화면" width="240"> | <img src="docs/ui/screenshots/2026-11/chat_en_mobile_390_history.png" alt="영어 모바일 채팅 화면" width="240"> |
+
+의료진 콘솔의 이용자 상세 화면과 혈당 그래프, 기록, 대화 내역은 [전체 화면 모음](docs/ui/SCREENSHOTS.md)에서 확인할 수 있습니다. 디자인 규칙은 [DESIGN.md](docs/ui/DESIGN.md), 계정과 보안은 [ACCOUNTS.md](docs/ACCOUNTS.md)에 정리했습니다.
+
+## 평가 결과
+
+두 가지 평가로 Standard Paper-Search RAG부터 Multi-Agent 기반 제안 시스템까지 비교했습니다. 모든 수치는 GPT-6 Luna를 사용한 저장된 평가 결과입니다.
+
+<p align="center">
+  <img src="docs/img/result_health_four_systems.png" alt="네 가지 시스템의 평가 결과 비교" width="900">
+</p>
 
 첫 번째 표는 **건강 질문 60개만 4가지 시스템으로 비교**해 RAG와 Agent 구조의 효과를 확인한 결과입니다.
 
@@ -134,7 +156,7 @@ cp .env.example .env                                  # OPENAI_API_KEY 입력 (L
 
 ## 연구 배경 및 참고
 
-이 프로젝트는 2024년 UIUC Information Experience and Accessibility Lab에서 참여한 고령자 대상 GenAI health coaching 연구 경험을 바탕으로, 제2형 당뇨병 식단·신체활동 코칭, Agentic RAG, deterministic safety rules를 독립적으로 확장한 프로젝트입니다.
+이 프로젝트는 2024년 UIUC Information Experience and Accessibility Lab에서 참여한 고령자 대상 GenAI health coaching 연구 경험을 바탕으로, 제2형 당뇨병 식단 및 신체활동 코칭, Agentic RAG, deterministic safety rules를 독립적으로 확장한 프로젝트입니다.
 
 - [UIUC Information Experience and Accessibility Lab](https://infoaccesslab.web.illinois.edu/)
 - [IEA Lab 구성원 및 이전 참여자](https://infoaccesslab.web.illinois.edu/people/)
